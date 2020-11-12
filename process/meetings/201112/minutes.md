@@ -5,17 +5,17 @@
 Working title: "// Processing Architecture"
 
 ## Timeframe:
-W46: Kick off
-W47: Sketches
-W48: Visual Style
-W49: Proof of concept
-W50: Concept lock
-W51: Buffer
-W52: Vacation
-W01: Phase 2: Production, planning
-W02: Production
-W03: Production
-W04: Release
+W46: Kick off  
+W47: Sketches  
+W48: Visual Style  
+W49: Proof of concept  
+W50: Concept lock  
+W51: Buffer  
+W52: Vacation  
+W01: Phase 2: Production, planning  
+W02: Production  
+W03: Production  
+W04: Release  
 
 ## Overview:
 
@@ -78,8 +78,8 @@ Karen would like us to explore a "Turquoise + White + Black" colorscheme
 ## Notes on Student "List" view
 
 Karen would like us to explore ways to dynamically animate circles (representing each student),
-inspired by a Processing.js workshop Casper has shown her.
-The (working) title "// Processing Architecture" is also highly inspired by this.
+inspired by a Processing.js workshop Casper has shown her.  
+The (working) title "// Processing Architecture" is also highly inspired by this.  
 We proposed a strategy where a procedural animation algorithm is to be developed,
 that can move the circles in various shapes - but also "reconfigure" the circles into
 lists, groups, relations - or other.
@@ -87,5 +87,5 @@ lists, groups, relations - or other.
 
 ## Team
 Casper Riis Jensen <casper@walk.agency>  
-Karen Kjærgaard <kje@aarch.dk>
+Karen Kjærgaard <kje@aarch.dk>  
 Jørgen Skogmo <js@dearstudio.dk>
