@@ -1,0 +1,290 @@
+<!--
+
+- "interactivity" as a medium in itself (Antirom 1997, Lev Manovich 2001)
+exploring interactivity in its own right, rather than being an interface to existing content such as video, audio and text)
+
+- Architecture (in SW domain) is "the organization of information"
+-> so, direct-urls, multiple views (canvas, list, tags)
+
+- Covid19 has tought us virtual meetings.
+-> schedule a meeting (zoom) with the student
+-> view recording of the student presenting their work
+
+
+-->
+<!DOCTYPE html>
+<html>
+<head>
+	<title>wrap</title>
+	<style type="text/css">
+		body, html {
+			margin: 0;
+			padding: 0;
+		}
+		#container {
+			position: absolute;
+			overflow: hidden;
+			border: 1px solid #09f;
+		}
+
+		.elm {
+			background-color: #000;
+			position: absolute;
+			border-radius: 100%;
+			background-size: contain;
+		}
+	</style>
+</head>
+<body>
+
+<div id="container"></div>
+
+<script type="text/javascript">
+
+const data = [
+	'https://media.giphy.com/media/3o85xzkvl1siB2rHSo/giphy.gif',
+	'https://media.giphy.com/media/3oEdv0DUQOagqEI30k/giphy.gif',
+	'',
+	'https://media.giphy.com/media/elzCnIQAjQMWA/giphy.gif',
+	'',
+	'https://media.giphy.com/media/Fd0rrjTJ3yLDi/giphy.gif',
+	'https://media.giphy.com/media/f6qMGmXuOdkwU/giphy.gif',
+	'',
+	'',
+	'https://media.giphy.com/media/10l8fc00NMNJNm/giphy.gif', //heart
+	'https://media.giphy.com/media/3o85xKF0OvhaWyWvHa/giphy.gif',
+	'https://media.giphy.com/media/3oEjHDrfcwNCrqXrxK/giphy.gif',
+	'',
+	'',
+	'',
+	''
+]
+
+// element size
+const elm_size = 100
+// space between
+const elm_m    = 20
+
+
+const c_width = 600
+const c_height = 600
+// const c_width  = window.innerWidth
+// const c_height = window.innerHeight
+
+// calc number of elements to fill the container
+const nh = Math.ceil( c_width  / (-1+elm_size+elm_m) )
+const nv = Math.ceil( c_height / (-1+elm_size+elm_m) )
+
+
+// container center
+let cx = 0
+let cy = 0
+
+// direction
+let dx = 0
+let dy = 0
+
+// distance
+let lx = 0
+let ly = 0
+
+// global offset
+let gx = 0
+let gy = 0
+
+// global speed
+const speed = 0.05
+const slow  = 0.09
+let pspeed = 0
+let gs = 0
+
+// collection
+const elms = []
+
+// sound
+let audioManager
+
+class Elem {
+	constructor(i,x,y){
+		// index
+		this.index = i
+		this.ix = x
+		this.iy = y
+		// position
+		this.x = x
+		this.y = y
+		// loops
+		this.xl = 0
+		this.yl = 0
+		this.el = document.createElement('div')
+		this.el.className = 'elm'
+		this.el.style.width  = `${elm_size}px`
+		this.el.style.height = `${elm_size}px`
+
+		// #1
+		// const url = data[ Math.floor( Math.random() * data.length) ]
+		// const url = i < data.length ? data[i] : ''
+		const url = data[i % data.length]
+		if(url != '') this.el.style.backgroundImage = `url(${url})`
+
+		this.el.addEventListener('mouseenter', () => {
+			// console.log((lx*ly))
+			// #3
+			// audioManager.play('tsnt', lx*ly)
+		})
+	}
+
+	update(){
+		let px = gx + this.x * (elm_size + elm_m)
+		let py = gy + this.y * (elm_size + elm_m)
+
+		if( px < -elm_size ){
+			this.x = nh + this.ix + this.xl
+			this.xl += nh
+		}
+		if( px > c_width+elm_m){
+			this.x = nh + this.ix + this.xl
+			this.xl -= nh
+		}
+		if( py < -elm_size ){
+			this.y = nv + this.iy + this.yl
+			this.yl += nv
+		}
+		if( py > c_height+elm_m ){
+			this.y = nv + this.iy + this.yl
+			this.yl -= nv
+		}
+
+		this.el.style.left = `${px}px`
+		this.el.style.top  = `${py}px`
+	}
+}
+
+
+const init = () => {
+	const c = document.querySelector('#container')
+	c.style.width  = `${c_width}px`
+	c.style.height = `${c_height}px`
+
+	let i = 0
+	for(let y=0; y<nv; y++){
+		for(let x=0; x<nh; x++){
+			const elm = new Elem(i,x,y)
+			c.appendChild(elm.el)
+			elms.push(elm)
+			i++
+		}
+	}
+
+	const containerBounds = document.querySelector('#container').getBoundingClientRect()
+	cx = containerBounds.x + containerBounds.width/2
+	cy = containerBounds.y + containerBounds.height/2
+	
+	// #2
+	document.addEventListener('mousemove', (evnt) => {
+		let x = event.clientX
+		let y = event.clientY
+
+		// direction
+		dx = x < cx ? -1 : 1
+		dy = y < cy ? -1 : 1
+
+		// distance
+		lx = Math.min(1, Math.abs(cx - x) / c_width*2)
+		ly = Math.min(1, Math.abs(cy - y) / c_height*2)
+	})
+	
+}
+
+const update = () => {
+	// global offset
+
+	const ns = (speed * lx)
+
+	gs += (ns - pspeed * slow)
+
+	gx -= lx * dx * gs
+	gy -= ly * dy * gs
+
+	elms.forEach( elm => {
+		elm.update()
+	})
+	requestAnimationFrame(update)
+}
+
+const main = async () => {
+	audioManager = new Audio()
+	await audioManager.load('tsnt', 'tsnt.wav')
+	audioManager.play('tsnt')
+
+	init()
+	update()
+}
+
+
+class Audio {
+	constructor(){
+		this.sounds  = {}
+		this.context = new AudioContext();
+		this.source  = this.context.createBufferSource()
+
+		this.delay = this.context.createDelay()
+		this.delay.delayTime.value = 1
+		this.delay.connect(this.context.destination)
+
+		this.filter = this.context.createBiquadFilter()
+		this.filter.type = 'lowpass' // Low-pass filter. See BiquadFilterNode docs
+		this.filter.frequency.value = 440 // Set cutoff to 440 HZ
+		//source.connect(this.filter)
+		this.filter.connect(this.context.destination)
+
+	}
+
+	load(name, url){
+		return new Promise( (resolve, reject) => {
+			const request = new XMLHttpRequest()
+	  	request.open('GET', url, true)
+	  	request.responseType = 'arraybuffer'
+		  request.onload = () => {
+		    this.context.decodeAudioData(request.response, 
+		    	(buffer) => {
+		    		this.sounds[name] = buffer
+		    		console.log('Audio.load ok:', name, this.sounds)
+		    		resolve()
+		    	},
+		    	(err) => {
+		    		console.log('Audio.load error:', err)
+		    		reject()
+		    	}
+		    )
+		  }
+		  request.send()
+		})
+	}
+
+	play(name, rate=1){
+		const sound = this.sounds[name]
+		if( !sound ){
+			console.log('Audio.play error: Sound not defined/loaded', name, this.sounds)
+			return
+		}
+		const source = this.context.createBufferSource()
+		source.buffer = sound
+		source.playbackRate.value = rate
+		this.filter.frequency.value = 440 - 10 * rate
+		source.connect(this.filter)
+		
+		this.delay.delayTime.value = 1 - rate
+		this.delay.connect(this.filter)
+		// source.connect(this.delay)
+		// source.connect(this.context.destination)
+
+		source.start(0)
+	}
+}
+
+main()
+
+</script>
+</body>
+</html>
