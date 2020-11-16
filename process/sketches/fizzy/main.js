@@ -160,6 +160,7 @@ function FizzyText(message) {
       // Where should we move?
       var angle = noise(this.x / noiseScale, this.y / noiseScale) * _this.noiseStrength;
       // var angle = -Math.PI/2;
+      console.log('angle', angle);
 
       // Are we within the boundaries of the image?
       var onScreen = this.x > 0 && this.x < width &&

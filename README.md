@@ -1,6 +1,6 @@
 # walk-aarch-2021
 
-AARCH Winther 2021, Graduation website.
+AARCH Winter 2021, Graduation website.
 
 
 ## Team

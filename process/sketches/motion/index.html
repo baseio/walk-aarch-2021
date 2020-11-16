@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+  <head>
+    <meta charset="utf-8">
+    <title></title>
+
+
+    <style media="screen">
+
+      html, body {
+        margin: 0;
+        padding: 0;
+        overflow: hidden;
+        background: turquoise;
+        background: floralwhite;
+      }
+
+      #playground {
+        width: 600px;
+        height: 400px;
+        /* border: 1px solid #444; */
+        /* overflow: hidden; */
+        position: absolute;
+      }
+
+      .circ {
+        width: 20px;
+        height: 20px;
+        background: #09f;
+        border-radius: 100%;
+        position: absolute;
+        display: inline-block;
+        margin-left:-10px;
+        margin-top: -10px;
+        border: 2px solid #fff;
+        /* box-shadow: 17px 10px 9px 16px black; */
+      }
+
+      #controls {
+        position: absolute;
+        top: 10px;
+        left: 10px;
+      }
+      #controls .button {
+        padding: 10px 20px;
+        background: #000;
+        color: #fff;
+        font-family: helvetica;
+        border-radius: 4px;
+        font-size: 12px;
+        font-weight: 600;
+        text-transform: uppercase;
+        user-select: none;
+        cursor: pointer;
+        margin: 10px;
+        text-align: center;
+      }
+
+    </style>
+
+  </head>
+  <body>
+
+  <div id="playground"></div>
+
+  <div id="controls">
+    <div class="button" onclick="window.setMode('bounceOfWalls')">bounceOfWalls</div>
+    <div class="button" onclick="window.setMode('wrapAround')">wrapAround</div>
+
+  </div>
+
+  <script src='../fizzy/improvedNoise.js'></script>
+  <script type="module" src="index.js"></script>
+
+  </body>
+</html>
