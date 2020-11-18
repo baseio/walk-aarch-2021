@@ -17,25 +17,39 @@ Karen Kjærgaard <kje@aarch.dk>
 ## Tasks
 
 
----
-
-## Notes
-
-URL Scheme  
-
-/ 		-> home
-/s/ole 	-> student-page for ole
-/p/ 	-> static page
 
 ---
 
 ## Worklog
 
-#### W48
-- [x] sketch circle animations
-- [x] test "go live" -> twitch
-- [ ] figure out how to schedule this
-- [-] test "book zoom" -> ?
-- Get Feedback
+#### W46: Kickoff
+- [x] prepare for meeting
+- [x] kickoff with client thursday @ 12.00
 
-#### W49
+#### W47: Sketching and Prototypes
+- [x] sketch circle animations:
+- - [x] fizzy
+- - [x] wraparound
+- - [x] boids
+- - [x] motion
+- - [x] sine
+- - [x] wave
+- [x] test "go live" -> twitch
+- [x] netlify twitch test
+- [ ] figure out how to schedule this
+- [ ] test "book zoom" -> ?
+- [x] sketch index
+- [ ] automatically get subtitles from youtube
+- [x] colorize subtitles (nlp)
+- [x] play youtube movie in custom player
+- [x] students data: get from karen
+- [x] students data: build parser and stub-generator
+- [ ] present and get feedback: meeting friday @ 09
+
+#### W48: Style + Tone
+#### W49: Concept approval
+#### W50: Concept lock
+#### W01: Plan production
+#### W02: Production
+#### W03: Production
+#### W04: Release
