@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>sine</title>
+	<style type="text/css">
+		
+	.button {
+        padding: 10px 20px;
+        background: #000;
+        color: #fff;
+        font-family: helvetica;
+        border-radius: 4px;
+        border: 2px solid #000;
+        font-size: 12px;
+        font-weight: 600;
+        text-transform: uppercase;
+        user-select: none;
+        cursor: pointer;
+        margin: 10px;
+        text-align: center;
+        display: inline-block;
+        /*width: 200px;*/
+
+
+    }
+    .button:hover {
+    	border: 2px solid #09f;
+    	background: #222;
+    	/*color: #000;*/
+    }
+
+	</style>
+</head>
+<body>
+
+<canvas id="c" width="1280" height="720"></canvas>
+
+<div class="button" onclick="window.setMode('radiusmode', 'a')">R-A</div>	
+<div class="button" onclick="window.setMode('radiusmode', 'b')">R-B</div>
+<div class="button" onclick="window.setMode('radiusmode', 'c')">R-C</div>
+
+<script type="text/javascript">
+	
+const ctx = document.getElementById('c').getContext('2d')
+
+class Dot {
+	constructor(i){
+		this.i = i
+		this.color = ['#f00', '#0f0', '#00f'][ this.i % 3]
+		this.color = '#09f'
+		this.r = 20
+		this.spreadx = width / num
+		this.spready = height / num
+		
+		this.x = (this.spreadx/2) + (this.i * this.spreadx)
+	}
+
+	update(){
+
+	    this.x = this.i * this.spreadx
+	    this.y = (height/2) + Math.sin(this.i * wavelength + increment) * amplitude * Math.sin(increment)
+
+	    if( SETTINGS.radiusmode === 'a' ){
+	    	this.r = Math.abs(amplitude - this.y) * 0.1
+	    }
+
+	    if( SETTINGS.radiusmode === 'b' ){
+	    	this.r = Math.abs(height/2 - this.y) * 0.1
+	    }
+
+	    if( SETTINGS.radiusmode === 'c' ){
+	    	this.r = Math.max(1, 25 - Math.abs(height/2 - this.y) * 0.15)
+	    }
+		
+		ctx.fillStyle = this.color
+		ctx.beginPath();
+    	ctx.arc(this.x, this.y, this.r, 0, Math.PI * 2, true)
+    	ctx.fill()
+	}
+}
+
+const num = 100
+const width = 1280
+const height = 720
+
+let wavelength = 0.1
+let amplitude = 100
+let increment = 1
+
+const m = {
+	x: width/2,
+	y: height/2
+}
+
+const dots = []
+for(let i=0; i<num; i++){
+	dots.push( new Dot(i) )
+}
+
+const update = () => {
+	requestAnimationFrame(update)
+
+	ctx.fillStyle = 'floralwhite'
+	ctx.fillRect(0,0,width,height)
+
+	wavelength = (width/2-m.x) * 0.1
+	amplitude = height/2-m.y
+	increment += 0.01
+
+	// console.log(amplitude)
+
+	dots.forEach( d => d.update() )
+
+}
+
+window.addEventListener('mousemove', (e) => {
+	m.x = e.clientX
+	m.y = e.clientY
+})
+
+
+
+const SETTINGS = {
+	radiusmode: 'a'
+}
+
+function setMode(key, val){
+	SETTINGS[key] = val
+}
+
+update()
+
+</script>
+
+</body>
+</html>
