@@ -201,7 +201,8 @@ function groups_lock(){
 
 
   for (var i=0; i<boids.length; i++) {
-    var colorIndex = colors.indexOf(boids[i].category)
+    // var colorIndex = colors.indexOf(boids[i].category)
+    var colorIndex = colors.indexOf(boids[i].color)
     // console.log(colorIndex)
     rows[colorIndex]++
     boids[i].quicknessCoefficient = 0.1

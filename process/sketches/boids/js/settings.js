@@ -23,7 +23,8 @@ var RADIUS 		  = 15
 var speed         = 10.9
 var SPEED 		  = 1
 
-var diversity     = 1; // 1..10 // colors.length
+var diversity     = colors.length
+// var diversity     = 1; // 1..10 // colors.length
 var quickness     = 1;
 var introversion  = 0.1 	//0..1;
 var racism        = 2; // 0..2

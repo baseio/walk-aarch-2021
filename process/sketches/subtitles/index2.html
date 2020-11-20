@@ -6,6 +6,11 @@
 	<link rel="stylesheet" href="vlite/css/vlite.css" />
 
 	<style type="text/css">
+
+		* {
+			font-family: helvetica;
+		}
+
 		#video-container {
 			width: 720px;
 		}
@@ -25,6 +30,11 @@
     		color: white;
     	}
 
+    	#colorlegend {
+    		position: absolute;
+    		bottom: 3px;
+    	}
+
 
 	</style>
 
@@ -41,6 +51,10 @@
 
 	<div id="subtitle-container">(colorized subtitles test)</div>
 
+	<div id="colorlegend">
+
+	</div>
+
 	<script src="vlite/js/vlite.js"></script>
 	<script>
 		
@@ -54,7 +68,7 @@
 				const word = Object.keys(tags[k])[0]
 				const taglist = Object.values(tags[k])[0]
 				
-				const {cls, color} = getColorFor(word, taglist)
+				const {cls, color} = getColorFor(taglist)
 				console.log(word, taglist, cls, color )
 
 				result += `<span class="nlp-word" style="color:${color}">${word}</span>`
@@ -69,7 +83,7 @@
 			return line
 		}
 		
-		const getColorFor = (word, taglist) => {
+		const getColorFor = (taglist) => {
 			let color = '#fff'
 			
 			if( taglist.includes('Adjective')){ 	color=colors[0]; cls='adjective';	}
@@ -100,6 +114,15 @@
 		// console.log( 'colorize', colorize(line ) )
 
 		// document.querySelector('#subtitle-container').innerHTML = colorize(line)
+
+		const types = ['Adjective', 'Determiner', 'Noun', 'Pronoun', 'Verb', 'Preposition', 'Person']
+		types.forEach( t => {
+			const {cls, color} = getColorFor([t])
+			const d = document.createElement('div')
+			d.innerHTML = `<span style ="display:inline-block; background: ${color}; width:50px; height:20px;"></span> ${t}`
+			document.querySelector('#colorlegend').appendChild(d)
+		})
+		
 		
 
 		const data = SRTParser.process(SRT);
