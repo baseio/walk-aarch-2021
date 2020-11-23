@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>draw</title>
+	<style type="text/css">
+
+		body, html {
+			margin: 0;
+			padding: 0;
+		}
+		
+		#left {
+			position: absolute;
+			height: 100%;
+			left: 0;
+			width: 50%;
+			background: cyan;
+		}
+		#right {
+			position: absolute;
+			height: 100%;
+			right: 0;
+			width: 50%;
+			background: #222;
+		}
+
+		#userdraw {
+			/*border: 1px solid #ccc;*/
+			margin: auto;
+		}
+
+		.center {
+			display: flex;
+			height: 100%;
+			align-items: center;
+  			justify-content: center;
+		}
+
+		.ball {
+			width: 40px;
+			height: 40px;
+			margin-left: 20px;
+			margin-top: -20px;
+			background: #fff;
+			color: #000;
+			border-radius: 100%;
+			position: absolute;
+			border: 1px solid #ccc;
+		}
+	</style>
+</head>
+<body>
+
+<div id="left">
+	
+</div>
+
+<div id="right">
+	<div class="center">
+		<canvas id="userdraw"></canvas>
+	</div>
+</div>
+
+<script src="fabric.min.js"></script>
+<!-- <script src="three.min.js"></script> -->
+
+<script type="module">
+
+	import * as THREE from './three.module.js';
+
+	import { OrbitControls } from './OrbitControls.js';
+	
+let width = window.innerWidth / 2
+let uc = document.querySelector('#userdraw')
+uc.setAttribute('width',  `${width * 0.75}px`)
+uc.setAttribute('height', `${width * 0.75}px`)
+
+
+
+let camera, renderer, scene;
+let controls, clock, group;
+let fadeMesh;
+
+const init_scene = () => {
+
+	window.addEventListener( 'resize', OnWindowResize, false );
+
+	renderer = new THREE.WebGLRenderer( { preserveDrawingBuffer: true, antialias: true } );
+	renderer.autoClearColor = false;
+
+	// renderer = new THREE.WebGLRenderer( { antialias: true } );
+	renderer.setPixelRatio( window.devicePixelRatio );
+	renderer.setSize( width, window.innerHeight );
+	document.querySelector('#left').appendChild( renderer.domElement );
+
+	clock = new THREE.Clock();
+
+	scene = new THREE.Scene();
+	// scene.background = new THREE.Color( 0x00ffff );
+	// scene.fog = new THREE.Fog( 0x00ffff, 0.5, 10 );
+
+	group = new THREE.Group();
+	scene.add( group );
+
+	camera = new THREE.PerspectiveCamera( 60, width / window.innerHeight, 0.1, 10 );
+	camera.position.set( 0, 0, 5 );
+	camera.lookAt( scene.position );
+
+	// var eraser = new THREE.Sprite( new THREE.SpriteMaterial( { color: '#00ffff' } ) );
+	// eraser.position.set( 0, 0, -2 );
+	// eraser.scale.set( 1, 1, 1 );
+	// scene.add( eraser );
+	// Make highly-transparent plane
+	var fadeMaterial = new THREE.MeshBasicMaterial({
+	    color: 0xff0000,
+	    transparent: true,
+	    opacity: 0.01
+	});
+	var fadePlane = new THREE.PlaneBufferGeometry(1, 1);
+	fadeMesh = new THREE.Mesh(fadePlane, fadeMaterial);
+
+	var camGroup = new THREE.Object3D();
+	camGroup.add(camera);
+	// camGroup.add(fadeMesh);
+	scene.add(camGroup);
+	// Make plane render before particles
+	fadeMesh.renderOrder = -1;
+	fadeMesh.position.z = -0.1;
+
+	controls = new OrbitControls( camera, renderer.domElement );
+	controls.enableRotate = true;
+	controls.enableDamping = true;
+	controls.dampingFactor = 0.02;
+
+
+	const eraserMaterial = new THREE.SpriteMaterial( { color: '#00ffff', transparent: true, opacity:1 } )
+	var eraser = new THREE.Sprite( eraserMaterial );
+	eraser.position.set( 0, 0, -2 );
+	const s = 10
+	eraser.scale.set( s, s, 1 );
+	scene.add( eraser );
+
+	setTimeout( () => {
+		// eraserMaterial.opacity = 0.02
+		eraserMaterial.opacity = 0.01
+		// eraserMaterial.opacity = 0
+		// eraser.remove()
+	}, 100)
+}
+
+const OnWindowResize = () => {
+	camera.aspect = width / window.innerHeight;
+	camera.updateProjectionMatrix();
+	renderer.setSize( width, window.innerHeight );
+}
+
+
+
+const init_userdraw = () => {
+	var lastPath = null
+	var canvas = new fabric.Canvas('userdraw')
+	canvas.backgroundColor = '#efefef';
+    canvas.isDrawingMode= 1;
+    canvas.freeDrawingBrush.color = '#222'
+    canvas.freeDrawingBrush.width = 20;
+    canvas.renderAll();
+
+    canvas.on('mouse:down', function(e){
+	    if( lastPath ){
+	    	canvas.remove(...canvas.getObjects());
+	    }
+	});
+
+    canvas.on('path:created', function(e){
+	    lastPath = e.path;
+	    process_userpath(lastPath)
+	});
+
+}
+
+const process_userpath = (fabricPath) => {
+	const svg = fabricPath.toSVG()
+	const parser = new DOMParser();
+	const doc = parser.parseFromString(`<svg xmlns="http://www.w3.org/2000/svg">${svg}</svg>`, 'image/svg+xml');
+	const path = doc.querySelector('path')
+	
+	const length = path.getTotalLength()
+	const inc = length / numballs
+
+	const elapsedTime = clock.getElapsedTime();
+	scene.rotation.y = elapsedTime * 0.5;
+
+	for(let i=0; i<numballs; i++){	
+		const p = path.getPointAtLength( inc * i)
+		const sx = -1 + (2* (p.x / width))
+		const sy = -1 + (2* (p.y / width)) //p.y / width	
+		setTimeout( () => {
+			balls[i].setTarget(sx, sy)
+		}, 10 + 10 * i)
+	}
+}
+
+let balls = []
+let numballs = 70
+
+const init_balls = () => {
+	// const parent = document.querySelector('#left')
+	for(let i=0; i<numballs; i++){
+		balls.push( new Ball(group, i))
+	}
+}
+
+
+
+class Ball {
+	constructor(parent, i){
+		this.i = i
+
+		this.x = 0
+		this.y = 0
+		this.z = -0.25
+		this.r = 0.1
+		
+		this.tx = Math.random() //* width
+		this.ty = Math.random() //* width
+		this.tz = Math.random() //* width
+		this.tr = 0.1 //Math.random() //* 50
+
+		const textureLoader = new THREE.TextureLoader();
+		const map = textureLoader.load( "circle-0.png" );
+		// const map = textureLoader.load( "circle-1.png" );
+		// this.material = new THREE.SpriteMaterial( { map: map, color: 0xff0000, fog: true } );
+		// this.material = new THREE.SpriteMaterial( { map: map, color: Math.random() * 0xffffff, fog: true } );
+		this.material = new THREE.SpriteMaterial( { map: map, color: 0xffffff , fog: true } );
+		
+
+		this.el = new THREE.Sprite( this.material );
+		this.el.position.set( this.x, this.y, this.z );
+
+		
+		this.el.scale.set(this.r,this.r,1);
+		parent.add( this.el );
+
+		// this.el = document.createElement('div')
+		// this.el.className = 'ball'
+		// parent.appendChild(this.el)
+	}
+	setTarget(x, y){
+		console.log(x, y);
+		this.tx = x
+		this.ty = y
+		this.tz = -1 + Math.random() * 2
+		this.r = 0
+		
+	}
+	update(){
+		// Lerp towards tx,ty
+	    this.x = this.tx - (this.tx - this.x) * 0.9
+	    this.y = this.ty - (this.ty - this.y) * 0.9
+	    // this.z = this.tz - (this.tz - this.z) * 0.9
+	    
+	    this.r = this.tr - (this.tr - this.r) * 0.9
+
+	    // if( this.i > 0 ){
+	    // 	let p = balls[this.i-1]
+	    // 	if( Math.abs(p.x - p.tx) < 1 && Math.abs(p.y - p.ty) < 1 ){
+	    // 		this.x = this.tx // - (this.tx - this.x) * 0.9
+	    // 		this.y = this.ty // - (this.ty - this.y) * 0.9
+	    // 	}else{
+	    // 		this.x = p.tx - (p.tx - this.x) * 0.9
+	    // 		this.y = p.ty - (p.ty - this.y) * 0.9
+	    // 	}
+	    // }
+
+	    // this.r = 20 //this.tr - (this.tr - this.r) * 0.9
+
+	    this.el.scale.set(this.r,this.r,1);
+	    this.el.position.set(this.x, this.y, this.z)
+
+		// this.el.style = `left:${this.x}px;top:${this.y}px;width:${this.r}px;height:${this.r}px;margin-top:${-this.r/2}px;margin-left:${-this.r/2}px`;
+	}
+}
+
+const update = () => {
+	requestAnimationFrame(update)
+	balls.forEach( b => b.update() )
+
+
+	controls.update()
+	// fadeMesh.lookAt(camera)
+	// fadeMesh.rotation.z = -90;
+
+	const elapsedTime = clock.getElapsedTime();
+
+	const speed = 2.7
+
+	group.rotation.y = elapsedTime * speed;
+	group.rotation.x = elapsedTime * speed;
+	group.rotation.z = elapsedTime * speed;
+	renderer.render( scene, camera );
+}
+
+
+init_userdraw()
+init_scene()
+init_balls()
+update()
+
+</script>
+
+</body>
+</html>

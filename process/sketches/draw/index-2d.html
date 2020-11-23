@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>draw</title>
+	<style type="text/css">
+
+		body, html {
+			margin: 0;
+			padding: 0;
+		}
+		
+		#left {
+			position: absolute;
+			height: 100%;
+			left: 0;
+			width: 50%;
+			background: cyan;
+		}
+		#right {
+			position: absolute;
+			height: 100%;
+			right: 0;
+			width: 50%;
+			background: #222;
+		}
+
+		#userdraw {
+			/*border: 1px solid #ccc;*/
+			margin: auto;
+		}
+
+		.center {
+			display: flex;
+			height: 100%;
+			align-items: center;
+  			justify-content: center;
+		}
+
+		.ball {
+			width: 40px;
+			height: 40px;
+			margin-left: 20px;
+			margin-top: -20px;
+			background: #fff;
+			color: #000;
+			border-radius: 100%;
+			position: absolute;
+			border: 1px solid #ccc;
+		}
+	</style>
+</head>
+<body>
+
+<div id="left">
+	
+</div>
+
+<div id="right">
+	<div class="center">
+		<canvas id="userdraw"></canvas>
+	</div>
+</div>
+
+<script src="fabric.min.js"></script>
+
+<script type="text/javascript">
+	
+let width = window.innerWidth / 2
+let uc = document.querySelector('#userdraw')
+uc.setAttribute('width',  `${width * 0.75}px`)
+uc.setAttribute('height', `${width * 0.75}px`)
+
+const init_userdraw = () => {
+	var lastPath = null
+	var canvas = new fabric.Canvas('userdraw')
+	canvas.backgroundColor = '#efefef';
+    canvas.isDrawingMode= 1;
+    canvas.freeDrawingBrush.color = '#222'
+    canvas.freeDrawingBrush.width = 20;
+    canvas.renderAll();
+
+    canvas.on('mouse:down', function(e){
+	    if( lastPath ){
+	    	canvas.remove(...canvas.getObjects());
+	    }
+	});
+
+    canvas.on('path:created', function(e){
+	    lastPath = e.path;
+	    process_userpath(lastPath)
+	});
+
+}
+
+const process_userpath = (fabricPath) => {
+	const svg = fabricPath.toSVG()
+	const parser = new DOMParser();
+	const doc = parser.parseFromString(`<svg xmlns="http://www.w3.org/2000/svg">${svg}</svg>`, 'image/svg+xml');
+	const path = doc.querySelector('path')
+	
+	const length = path.getTotalLength()
+	const inc = length / numballs
+
+	for(let i=0; i<numballs; i++){	
+		const p = path.getPointAtLength( inc * i)
+		// balls[i].x = path.getPointAtLength(0).x
+		// balls[i].y = path.getPointAtLength(0).y
+		setTimeout( () => {
+			balls[i].setTarget(p.x, p.y)
+		}, 10 + 10 * i)
+	}
+	setTimeout( () => {
+		// balls.reverse()
+	}, 20 + 10 * numballs)
+}
+
+let balls = []
+let numballs = 70
+
+const init_balls = () => {
+	const parent = document.querySelector('#left')
+	for(let i=0; i<numballs; i++){
+		balls.push( new Ball(parent, i))
+	}
+}
+
+
+
+class Ball {
+	constructor(parent, i){
+		this.i = i
+		this.x = 0
+		this.y = 0
+		this.r = 0
+		this.tx = Math.random() * width
+		this.ty = Math.random() * width
+		this.tr = Math.random() * 50
+		this.el = document.createElement('div')
+		this.el.className = 'ball'
+		// this.el.innerHTML = i
+		parent.appendChild(this.el)
+	}
+	setTarget(x, y){
+		this.tx = x
+		this.ty = y
+		// this.tr = 10 + i // Math.random() * 40
+		// this.tr = Math.sin(this.i) * 50
+
+		// if( this.i > 0 ){
+		// 	let p = balls[this.i-1]
+		// 	this.x = p.x
+		// 	this.y = p.y
+		// }
+	}
+	update(){
+		// Lerp towards tx,ty
+	    this.x = this.tx - (this.tx - this.x) * 0.9
+	    this.y = this.ty - (this.ty - this.y) * 0.9
+
+	    // if( this.i > 0 ){
+	    // 	let p = balls[this.i-1]
+	    // 	if( Math.abs(p.x - p.tx) < 1 && Math.abs(p.y - p.ty) < 1 ){
+	    // 		this.x = this.tx // - (this.tx - this.x) * 0.9
+	    // 		this.y = this.ty // - (this.ty - this.y) * 0.9
+	    // 	}else{
+	    // 		this.x = p.tx - (p.tx - this.x) * 0.9
+	    // 		this.y = p.ty - (p.ty - this.y) * 0.9
+	    // 	}
+	    // }
+
+	    this.r = 20 //this.tr - (this.tr - this.r) * 0.9
+
+		this.el.style = `left:${this.x}px;top:${this.y}px;width:${this.r}px;height:${this.r}px;margin-top:${-this.r/2}px;margin-left:${-this.r/2}px`;
+	}
+}
+
+const update = () => {
+	requestAnimationFrame(update)
+	balls.forEach( b => b.update() )
+}
+
+
+init_userdraw()
+init_balls()
+update()
+
+</script>
+
+</body>
+</html>
