@@ -267,7 +267,7 @@ class Ball {
 		this.x = 0
 		this.y = 0
 		this.z = -0.25
-		this.r = 0.3 //0.1
+		this.r = 0.1 //0.1
 		
 		this.tx = -1 + (2*Math.random())
 		this.ty = -1 + (2*Math.random())

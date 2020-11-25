@@ -45,10 +45,24 @@ Karen Kjærgaard <kje@aarch.dk>
 - [x] play youtube movie in custom player
 - [x] students data: get from karen
 - [x] students data: build parser and stub-generator
-- [ ] present and get feedback: meeting friday @ 09
+- [x] present and get feedback: meeting friday @ 09
 
 #### W48: Style + Tone
+
+- [x] more 'arcitectural' sketches
+- [x] webshell
+- [x] subtitles with vimeo-player
+- [ ] update subtitles to use VTT
+- [ ] send subtitles spec (VTT)
+- [ ] present and get feedback: meeting thursday @ 09
+
+- [ ] agree on menu, text-deliveries, integrations
+
 #### W49: Concept approval
+
+- [ ] test twitch
+- [ ] test twitch schedule
+
 #### W50: Concept lock
 #### W01: Plan production
 #### W02: Production
