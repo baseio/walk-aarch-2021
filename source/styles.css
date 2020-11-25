@@ -23,18 +23,21 @@ html, body {
 	position: absolute;
 	top: 0;
 	left: 0;
-	right: 0;
+	right: 280px;
 	bottom: 0;
 	z-index: 100;
+	padding: 20px;
+	pointer-events: none;
 }
 
 #sidebar {
 	position: absolute;
+	padding: 20px;
 	top: 20px;
 	right: 20px;
 	bottom: 20px;
 	z-index: 1000;
-	width: 200px;
+	width: 220px;
 	background: #fff;
 	border-radius: 25px;
 }

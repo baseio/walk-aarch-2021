@@ -31,7 +31,7 @@ const init = () => {
 	initHashRouter( OnHashChanged )
 	injectCSS('./styles.main.css')
 
-	_sidebar   = initSidebar('#sidebar') // must be called before initAnimation, as the #userdraw element must be present...
+	_sidebar   = initSidebar('#sidebar-menu') // must be called before initAnimation, as the #userdraw element must be present...
 	_animation = initAnimation('#animation')
 
 

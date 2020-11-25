@@ -16,12 +16,10 @@ export const initAnimation = (selector) => {
 		injectScript('vendor/tween.umd.js', () => {
 			console.log('tween loaded');
 
-			document.querySelector('#sidebar')
-
 			init_userdraw()
 			init_scene(selector)
 			init_balls()
-			// update()
+			update()
 			// jaggedCamera()
 		})
 	})
