@@ -1,0 +1,40 @@
+html, body {
+	margin: 0;
+	padding: 0;
+	overflow: hidden;
+
+	background: cyan;
+	color: #000;
+
+	font-family: helvetica;
+	font-size: 24px;
+}
+
+#animation {
+	position: absolute;
+	top: 0;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	z-index: 10;
+}
+
+#overlay {
+	position: absolute;
+	top: 0;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	z-index: 100;
+}
+
+#sidebar {
+	position: absolute;
+	top: 20px;
+	right: 20px;
+	bottom: 20px;
+	z-index: 1000;
+	width: 200px;
+	background: #fff;
+	border-radius: 25px;
+}

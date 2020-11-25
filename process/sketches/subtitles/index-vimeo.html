@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8" />
+	<title>vimeo+subtitles</title>
+	<link rel="stylesheet" href="vlite/css/vlite.css" />
+
+	<style type="text/css">
+
+		* {
+			font-family: helvetica;
+		}
+
+		#video-container {
+			width: 720px;
+		}
+		#video-container > .v-vlite {
+			border-radius: 20px;
+		}
+
+		#subtitle-container {
+			font-size: 28px;
+    		font-family: monospace;
+    		margin-top: 20px;
+		}
+
+		#subtitle-container .sub-line {
+    		background: black;
+    		padding: 4px;
+    		color: white;
+    	}
+
+    	#colorlegend {
+    		position: absolute;
+    		bottom: 3px;
+    	}
+
+
+	</style>
+
+	<script type="text/javascript" src="bps3m4eFTuE.srt.js"></script>
+	<script type="text/javascript" src="srt-parser.js"></script>
+	
+	<script type="text/javascript" src="compromise.min.js"></script>
+</head>
+<body>
+	
+	<div id="video-container">
+		
+	</div>
+
+	<div id="subtitle-container">(colorized subtitles test)</div>
+
+	<div id="colorlegend">
+
+	</div>
+
+	
+	<script src="vimep-player.min.js"></script>
+
+	<script>
+		
+		const colorize = (line) => {
+			const doc = nlp(line)
+			const tags = doc.words().out('tags')
+
+			let result = ''
+
+			for( let k in tags ){
+				const word = Object.keys(tags[k])[0]
+				const taglist = Object.values(tags[k])[0]
+				
+				const {cls, color} = getColorFor(taglist)
+				console.log(word, taglist, cls, color )
+
+				result += `<span class="nlp-word" style="color:${color}">${word}</span>`
+				// const styledWord = `<span class="nlp-word ${cls}" style="color:${color};">${word}</span>`
+				const styledWord = `<span style="color:${color};">${word}</span>`
+
+				const re = new RegExp(`\\b${word}\\b`)//(,"b");
+				line = line.replace(re, styledWord)
+				// line = line.replace(word, styledWord)
+			}
+			// return result
+			return line
+		}
+		
+		const getColorFor = (taglist) => {
+			let color = '#fff'
+			
+			if( taglist.includes('Adjective')){ 	color=colors[0]; cls='adjective';	}
+			if( taglist.includes('Determiner')){ 	color=colors[1]; cls='determiner';	}
+			if( taglist.includes('Noun')){ 			color=colors[2]; cls='noun';	}
+			if( taglist.includes('Pronoun')){ 		color=colors[3]; cls='pronoun';	}
+			if( taglist.includes('Verb')){ 			color=colors[4]; cls='verb';	}
+			if( taglist.includes('Preposition')){ 	color=colors[5]; cls='preposition';	 }
+			if( taglist.includes('Person')){ 		color=colors[6]; cls='person';	}
+
+			return {color, cls};
+			
+		}
+		// https://gka.github.io/palettes/#/9|d|00429d,96ffea,ffffe0|ffffe0,ff005e,93003a|1|1
+		// const colors = ['#00429d', '#4771b2', '#73a2c6', '#a5d5d8', '#ffffe0', '#ffbcaf', '#f4777f', '#cf3759', '#93003a']
+
+		// https://coolors.co/003049-d62828-f77f00-fcbf49-eae2b7
+		// const colors = ["#003049","#d62828","#f77f00","#fcbf49","#eae2b7"]
+		const colors = ["#f94144","#f3722c","#f8961e","#f9c74f","#90be6d","#43aa8b","#577590"]
+
+		// test
+		// const line = 'James built a lovely house for his big purple dinosaur. it was perfect!'
+		// let doc = nlp(line)
+		// console.log( 'words', doc.words().debug() )
+		// console.log( 'words', doc.words().out('tags') )
+		// console.log( 'terms', doc.all().out() )
+		
+		// console.log( 'colorize', colorize(line ) )
+
+		// document.querySelector('#subtitle-container').innerHTML = colorize(line)
+
+		const types = ['Adjective', 'Determiner', 'Noun', 'Pronoun', 'Verb', 'Preposition', 'Person']
+		types.forEach( t => {
+			const {cls, color} = getColorFor([t])
+			const d = document.createElement('div')
+			d.innerHTML = `<span style ="display:inline-block; background: ${color}; width:50px; height:20px;"></span> ${t}`
+			document.querySelector('#colorlegend').appendChild(d)
+		})
+		
+		
+
+		const data = SRTParser.process(SRT);
+		
+
+		let previousTime = 0
+
+
+
+		/// See: https://github.com/vimeo/player.js/#embed-options
+
+		const player = new Vimeo.Player('video-container', {
+			id: 450672487,
+			autoplay: true,
+		})
+
+		player.on('timeupdate', (data) => {
+		    // data is an object containing properties specific to that event
+		    // console.log('timeupdate', data.seconds, data );
+
+		    const t = data.seconds;
+			const T = Math.floor( t * 1000 )
+			if( T === previousTime ) return
+
+			previousTime = T
+
+			const s = SRTParser.show(T)
+			console.log(t, T, s)
+
+			if( s && s.text ){
+				document.querySelector('#subtitle-container').innerHTML = `
+					<span class="sub-line">
+						${ colorize(s.text) }
+					</span>`
+			}
+		});
+
+
+
+	</script>
+</body>
+</html>

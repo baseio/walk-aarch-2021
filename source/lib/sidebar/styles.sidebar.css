@@ -1,0 +1,42 @@
+/* Customize the label (the container) */
+
+#sidebar .toggle {
+  margin-bottom: 10px;
+}
+
+#sidebar .toggle:hover .label {
+  color: cyan;
+}
+#sidebar .toggle:hover .circle{
+  background: cyan;
+}
+
+
+#sidebar .toggle.selected .label {
+  color: #000;
+}
+#sidebar .toggle.selected .circle{
+  background: #000;
+}
+
+
+#sidebar .toggle .circle {
+  display: inline-block;
+  width: 24px;
+  height: 24px;
+  border-radius: 100%;
+  /*background: #000;*/
+  pointer-events: none;
+  border: 1px solid #000;
+}
+
+#sidebar .toggle .label {
+  display: inline-block;
+  font-size: 11px;
+  pointer-events: none;
+  margin-top: -4px;
+  color: #ccc;
+}
+
+
+

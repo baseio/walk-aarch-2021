@@ -1,6 +1,17 @@
 
 export const DATA_ORIGIN = "Afgang Efteråret 2020_inkl forsinkede.xlsx"
 export const DATA_PARSEDATE = "Wed Nov 18 2020"
+
+export const THEMES = [
+  {id:'1', name:'NYE FÆLLESSKABER (NEW COMMONS)'},
+  {id:'2', name:'KULTURENS HUSE (BUILDING FOR CULTURE)'},
+  {id:'3', name:'BYUDVIKLING (URBAN DEVELOPMENT)'},
+  {id:'4', name:'BÆREDYGTIG ARKITEKTUR (SUSTAINABLE ARCHITECTURE)'},
+  {id:'5', name:'ÆNDREDE LANDSKABER (LANDSCAPES IN TRANSITION)'},
+  {id:'6', name:'KULTURARV (CULTURAL HERITAGE)'},
+  {id:'7', name:'EKSTREM ARKITEKTUR (EXTREME ARCHITECTURE)'},
+]
+
 export const DATA_STUDENTS = [
   {
     "id": "4008524",

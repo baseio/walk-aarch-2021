@@ -62,7 +62,7 @@
 </div>
 
 <script src="fabric.min.js"></script>
-<!-- <script src="three.min.js"></script> -->
+<script src="tween.umd.js"></script>
 
 <script type="module">
 
@@ -71,9 +71,10 @@
 	import { OrbitControls } from './OrbitControls.js';
 	
 let width = window.innerWidth / 2
+const drawingSize = width * 0.75 // width of the drawing canvas. Also used to scale the path coords
 let uc = document.querySelector('#userdraw')
-uc.setAttribute('width',  `${width * 0.75}px`)
-uc.setAttribute('height', `${width * 0.75}px`)
+uc.setAttribute('width',  `${drawingSize}px`)
+uc.setAttribute('height', `${drawingSize}px`)
 
 
 
@@ -82,16 +83,23 @@ let controls, clock, group;
 let fadeMesh;
 let eraserMaterial;
 
-const eraserOpacity = 0.01
+const K_TRAILS_ENABLED 	= true
+const K_AUTO_ROTATION 	= true
+const K_JAGGED_ROTATION	= false
+const K_ERASER_OPACITY 	= 0.01
 
 const init_scene = () => {
 
 	window.addEventListener( 'resize', OnWindowResize, false );
 
-	renderer = new THREE.WebGLRenderer( { preserveDrawingBuffer: true, antialias: true } );
-	renderer.autoClearColor = false;
+	if( K_TRAILS_ENABLED ){
+		renderer = new THREE.WebGLRenderer( { preserveDrawingBuffer: true, antialias: true } );
+		renderer.autoClearColor = false;
+	}else{
+		renderer = new THREE.WebGLRenderer( { antialias: true } );
+		renderer.autoClearColor = '#00ffff';
+	}
 
-	// renderer = new THREE.WebGLRenderer( { antialias: true } );
 	renderer.setPixelRatio( window.devicePixelRatio );
 	renderer.setSize( width, window.innerHeight );
 	document.querySelector('#left').appendChild( renderer.domElement );
@@ -99,37 +107,24 @@ const init_scene = () => {
 	clock = new THREE.Clock();
 
 	scene = new THREE.Scene();
-	// scene.background = new THREE.Color( 0x00ffff );
-	// scene.fog = new THREE.Fog( 0x00ffff, 0.5, 10 );
+	scene.background = new THREE.Color( 0x00ffff );
 
 	group = new THREE.Group();
+	group.rotation.set( 0, Math.PI, Math.PI);
 	scene.add( group );
 
-	camera = new THREE.PerspectiveCamera( 60, width / window.innerHeight, 0.1, 10 );
-	camera.position.set( 0, 0, 5 );
+	camera = new THREE.PerspectiveCamera( 50, width / window.innerHeight, 0.001, 1000 );
+	camera.position.set( 0, 0, 2 );
 	camera.lookAt( scene.position );
 	scene.add( camera );
 
-	// var eraser = new THREE.Sprite( new THREE.SpriteMaterial( { color: '#00ffff' } ) );
-	// eraser.position.set( 0, 0, -2 );
-	// eraser.scale.set( 1, 1, 1 );
-	// scene.add( eraser );
-	// Make highly-transparent plane
-	// var fadeMaterial = new THREE.MeshBasicMaterial({
-	//     color: 0xff0000,
-	//     transparent: true,
-	//     opacity: 0.01
-	// });
-	// var fadePlane = new THREE.PlaneBufferGeometry(1, 1);
-	// fadeMesh = new THREE.Mesh(fadePlane, fadeMaterial);
+	const pointLight = new THREE.PointLight( 0xffffff, 1 );
+	scene.add( pointLight );
+	pointLight.position.copy( camera.position )
 
-	// var camGroup = new THREE.Object3D();
-	// camGroup.add(camera);
-	// // camGroup.add(fadeMesh);
-	// scene.add(camGroup);
-	// // Make plane render before particles
-	// fadeMesh.renderOrder = -1;
-	// fadeMesh.position.z = -0.1;
+
+	// scene.add( new THREE.AmbientLight( 0xffffff ) );
+
 
 	controls = new OrbitControls( camera, renderer.domElement );
 	controls.enableRotate = true;
@@ -138,15 +133,18 @@ const init_scene = () => {
 
 
 	eraserMaterial = new THREE.SpriteMaterial( { color: '#00ffff', transparent: true, opacity:1 } )
+	eraserMaterial = new THREE.SpriteMaterial( { color: '#000000', transparent: true, opacity:1 } )
 	var eraser = new THREE.Sprite( eraserMaterial );
 	eraser.position.set( 0, 0, -2 );
-	const s = 10
+	const s = 1000
 	eraser.scale.set( s, s, 1 );
-	scene.add( eraser );
+	if( K_TRAILS_ENABLED ){
+		scene.add( eraser );
+	}
 
 	setTimeout( () => {
 		// eraserMaterial.opacity = 0.02
-		eraserMaterial.opacity = eraserOpacity
+		eraserMaterial.opacity = K_ERASER_OPACITY
 		// eraserMaterial.opacity = 0
 		// eraser.remove()
 	}, 100)
@@ -196,21 +194,73 @@ const process_userpath = (fabricPath) => {
 
 	eraserMaterial.opacity = 1
 	setTimeout( () => {
-		eraserMaterial.opacity = eraserOpacity
+		eraserMaterial.opacity = K_ERASER_OPACITY
 	}, 100)
 
 	for(let i=0; i<numballs; i++){	
 		const p = path.getPointAtLength( inc * i)
-		const sx = -1 + (2* (p.x / width))
-		const sy = -1 + (2* (p.y / width)) //p.y / width	
+		// console.log(drawingSize, p.x, p.y);
+		const sx = -1 + (2* (p.x / drawingSize ))
+		const sy = -1 + (2* (p.y / drawingSize )) //p.y / width	
 		setTimeout( () => {
 			balls[i].setTarget(sx, sy)
 		}, 10 + 10 * i)
 	}
+
+	
+
 }
 
+
+let orient = {x:0, y:0, z:0}
+let axisIndex = 0
+
+const jaggedCamera = (source) => {
+	if( !source) source = {x:group.rotation.x, y:group.rotation.y, z:group.rotation.z}
+	new TWEEN.Tween(source)
+		.to(orient, 1000, TWEEN.Easing.Quadratic.InOut)
+		.onUpdate( (o) => {
+			if( K_JAGGED_ROTATION ){
+	   			group.rotation.x = o.x
+	   			group.rotation.y = o.y
+	   			group.rotation.z = o.z
+	   		}
+   			
+ 		})
+		.onComplete( (o) => {
+			let a = ++axisIndex % 2
+			console.log(a);
+			if( a === 0 ) orient.x = group.rotation.x + (Math.PI/180) * 90
+			if( a === 1 ) orient.y = group.rotation.y + (Math.PI/180) * 90
+			// if( a === 0 ) orient.z = group.rotation.z + (Math.PI/180) * 90
+
+			setTimeout( () => {
+				jaggedCamera( {x:group.rotation.x, y:group.rotation.y, z:group.rotation.z} )
+			}, 500)
+
+		})
+		.start()
+		
+		// camZoom()
+}
+
+const camZoom = () => {
+
+	const v = 2
+	const z = -v + (2* (Math.random() * v))
+
+	new TWEEN.Tween({z:group.position.z})
+		.to({z:z}, 1000, TWEEN.Easing.Quadratic.InOut)
+		.onUpdate( (o) => {
+   			group.position.z = o.z   			
+ 		})
+		.start()
+}
+
+
+
 let balls = []
-let numballs = 70
+let numballs = 30
 
 const init_balls = () => {
 	// const parent = document.querySelector('#left')
@@ -230,45 +280,75 @@ class Ball {
 		this.z = -0.25
 		this.r = 0.1
 		
-		this.tx = Math.random() //* width
-		this.ty = Math.random() //* width
-		this.tz = Math.random() //* width
+		this.tx = -1 + (2*Math.random())
+		this.ty = -1 + (2*Math.random())
+		this.tz = Math.random() //* drawingSize
 		this.tr = 0.1 //Math.random() //* 50
 
 		const textureLoader = new THREE.TextureLoader();
 		const map = textureLoader.load( "circle-0.png" );
 		// const map = textureLoader.load( "circle-1.png" );
+
 		// this.material = new THREE.SpriteMaterial( { map: map, color: 0xff0000, fog: true } );
 		// this.material = new THREE.SpriteMaterial( { map: map, color: Math.random() * 0xffffff, fog: true } );
 		this.material = new THREE.SpriteMaterial( { map: map, color: 0xffffff , fog: true } );
+		// this.el = new THREE.Sprite( this.material );
 		
 
-		this.el = new THREE.Sprite( this.material );
+
+		this.material = new THREE.MeshNormalMaterial({flatShading:true});
+		// this.material = new THREE.MeshLambertMaterial( { color: 0xffffff, flatShading:true } )
+		// this.material = new THREE.MeshBasicMaterial( { color: 0xffaa00, transparent: true, blending: THREE.AdditiveBlending } )
+		// this.material = new THREE.MeshBasicMaterial( { color: 0xffffff, transparent: true, blending: THREE.SubtractiveBlending } )
+		// this.material = new THREE.MeshBasicMaterial( { color: 0xffffff, wireframe:true }) //, transparent: true, blending: THREE.AdditiveBlending } )
+
+
+		this.el = new THREE.Group()
+
+		const r = Math.random() 
+		
+		const height = 10 + Math.random() * 100
+		const mesh = new THREE.Mesh( new THREE.CylinderBufferGeometry( r, r, height, 40 ), this.material );
+		this.el.add(mesh)
+		mesh.position.set( 0, height/2, 0 );
+		mesh.rotation.set( Math.PI/180*90, 0,0);
+				
 		this.el.position.set( this.x, this.y, this.z );
+		// this.el.rotation.set( Math.PI/180*90, 0,0);
 
+		this.el.position.z -= this.height
 		
-		this.el.scale.set(this.r,this.r,1);
+		// this.el.scale.set(this.r,this.r, this.r);
 		parent.add( this.el );
 
-		// this.el = document.createElement('div')
-		// this.el.className = 'ball'
-		// parent.appendChild(this.el)
+		this.setTarget(this.tx, this.ty)
 	}
 	setTarget(x, y){
 		// console.log(x, y);
 		this.tx = x
 		this.ty = y
-		this.tz = -1 + Math.random() * 2
-		this.r = 0
+		this.tz = 0 //-1 + Math.random() * 2
+		// this.r = 0
+
+		// this.tz = 2// -= this.height
+
+		
+		// this.tween = new TWEEN.Tween({x:this.x, y:this.y}).to({x:x, y:y}, 300, TWEEN.Easing.Quadratic.InOut).onUpdate( (o) => {
+		this.tween = new TWEEN.Tween({x:this.x, y:this.y}).to({x:x, y:y}, 1300, TWEEN.Easing.Elastic.Out).onUpdate( (o) => {
+   			this.x = o.x
+   			this.y = o.y
+
+   			
+ 		}).start()
+ 		
 		
 	}
 	update(){
 		// Lerp towards tx,ty
-	    this.x = this.tx - (this.tx - this.x) * 0.9
-	    this.y = this.ty - (this.ty - this.y) * 0.9
-	    // this.z = this.tz - (this.tz - this.z) * 0.9
-	    
-	    this.r = this.tr - (this.tr - this.r) * 0.9
+	    // this.x = this.tx - (this.tx - this.x) * 0.9
+	    // this.y = this.ty - (this.ty - this.y) * 0.9
+	    // // this.z = this.tz - (this.tz - this.z) * 0.9	    
+	    // this.r = this.tr - (this.tr - this.r) * 0.9
 
 	    // if( this.i > 0 ){
 	    // 	let p = balls[this.i-1]
@@ -283,8 +363,12 @@ class Ball {
 
 	    // this.r = 20 //this.tr - (this.tr - this.r) * 0.9
 
-	    this.el.scale.set(this.r,this.r,1);
+	    this.el.scale.set(this.r,this.r,this.r);
 	    this.el.position.set(this.x, this.y, this.z)
+
+	    // this.el.lookAt( camera.position )
+	    this.el.lookAt( group.position )
+
 
 		// this.el.style = `left:${this.x}px;top:${this.y}px;width:${this.r}px;height:${this.r}px;margin-top:${-this.r/2}px;margin-left:${-this.r/2}px`;
 	}
@@ -294,16 +378,28 @@ const update = () => {
 	requestAnimationFrame(update)
 	balls.forEach( b => b.update() )
 
-
+	TWEEN.update()
 	controls.update()
+
+	camera.lookAt( group.position );
 
 	const speed = 0.5 //2.7
 
 	const elapsedTime = clock.getElapsedTime();
-	group.rotation.y = elapsedTime * speed;
-	group.rotation.x = elapsedTime * speed;
-	group.rotation.z = elapsedTime * speed;
-	
+	if( K_AUTO_ROTATION ){
+		group.rotation.y = elapsedTime * speed;
+		group.rotation.x = elapsedTime * speed;
+		group.rotation.z = elapsedTime * speed;
+	}
+
+	// let v = Math.ceil( elapsedTime  % 3.6) // 0..3.6 secs
+	// console.log(v);
+	// group.rotation.y = v;
+	// group.rotation.y = (Math.PI/180) * v
+
+
+	window.group = group
+
 	renderer.render( scene, camera );
 }
 
@@ -312,6 +408,7 @@ init_userdraw()
 init_scene()
 init_balls()
 update()
+jaggedCamera()
 
 </script>
 

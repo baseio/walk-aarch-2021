@@ -1,0 +1,16 @@
+#overlay {
+	overflow: auto;
+}
+
+.student {
+	background: white;
+	padding: 10px;
+	border-radius: 50px;
+	margin: 10px;
+	user-select: none;
+	cursor: pointer;
+}
+
+.student:hover {
+	background: #eee;
+}
