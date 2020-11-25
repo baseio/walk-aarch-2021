@@ -1,8 +1,5 @@
 /* Customize the label (the container) */
 
-#sidebar {
-  user-select: none;
-}
 
 #sidebar .section {
   font-size: 13px;

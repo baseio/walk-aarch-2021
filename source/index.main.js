@@ -1,4 +1,4 @@
-console.log('index.main.js');
+// console.log('index.main.js');
 
 import {injectCSS, initHashRouter} from './lib/utils.js'
 import {settings} from '../settings.js'
@@ -10,8 +10,7 @@ import {initSidebar} from './lib/sidebar/index.js'
 
 /// called by utils.hashRouter when the (window)-location changes (and on page load)
 const OnHashChanged = (hash) => {
-	console.log('OnHashChanged', hash);
-	console.log('OnHashChanged', studentFromHash(hash) );
+	console.log('OnHashChanged', hash, studentFromHash(hash) );
 }
 
 /// return student (if any) given a (location)-hash

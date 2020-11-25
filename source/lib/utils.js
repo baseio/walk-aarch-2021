@@ -17,7 +17,7 @@ export const injectCSS = (src) => {
 }
 
 export const injectScript = (src, callback=null) => {
-	console.log('[SCRIPT LOADER] Loading', src)
+	// console.log('[SCRIPT LOADER] Loading', src)
 	let s = document.createElement('script');
 	s.type = 'text/javascript';
 	s.async = true;

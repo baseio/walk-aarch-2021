@@ -17,17 +17,17 @@ html, body {
 	right: 0;
 	bottom: 0;
 	z-index: 10;
+	display: none;
 }
 
 #overlay {
 	position: absolute;
 	top: 0;
 	left: 0;
-	right: 280px;
+	right: 0;
 	bottom: 0;
 	z-index: 100;
 	padding: 20px;
-	pointer-events: none;
 }
 
 #sidebar {
@@ -37,7 +37,9 @@ html, body {
 	right: 20px;
 	bottom: 20px;
 	z-index: 1000;
-	width: 220px;
+	width: 200px;
 	background: #fff;
 	border-radius: 25px;
+	display: none;
+	user-select: none;
 }

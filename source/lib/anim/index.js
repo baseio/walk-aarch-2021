@@ -12,9 +12,9 @@ export const initAnimation = (selector) => {
 
 	// todo: migrate to ESM
 	injectScript('vendor/fabric.min.js', () => {
-		console.log('fabric loaded');
+		// console.log('fabric loaded');
 		injectScript('vendor/tween.umd.js', () => {
-			console.log('tween loaded');
+			// console.log('tween loaded');
 
 			init_userdraw()
 			init_scene(selector)
@@ -51,7 +51,7 @@ const K_ERASER_OPACITY 	= 0.01
 const init_scene = (selector) => {
 
 	window.addEventListener( 'resize', OnWindowResize, false );
-	window.addEventListener( 'mousemove', onDocumentMouseMove, false );
+	// window.addEventListener( 'mousemove', onDocumentMouseMove, false );
 
 	if( K_TRAILS_ENABLED ){
 		renderer = new THREE.WebGLRenderer( { preserveDrawingBuffer: true, antialias: true } );
@@ -117,7 +117,7 @@ const init_userdraw = () => {
 	var canvas = new fabric.Canvas(USERDRAW_SELECTOR)
 	canvas.backgroundColor = '#efefef';
     canvas.isDrawingMode= 1;
-    canvas.freeDrawingBrush.color = '#00ffff'
+    canvas.freeDrawingBrush.color = '#000'
     canvas.freeDrawingBrush.width = 10 //20;
     canvas.renderAll();
 

@@ -1,10 +1,25 @@
-#userdraw {
-	margin: auto;
+#animation {
+	display: block;
 }
 
-.center {
-	display: flex;
-	height: 100%;
-	align-items: center;
-	justify-content: center;
+#overlay {
+	position: absolute;
+	top: 0;
+	left: 0;
+	right: 280px;
+	bottom: 0;
+	z-index: 100;
+	padding: 20px;
+	pointer-events: none;
+	display: block;
 }
+
+#sidebar {
+	display: block;
+}
+
+#userdraw-wrapper {
+	margin-bottom: 20px;
+
+}
+

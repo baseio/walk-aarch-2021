@@ -6,7 +6,9 @@ AARCH Winter 2021, Graduation website.
 
 [![Netlify Status](https://api.netlify.com/api/v1/badges/36622290-ab7c-4011-a494-660cef836fa5/deploy-status)](https://app.netlify.com/sites/vibrant-nobel-c7d9ea/deploys)
 
-Demo: <a href="https://vibrant-nobel-c7d9ea.netlify.app/">https://vibrant-nobel-c7d9ea.netlify.app</a>
+Demo: <a href="https://vibrant-nobel-c7d9ea.netlify.app/">
+	https://vibrant-nobel-c7d9ea.netlify.app
+</a>
 
 ## Team
 Casper Riis Jensen <casper@walk.agency>  
@@ -52,3 +54,19 @@ Karen Kjærgaard <kje@aarch.dk>
 #### W02: Production
 #### W03: Production
 #### W04: Release
+
+---
+https://wda2020.aarch.dk/
+41 requests
+65.3 MB transferred
+66.4 MB resources
+Finish: 39.30 s
+
+
+AAA-21 / 201125:
+17 requests
+341 kB transferred
+1.6 MB resources
+Finish: 947 ms
+
+
