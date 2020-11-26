@@ -166,7 +166,8 @@ const OnWindowResize = () => {
 const init_userdraw = () => {
 	var lastPath = null
 	var canvas = new fabric.Canvas(USERDRAW_SELECTOR)
-	canvas.backgroundColor = '#efefef';
+	// canvas.backgroundColor = '#efefef';
+	canvas.backgroundColor = '#fff';
     canvas.isDrawingMode= 1;
     canvas.freeDrawingBrush.color = '#000'
     canvas.freeDrawingBrush.width = 10 //20;

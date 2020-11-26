@@ -1,8 +1,27 @@
 
-#userdraw-wrapper {
-	margin-bottom: 20px;
+#userdraw-border {
 	border: 2px solid #000;
+	border-radius: 20px;
+	overflow: hidden;
+	position: relative;
+	top: -222px;
+	width: 198px;
+	height: 198px;
+	float: right;
+	pointer-events: none;
+}
+
+#userdraw-wrapper {
+	position: relative;
+	margin-bottom: 20px;
+	/*border: 2px solid #000;*/
     border-radius: 20px;
     overflow: hidden;
 }
 
+
+#userdraw-wrapper * {
+	/*border: 2px solid transparent;*/
+    /*border-radius: 20px;
+    overflow: hidden;*/
+}
