@@ -1,0 +1,22 @@
+{
+  "name": "source",
+  "version": "0.0.1",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "bundletest": "esbuild index-bundletest.js --bundle --minify --outfile=test.bundle.js",
+    "watchtest": "watchexec --exts js,css,html -i /*.bundle.js/ npm run bundletest",
+    "bundle": "esbuild index.main.js --bundle --minify --outfile=../dist/bundle.js --banner='/* comment */'",
+    "watch": "watchexec --exts js,css,html -i /*.bundle.js/ npm run bundle"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "es6-tween": "^5.5.11",
+    "esbuild": "^0.8.15",
+    "fabric": "^4.2.0",
+    "three": "^0.123.0"
+  }
+}

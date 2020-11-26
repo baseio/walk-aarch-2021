@@ -1,0 +1,38 @@
+/* font converted using font-converter.net. thank you! */
+@font-face {
+  font-family: "UniversLTStd-Bold";
+  src: url("./fonts/UniversLTStd-Bold.eot"); /* IE9 Compat Modes */
+  src: url("./fonts/UniversLTStd-Bold.eot?#iefix") format("embedded-opentype"), /* IE6-IE8 */
+    url("./fonts/UniversLTStd-Bold.otf") format("opentype"), /* Open Type Font */
+    url("./fonts/UniversLTStd-Bold.svg") format("svg"), /* Legacy iOS */
+    url("./fonts/UniversLTStd-Bold.ttf") format("truetype"), /* Safari, Android, iOS */
+    url("./fonts/UniversLTStd-Bold.woff") format("woff"), /* Modern Browsers */
+    url("./fonts/UniversLTStd-Bold.woff2") format("woff2"); /* Modern Browsers */
+  font-weight: normal;
+  font-style: normal;
+}
+
+/* font converted using font-converter.net. thank you! */
+@font-face {
+  font-family: "UniversLTStd";
+  src: url("./fonts/UniversLTStd.eot"); /* IE9 Compat Modes */
+  src: url("./fonts/UniversLTStd.eot?#iefix") format("embedded-opentype"), /* IE6-IE8 */
+    url("./fonts/UniversLTStd.otf") format("opentype"), /* Open Type Font */
+    url("./fonts/UniversLTStd.svg") format("svg"), /* Legacy iOS */
+    url("./fonts/UniversLTStd.ttf") format("truetype"), /* Safari, Android, iOS */
+    url("./fonts/UniversLTStd.woff") format("woff"), /* Modern Browsers */
+    url("./fonts/UniversLTStd.woff2") format("woff2"); /* Modern Browsers */
+  font-weight: normal;
+  font-style: normal;
+}
+
+body {
+  font-family: "UniversLTStd";
+}
+
+h1, #sidebar .label {
+  font-family: "UniversLTStd-Bold";
+}
+
+
+
