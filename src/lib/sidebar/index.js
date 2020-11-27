@@ -53,11 +53,11 @@ export const initSidebar = (selector) => {
 		const sb = document.querySelector('#sidebar')
 		if( sb.classList.contains('closed') ){
 			sb.classList.remove('closed')
-			document.querySelector('#showhide').innerHTML = '+'
+			document.querySelector('#showhide').innerHTML = '-'
 			console.log('show sidebar +');
 		}else{
 			sb.classList.add('closed')
-			document.querySelector('#showhide').innerHTML = '-'
+			document.querySelector('#showhide').innerHTML = '+'
 			console.log('hide sidebar');
 		}
 	})
