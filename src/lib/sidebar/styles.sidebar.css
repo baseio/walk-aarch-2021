@@ -1,5 +1,17 @@
 /* Customize the label (the container) */
 
+#sidebar.closed {
+  height: 0;
+  opacity: 1;
+}
+
+#showhide {
+  margin-top: -12px;
+  padding-left: 7px;
+  height: 35px;
+}
+
+
 
 #sidebar .section {
   font-size: 13px;

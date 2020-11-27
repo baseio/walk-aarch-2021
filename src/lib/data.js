@@ -2,14 +2,24 @@
 export const DATA_ORIGIN = "Afgang Efteråret 2020_inkl forsinkede.xlsx"
 export const DATA_PARSEDATE = "Wed Nov 18 2020"
 
-export const THEMES = [
-  {id:'1', name:'NYE FÆLLESSKABER (NEW COMMONS)'},
-  {id:'2', name:'KULTURENS HUSE (BUILDING FOR CULTURE)'},
-  {id:'3', name:'BYUDVIKLING (URBAN DEVELOPMENT)'},
-  {id:'4', name:'BÆREDYGTIG ARKITEKTUR (SUSTAINABLE ARCHITECTURE)'},
-  {id:'5', name:'ÆNDREDE LANDSKABER (LANDSCAPES IN TRANSITION)'},
-  {id:'6', name:'KULTURARV (CULTURAL HERITAGE)'},
-  {id:'7', name:'EKSTREM ARKITEKTUR (EXTREME ARCHITECTURE)'},
+export const THEMES_DK = [
+  {id:'1', name:'NYE FÆLLESSKABER'},
+  {id:'2', name:'KULTURENS HUSE'},
+  {id:'3', name:'BYUDVIKLING'},
+  {id:'4', name:'BÆREDYGTIG ARKITEKTUR'},
+  {id:'5', name:'ÆNDREDE LANDSKABER'},
+  {id:'6', name:'KULTURARV'},
+  {id:'7', name:'EKSTREM ARKITEKTUR'},
+]
+
+export const THEMES_EN = [
+  {id:'1', name:'NEW COMMONS'},
+  {id:'2', name:'BUILDING FOR CULTURE'},
+  {id:'3', name:'DEVELOPMENT'},
+  {id:'4', name:'SUSTAINABLE ARCHITECTURE'},
+  {id:'5', name:'LANDSCAPES IN TRANSITION'},
+  {id:'6', name:'HERITAGE'},
+  {id:'7', name:'EXTREME ARCHITECTURE'},
 ]
 
 export const DATA_STUDENTS = [

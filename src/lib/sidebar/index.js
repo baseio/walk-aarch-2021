@@ -1,11 +1,12 @@
 
 import * as DATA from '../data.js'
+import {action} from './actions.js'
 
 import './styles.sidebar.css'
 
 const FEATS = [
 	{id:'about', name:'ABOUT'},
-	{id:'credits', name:'CREDITS'},
+	// {id:'credits', name:'CREDITS'},
 	{id:'live', name:'LIVE'},
 	// {id:'archive', name:'ARCHIVE'},
 	{id:'videos', name:'VIDEOS'},
@@ -14,6 +15,7 @@ const FEATS = [
 ]
 
 const state = {}
+const themes = DATA.THEMES_EN;
 
 export const initSidebar = (selector) => {
 
@@ -21,7 +23,7 @@ export const initSidebar = (selector) => {
 	
 	state.selectedFeatIds = []
 	state.selectedThemeIds = []
-	state.selectedStudioIds = []
+	state.selectedStudioIds = [] // not used - yet
 	
 	state.themes = []
 	state.studios = []
@@ -44,12 +46,26 @@ export const initSidebar = (selector) => {
 	})
 	// console.log(state);
 
-	
-
-	// render(selector)
-
 	document.querySelector('#feats-menu').innerHTML = render_feats_menu()
 	document.querySelector('#themes-menu').innerHTML = render_themes_menu()
+	
+	document.querySelector('#showhide').addEventListener('click', () => {
+		const sb = document.querySelector('#sidebar')
+		if( sb.classList.contains('closed') ){
+			sb.classList.remove('closed')
+			document.querySelector('#showhide').innerHTML = '+'
+			console.log('show sidebar +');
+		}else{
+			sb.classList.add('closed')
+			document.querySelector('#showhide').innerHTML = '-'
+			console.log('hide sidebar');
+		}
+	})
+
+
+
+	document.querySelector('#sidebar').style.display = 'block'
+
 
 	document.querySelectorAll('#sidebar [data-trigger]').forEach( el => {
 		// console.log('found', el.getAttribute('data-key'));
@@ -57,32 +73,61 @@ export const initSidebar = (selector) => {
 			const el = evnt.target
 			const trigger = el.getAttribute('data-trigger')
 			const key = el.getAttribute('data-key')
-			console.log('clicked', trigger, key );
+			// console.log('clicked', trigger, key );
 
-			if( trigger === 'filter:feat' ){
-				if( state.selectedFeatIds.includes(key) ){
-					state.selectedFeatIds = state.selectedThemeIds.filter(o => o != key)
-					el.classList.remove('selected')
-				}else{
-					state.selectedFeatIds.push( key )
-					el.classList.add('selected')
-				}
+			// const MODE = 'checkbox'
+			const MODE = 'radio'
+
+			const LIST = trigger === 'filter:feat' ? 'selectedFeatIds' : 'selectedThemeIds';
+
+			///
+
+			if( MODE === 'radio' ){
+				// radio bhv
+				state[LIST] = []
+				const elms = document.querySelectorAll(`#sidebar [data-trigger="${trigger}"]`)
+				elms.forEach(elm => {
+					if( elm.classList.contains('selected') ){
+						elm.classList.remove('selected')
+						// console.log('hide', elm.getAttribute('data-key') );
+						action(trigger, 'hide', elm.getAttribute('data-key'))
+					}else{
+						if( el == elm ){
+							el.classList.add('selected')
+							state[LIST] = [key]
+							// console.log('show', key );		
+							action(trigger, 'show', key)
+						}
+					}
+
+				})
 			}
 
-			if( trigger === 'filter:theme' ){
-				if( state.selectedThemeIds.includes(key) ){
-					state.selectedThemeIds = state.selectedThemeIds.filter(o => o != key)
+			if( MODE === 'checkbox' ){
+				// checkbox bhv
+				if( state[LIST].includes(key) ){
+					state[LIST] = state[LIST].filter(o => o != key)
 					el.classList.remove('selected')
+					// console.log('hide', key );
+					action(trigger, 'hide', key)
 				}else{
-					state.selectedThemeIds.push( key )
+					state[LIST].push( key )
 					el.classList.add('selected')
+					// console.log('show', key );	
+					action(trigger, 'show', key)
 				}
 			}
+			
+			// console.log(`state[${LIST}]:`, state[LIST]);
 
 		})
 	})
 
 }
+
+// const action = (trigger, action, id) => {
+// 	console.log('action():', trigger, action, id)
+// }
 
 
 const render_feats_menu = () => {
@@ -116,5 +161,5 @@ const _partial_radiobtn = (trigger, key, val, selected=false, style='') => {
 }
 
 const getThemeById = (id) => {
-	return DATA.THEMES.filter( t => t.id === id)[0]?.name || ''
+	return themes.filter( t => t.id === id)[0]?.name || ''
 }

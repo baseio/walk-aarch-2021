@@ -1,18 +1,16 @@
 {
-  "name": "source",
+  "name": "AAA-21",
   "version": "0.0.1",
-  "description": "",
-  "main": "index.js",
+  "description": "Offical website for the 2021-winter graduation from Aarhus School of Architecture",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "bundletest": "esbuild index-bundletest.js --bundle --minify --outfile=test.bundle.js",
-    "watchtest": "watchexec --exts js,css,html -i /*.bundle.js/ npm run bundletest",
-    "bundle": "esbuild index.main.js --bundle --minify --outfile=../dist/bundle.js --banner='/* comment */'",
+    "bundle-main": "esbuild index.main.js --bundle --minify --outfile=../dist/bundle.js --banner='/* comment */'",
+    "bundle-mobile": "esbuild index.mobile.js --bundle --minify --outfile=../dist/bundle.mobile.js --banner='/* comment */'",
+    "bundle": "npm run bundle-main && npm run bundle-mobile",
     "watch": "watchexec --exts js,css,html -i /*.bundle.js/ npm run bundle"
   },
   "keywords": [],
-  "author": "",
-  "license": "ISC",
+  "author": "Jørgen Skogmo <js@dearstudio.dk>",
+  "license": "Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International (CC BY-NC-SA 4.0)",
   "dependencies": {
     "es6-tween": "^5.5.11",
     "esbuild": "^0.8.15",

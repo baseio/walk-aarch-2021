@@ -41,11 +41,11 @@ const init = () => {
 		<div id="content"></div>
 	`
 	
-	let html = ''
-	DATA.DATA_STUDENTS.forEach( s => {
-		html += `<a class="student" href="/#${s.stub}">${s.name}</a>`
-	})
-	document.querySelector('#content').innerHTML = html
+	// let html = ''
+	// DATA.DATA_STUDENTS.forEach( s => {
+	// 	html += `<a class="student" href="/#${s.stub}">${s.name}</a>`
+	// })
+	// document.querySelector('#content').innerHTML = html
 }
 
 

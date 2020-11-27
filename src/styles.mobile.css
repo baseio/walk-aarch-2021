@@ -1,14 +1,30 @@
-#overlay {
-	overflow: auto;
+html, body {
+
+	background: cyan;
+	color: #000;
+
+	font-family: helvetica;
+	font-size: 24px;
 }
+
+#animation {
+	display: none;
+}
+
+
+#sidebar {
+	display: none;
+}
+/**/
+
 
 .student {
 	background: white;
-	padding: 10px;
-	border-radius: 50px;
-	margin: 10px;
-	user-select: none;
-	cursor: pointer;
+    padding: 10px 15px;
+    border-radius: 20px;
+    margin: 10px;
+    user-select: none;
+    cursor: pointer;
 }
 
 .student:hover {

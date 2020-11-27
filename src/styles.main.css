@@ -57,7 +57,8 @@ a {
 	z-index: 1000;
 	width: 200px;
 	background: #fff;
-	border-radius: 25px;
-	display: block;
+	border-radius: 20px;
 	user-select: none;
+	display: none;
+	overflow:hidden;
 }
