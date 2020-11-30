@@ -42184,23 +42184,27 @@
   var K_ERASER_OPACITY = 0.01;
   var targetQuat;
   var originQuat;
-  var _group;
+  var cameraTarget;
   var generate_texture = () => {
     const canvas = document.createElement("canvas");
-    const size = 512;
+    const size = window.innerWidth;
     canvas.width = size;
     canvas.height = size;
     const c = canvas.getContext("2d");
+    c.fillStyle = "#00ffff";
+    c.fillStyle = "#fff";
     const s = size / 2;
     c.beginPath();
     c.arc(s, s, s - 10, 0, Math.PI * 2, false);
-    c.fillStyle = "#fff";
     c.fill();
     c.closePath();
     const map = new Texture(canvas);
     map.needsUpdate = true;
     return new SpriteMaterial({
       map,
+      transparent: true,
+      depthTest: false,
+      depthWrite: false,
       color: 16777215
     });
   };
@@ -42208,7 +42212,7 @@
     generated_texture = generate_texture();
     window.addEventListener("resize", OnWindowResize, false);
     window.addEventListener("mousemove", onDocumentMouseMove, false);
-    window.addEventListener("mousedown", onDocumentMouseDown, false);
+    document.querySelector("#animation").addEventListener("click", onDocumentMouseDown);
     if (K_TRAILS_ENABLED) {
       renderer = new WebGLRenderer({preserveDrawingBuffer: true, antialias: true});
     } else {
@@ -42222,15 +42226,16 @@
     clock = new Clock();
     scene = new Scene();
     scene.background = new Color(65535);
+    cameraTarget = scene.position;
     group = new Group();
     group.rotation.set(0, Math.PI, Math.PI);
     scene.add(group);
-    _group = new Group();
-    scene.add(_group);
     camera = new PerspectiveCamera(50, width / window.innerHeight, 0.1, 10);
     camera.position.set(0, 0, 2);
-    camera.lookAt(scene.position);
+    camera.lookAt(cameraTarget);
     scene.add(camera);
+    window.camera = camera;
+    window.group = group;
     controls = new OrbitControls(camera, renderer.domElement);
     controls.enableRotate = true;
     controls.enableDamping = true;
@@ -42304,26 +42309,54 @@
     }
   };
   var onDocumentMouseDown = () => {
-    console.log("onDocumentMouseDown", MODE);
-    if (MODE != "free")
-      toFree();
+    console.log("onDocumentMouseDown", MODE, previousSelectedObjectId);
+    if (previousSelectedObjectId) {
+      console.log("select node", DATA_STUDENTS[previousSelectedObjectId].name);
+      window.location.href = "#" + DATA_STUDENTS[previousSelectedObjectId].stub;
+      toNode(previousSelectedObjectId);
+    } else {
+      if (MODE != "free")
+        toFree();
+    }
   };
   var MODE = "free";
-  window.toFree = () => {
-    controls.enableRotate = true;
-    controls.enableDamping = true;
-    MODE = "free";
-  };
-  window.toGrid = () => {
-    MODE = "grid";
-    eraserMaterial.opacity = 1;
-    setTimeout(() => {
-      eraserMaterial.opacity = K_ERASER_OPACITY;
-    }, 100);
+  var reset_rotations = () => {
     controls.enableRotate = false;
     controls.enableDamping = false;
     controls.reset();
-    _group.rotation.set(0, Math.PI, Math.PI);
+    group.rotation.set(0, Math.PI, Math.PI);
+  };
+  window.toFree = () => {
+    console.log("toFree");
+    controls.enableRotate = true;
+    controls.enableDamping = true;
+    MODE = "free";
+    balls.forEach((ball) => {
+      ball.normal();
+    });
+  };
+  window.toNode = (id) => {
+    MODE = "node";
+    const sball = balls[id];
+    console.log("toNode", toNode, sball);
+    balls.forEach((ball) => {
+      if (ball.i != sball.i) {
+        ball.hide();
+      }
+    });
+    sball.focus();
+    let dist = 1 / 2 / Math.tan(Math.PI * camera.fov / 360);
+    dist += 0.1;
+    camera.position.set(0, 0, dist);
+    console.log("dist", dist);
+  };
+  window.toGrid = () => {
+    MODE = "grid";
+    eraserMaterial.opacity = 0.1;
+    setTimeout(() => {
+      eraserMaterial.opacity = K_ERASER_OPACITY;
+    }, 100);
+    reset_rotations();
     const scale = 0.1;
     const cols = Math.floor(Math.sqrt(numballs));
     let y = -(cols / 2) * scale;
@@ -42368,12 +42401,34 @@
       this.setTarget(this.tx, this.ty);
     }
     setTarget(x, y, z) {
-      this.tx = x;
-      this.ty = y;
+      this.tx = x || this.x;
+      this.ty = y || this.y;
       this.tz = z || -1 + Math.random() * 2;
       this.tween = new es6_tween.Tween({x: this.x, y: this.y}).to({x, y}, 300).easing(es6_tween.Easing.Bounce.InOut).on("update", (o) => {
         this.x = o.x;
         this.y = o.y;
+      }).start();
+    }
+    normal() {
+      this.material.color.set("#fff");
+      this.tween = new es6_tween.Tween({r: this.r, o: this.material.opacity}).to({r: this.enabledSize, o: 1}, 300).easing(es6_tween.Easing.Sinusoidal.InOut).on("update", (o) => {
+        this.material.opacity = o.o;
+        this.r = o.r;
+      }).start();
+    }
+    hide() {
+      this.material.color.set("#fff");
+      this.tween = new es6_tween.Tween({r: this.r, o: this.material.opacity}).to({r: 0, o: 0}, 300).easing(es6_tween.Easing.Sinusoidal.InOut).on("update", (o) => {
+        this.material.opacity = o.o;
+        this.r = o.r;
+      }).start();
+    }
+    focus() {
+      this.material.color.set("#fff");
+      this.tween = new es6_tween.Tween({x: this.x, y: this.y, r: this.r}).to({x: 0, y: 0, r: 1}, 300).easing(es6_tween.Easing.Sinusoidal.InOut).on("update", (o) => {
+        this.x = o.x;
+        this.y = o.y;
+        this.r = o.r;
       }).start();
     }
     setEnabled(bool) {
@@ -42394,15 +42449,14 @@
     requestAnimationFrame(update);
     balls.forEach((b) => b.update());
     controls.update();
-    camera.lookAt(group.position);
     const speed = 0.5;
     const elapsedTime = clock.getElapsedTime();
     if (K_AUTO_ROTATION && MODE === "free") {
-      _group.rotation.y = elapsedTime * speed;
-      _group.rotation.x = elapsedTime * speed;
-      _group.rotation.z = elapsedTime * speed;
+      group.rotation.y = elapsedTime * speed;
+      group.rotation.x = elapsedTime * speed;
+      group.rotation.z = elapsedTime * speed;
     }
-    targetQuat = targetQuat.setFromEuler(_group.rotation);
+    targetQuat = targetQuat.setFromEuler(group.rotation);
     group.quaternion.slerp(targetQuat, 0.01);
     renderer.render(scene, camera);
   };
@@ -42625,7 +42679,6 @@
           }
           setTimeout(() => {
             const any = document.querySelectorAll('#sidebar [data-trigger="filter:theme"].selected');
-            console.log("ANY", any, any.length);
             if (any.length === 0) {
               window.toFree();
             } else {

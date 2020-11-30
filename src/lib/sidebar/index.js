@@ -114,7 +114,7 @@ export const initSidebar = (selector) => {
 				// enter/exit grid 
 				setTimeout( () => {
 					const any = document.querySelectorAll('#sidebar [data-trigger="filter:theme"].selected')
-					console.log('ANY', any, any.length);
+					// console.log('ANY', any, any.length);
 					if( any.length === 0 ){
 						window.toFree()
 					}else{

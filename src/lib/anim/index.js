@@ -124,31 +124,43 @@ const K_ERASER_OPACITY 	= 0.01
 
 
 let targetQuat, originQuat
-let _group
+let cameraTarget
 
 let rotationController
 
 const generate_texture = () => {
 	const canvas = document.createElement('canvas');
-	const size = 512;
+	const size = window.innerWidth;
 	canvas.width = size;
 	canvas.height = size;
 	const c = canvas.getContext('2d');
 
+	// c.globalCompositeOperation = 'destination-in';
+
+    c.fillStyle = '#00ffff';
+    c.fillStyle = '#fff';
 	const s = size/2;
 	c.beginPath();
     c.arc(s, s, s-10, 0, Math.PI * 2, false);
-    c.fillStyle = '#fff';
     c.fill();
     c.closePath();
+
+ //    c.globalCompositeOperation = 'copy'
+ //    c.fillStyle = '#fff';
+	// c.beginPath();
+ //    c.arc(s, s, s-10, 0, Math.PI * 2, false);
+ //    c.fill();
+ //    c.closePath();
 
     const map = new Texture(canvas);
 	map.needsUpdate = true;
 
 	return new SpriteMaterial({
 	    map: map,
-	    // transparent: false,
+	    transparent: true,
 	    // useScreenCoordinates: false,
+	    depthTest: false,
+	    depthWrite: false,
 	    color: 0xffffff
 	});
 
@@ -168,7 +180,10 @@ const init_scene = (selector) => {
 
 	window.addEventListener( 'resize', OnWindowResize, false );
 	window.addEventListener( 'mousemove', onDocumentMouseMove, false );
-	window.addEventListener( 'mousedown', onDocumentMouseDown, false );
+	// window.addEventListener( 'mousedown', onDocumentMouseDown, false );
+
+	// document.querySelector('#animation').addEventListener('click', (e) => console.log('AAA', e));
+	document.querySelector('#animation').addEventListener('click', onDocumentMouseDown );
 
 	if( K_TRAILS_ENABLED ){
 		renderer = new WebGLRenderer( { preserveDrawingBuffer: true, antialias: true } );
@@ -186,19 +201,19 @@ const init_scene = (selector) => {
 
 	scene = new Scene();
 	scene.background = new Color( 0x00ffff );
+	cameraTarget = scene.position
 
 	group = new Group();
 	group.rotation.set( 0, Math.PI, Math.PI);
 	scene.add( group );
 
-	_group = new Group();
-	scene.add( _group );
 
 	camera = new PerspectiveCamera( 50, width / window.innerHeight, 0.1, 10 );
 	camera.position.set( 0, 0, 2 );
-	camera.lookAt( scene.position );
+	camera.lookAt( cameraTarget );
 	scene.add( camera );
-
+	window.camera = camera
+	window.group = group
 
 	controls = new OrbitControls( camera, renderer.domElement );
 	controls.enableRotate = true;
@@ -356,53 +371,110 @@ const camZoom = () => {
 
 
 const onDocumentMouseDown = () => {
-	console.log('onDocumentMouseDown', MODE);
-	if( MODE != 'free') toFree()
+	console.log('onDocumentMouseDown', MODE, previousSelectedObjectId);
+	if( previousSelectedObjectId ){
+		console.log('select node', DATA.DATA_STUDENTS[previousSelectedObjectId].name );
+		window.location.href = '#'+ DATA.DATA_STUDENTS[previousSelectedObjectId].stub
+
+		toNode( previousSelectedObjectId )
+
+	}else{
+	 	if( MODE != 'free') toFree()
+	}
+
+
 }
 let MODE = 'free'
 
+const reset_rotations = () => {
+	controls.enableRotate  = false;
+	controls.enableDamping = false;
+	controls.reset()
+
+	group.rotation.set( 0, Math.PI, Math.PI);
+}
+
 window.toFree = () => {
+	console.log('toFree');
 	controls.enableRotate  = true;
 	controls.enableDamping = true;
 	MODE = 'free'
+
+	balls.forEach( ball => {
+		ball.normal()
+	})
+}
+
+window.toNode = (id) => {
+	MODE = 'node'
+	const sball = balls[id]
+
+	console.log('toNode', toNode, sball);
+
+	//reset_rotations()
+
+	balls.forEach( ball => {
+		if( ball.i != sball.i ){
+			// ball.r = ball.disabledSize
+			ball.hide()
+		}
+	})
+	
+	// sball.material.color.set( '#fff' );
+	//sball.r = 1
+	// sball.setTarget(0, 0, 0)
+	// sball.setTarget(0, 0, -0.25)
+	sball.focus()
+
+	let dist = 1 / 2 / Math.tan(Math.PI * camera.fov / 360);
+	dist += 0.1
+	camera.position.set(0,0,dist)
+
+	console.log('dist', dist);
 }
 
 window.toGrid = () => {
 	
 
 	MODE = 'grid'
-	eraserMaterial.opacity = 1
+	eraserMaterial.opacity = 0.1
 	setTimeout( () => {
 		eraserMaterial.opacity = K_ERASER_OPACITY
 	}, 100)
 
-	controls.enableRotate  = false;
-	controls.enableDamping = false;
-	controls.reset()
+	reset_rotations()
+	// controls.enableRotate  = false;
+	// controls.enableDamping = false;
+	// controls.reset()
+	// group.rotation.set( 0, Math.PI, Math.PI);
 
-	// const q = new Quaternion() //.setFromAxisAngle( new Vector3(0, Math.PI, Math.PI) )
-	// _group.quaternion.slerp( q, 1);
-	_group.rotation.set( 0, Math.PI, Math.PI);
+	// balls.forEach( b => {
+	// 	const x = -1 + (2*Math.random())
+	// 	const y = -1 + (2*Math.random())
+	// 	// b.setTarget(x,y)
+	// 	// b.setTarget(0,0,0)
+	// 	b.normal()
+	// })
 
-	// targetQuat = originQuat.clone()
-	// group.quaternion.slerp( originQuat, 1);
-
-	const scale = 0.1
-
-	const cols = Math.floor( Math.sqrt(numballs))
+	// setTimeout( () => {
 
 	
-	let y = -(cols / 2) * scale
-	let sx = -(cols / 2) * scale
+		const scale = 0.1
+		const cols = Math.floor( Math.sqrt(numballs))
 
-	balls.forEach( b => {
+		let y = -(cols / 2) * scale
+		let sx = -(cols / 2) * scale
 
-		let x = sx + ( b.i % cols ) * scale
-		if( b.i % cols === 0 ) y += scale
-		
+		balls.forEach( b => {
 
-		b.setTarget(x, y, 0)
-	})
+			let x = sx + ( b.i % cols ) * scale
+			if( b.i % cols === 0 ) y += scale
+			
+
+			b.setTarget(x, y, 0)
+		})
+
+	// }, 1000)
 }
 
 
@@ -454,8 +526,8 @@ class Ball {
 	}
 	setTarget(x, y, z){
 		// console.log(x, y);
-		this.tx = x
-		this.ty = y
+		this.tx = x || this.x
+		this.ty = y || this.y
 		this.tz = z || -1 + Math.random() * 2
 		// this.r = 0
 
@@ -472,6 +544,45 @@ class Ball {
 	 		.start()
  		
 		
+	}
+
+	normal(){
+		this.material.color.set( '#fff' );
+		this.tween = new Tween({r:this.r, o:this.material.opacity}).to({r:this.enabledSize, o:1}, 300)
+			.easing(Easing.Sinusoidal.InOut)
+			.on('update', (o) => {
+	   			this.material.opacity = o.o
+	   			this.r = o.r
+	 		})
+	 		.start()
+	}
+
+	hide(){
+		this.material.color.set( '#fff' );
+
+		this.tween = new Tween({r:this.r, o:this.material.opacity}).to({r:0, o:0}, 300)
+			.easing(Easing.Sinusoidal.InOut)
+			.on('update', (o) => {
+	   			this.material.opacity = o.o
+	   			this.r = o.r
+	 		})
+	 		.start()
+	}
+
+	focus(){
+
+		this.material.color.set( '#fff' );
+
+		this.tween = new Tween({x:this.x, y:this.y, r:this.r}).to({x:0, y:0, r:1}, 300)
+			// .easing(Easing.Back.InOut)
+			.easing(Easing.Sinusoidal.InOut)
+			// .easing( Easing.Elastic.InOut )
+			.on('update', (o) => {
+	   			this.x = o.x
+	   			this.y = o.y
+	   			this.r = o.r
+	 		})
+	 		.start()
 	}
 
 
@@ -530,31 +641,27 @@ class Ball {
 }
 
 const update = () => {
-	// console.log('anim update');
+
 	requestAnimationFrame(update)
+
 	balls.forEach( b => b.update() )
 
 	controls.update()
 
-	// rotationController.update()
-
-	camera.lookAt( group.position );
+	// camera.lookAt( group.position );
+	// camera.lookAt( cameraTarget );
 
 	const speed = 0.5 //2.7
 
 	const elapsedTime = clock.getElapsedTime();
 	if( K_AUTO_ROTATION && MODE === 'free'){
-		// group.rotation.y = elapsedTime * speed;
-		// group.rotation.x = elapsedTime * speed;
-		// group.rotation.z = elapsedTime * speed;
-
-		_group.rotation.y = elapsedTime * speed;
-		_group.rotation.x = elapsedTime * speed;
-		_group.rotation.z = elapsedTime * speed;
+		group.rotation.y = elapsedTime * speed;
+		group.rotation.x = elapsedTime * speed;
+		group.rotation.z = elapsedTime * speed;
 	
 	}
 
-	targetQuat = targetQuat.setFromEuler(_group.rotation)
+	targetQuat = targetQuat.setFromEuler(group.rotation)
 	group.quaternion.slerp(targetQuat, 0.01);
 
 
