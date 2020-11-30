@@ -4,9 +4,11 @@ import {injectCSS, initHashRouter} from './lib/utils.js'
 import {settings} from './settings.js'
 import * as DATA from './lib/data.js'
 
-import {initAnimation} from './lib/anim/index.js'
+import * as Animation from './lib/anim/index.js'
 import {initSidebar} from './lib/sidebar/index.js'
 import {initSearch} from './lib/search/index.js'
+
+import * as Actions from './lib/sidebar/actions.js'
 
 import './styles.main.css'
 
@@ -21,9 +23,9 @@ const studentFromHash = (hash) => {
 	return DATA.DATA_STUDENTS.filter(s => s.stub === hash)[0] || false
 }
 
-let _animation;
-let _sidebar;
-let _search;
+// let _animation;
+// let _sidebar;
+// let _search;
 
 const init = () => {
 
@@ -31,9 +33,18 @@ const init = () => {
 
 	initHashRouter( OnHashChanged )
 
-	_sidebar   	= initSidebar('#sidebar-menu') // must be called before initAnimation, as the #userdraw element must be present...
-	_animation	= initAnimation('#animation')
-	_search 	= initSearch('#search')
+
+	// _sidebar   	= initSidebar('#sidebar-menu')
+	// _search 	= initSearch('#search')
+
+	window.app = {
+		sidebar: initSidebar('#sidebar-menu'),
+		animation: Animation,
+		search: initSearch('#search'),
+		actions: Actions,
+	}
+
+	Animation.initAnimation('#animation')
 
 
 	document.querySelector('#overlay').innerHTML = `

@@ -6,7 +6,10 @@
     "bundle-main": "esbuild index.main.js --bundle --minify --outfile=../dist/bundle.js --banner='/* comment */'",
     "bundle-mobile": "esbuild index.mobile.js --bundle --minify --outfile=../dist/bundle.mobile.js --banner='/* comment */'",
     "bundle": "npm run bundle-main && npm run bundle-mobile",
-    "watch": "watchexec --exts js,css,html -i /*.bundle.js/ npm run bundle"
+    "bundle-main-dev": "esbuild index.main.js --bundle --outfile=../dist/bundle.js",
+    "bundle-mobile-dev": "esbuild index.mobile.js --bundle --outfile=../dist/bundle.mobile.js",
+    "bundle-dev": "npm run bundle-main-dev && npm run bundle-mobile-dev",
+    "watch": "watchexec --exts js,css,html -i /*.bundle.js/ npm run bundle-dev"
   },
   "keywords": [],
   "author": "Jørgen Skogmo <js@dearstudio.dk>",

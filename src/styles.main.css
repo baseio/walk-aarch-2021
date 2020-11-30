@@ -24,7 +24,9 @@ a {
 	pointer-events: all;
 }
 
-
+.selectedHilite {
+	background: #f00;
+}
 
 #animation {
 	position: absolute;

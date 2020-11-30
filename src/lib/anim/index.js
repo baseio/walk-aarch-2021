@@ -12,11 +12,14 @@ import {
 	// TextureLoader,
 	Raycaster,
 	Vector3,
+	Quaternion,
 	Texture
 } from 'three';
 
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
 import TWEEN, { Tween, Easing, Interpolation, autoPlay } from 'es6-tween';
+
+import { RotationController } from './RotationController.js'
 
 import { fabric } from "fabric"
 
@@ -30,6 +33,10 @@ import './styles.anim.css'
 const USERDRAW_SELECTOR = 'userdraw'
 
 
+let currentPath;
+let currentFilter;
+let currentThemeFilterValue = ''
+
 export const initAnimation = (selector) => {
 	autoPlay(true); // TWEEN auto-runs the loop-frames
 	
@@ -38,6 +45,59 @@ export const initAnimation = (selector) => {
 	init_balls()
 	update()
 	// jaggedCamera()
+
+	return this
+}
+
+export const setFilter = (key) => {
+	currentFilter = key
+}
+
+export const applyFilter = (key, val) => {
+	// we want to be able to filter on a theme AND search for a NAME at the same time
+	// console.log('#A Animation applyFilter', key, val);
+	
+	if( key ){
+		currentFilter = key
+	}
+
+
+	if( currentFilter === 'all' ){
+		return;
+	}
+
+	if( currentFilter === 'theme' ){
+		currentThemeFilterValue = val
+		const t = DATA.THEMES_EN.filter(t => t.id === val)[0]
+
+		const includedBalls = []
+		balls.forEach( ball => {
+			ball.tween.stop()
+			if( val === false || ball.el.userData.data.theme === currentThemeFilterValue ){
+				includedBalls.push(ball.i)
+			}
+		})
+
+		balls.forEach( ball => {
+			if( includedBalls.includes( ball.i ) ){
+				ball.setEnabled(true)	
+			}else{
+				ball.setEnabled(false)		
+			}
+		})
+	}
+
+	if( currentFilter === 'student' ){
+
+	}
+
+	// 
+
+	eraserMaterial.opacity = 0.1
+	setTimeout( () => {
+		eraserMaterial.opacity = K_ERASER_OPACITY
+	}, 100)
+	
 }
 
 
@@ -58,10 +118,15 @@ let eraserMaterial;
 let generated_texture;
 
 const K_TRAILS_ENABLED 	= true
-const K_AUTO_ROTATION 	= true
+let K_AUTO_ROTATION 	= false
 const K_JAGGED_ROTATION	= false
 const K_ERASER_OPACITY 	= 0.01
 
+
+let targetQuat, originQuat
+let _group
+
+let rotationController
 
 const generate_texture = () => {
 	const canvas = document.createElement('canvas');
@@ -102,7 +167,8 @@ const init_scene = (selector) => {
 	generated_texture = generate_texture()
 
 	window.addEventListener( 'resize', OnWindowResize, false );
-	// window.addEventListener( 'mousemove', onDocumentMouseMove, false );
+	window.addEventListener( 'mousemove', onDocumentMouseMove, false );
+	window.addEventListener( 'mousedown', onDocumentMouseDown, false );
 
 	if( K_TRAILS_ENABLED ){
 		renderer = new WebGLRenderer( { preserveDrawingBuffer: true, antialias: true } );
@@ -125,6 +191,9 @@ const init_scene = (selector) => {
 	group.rotation.set( 0, Math.PI, Math.PI);
 	scene.add( group );
 
+	_group = new Group();
+	scene.add( _group );
+
 	camera = new PerspectiveCamera( 50, width / window.innerHeight, 0.1, 10 );
 	camera.position.set( 0, 0, 2 );
 	camera.lookAt( scene.position );
@@ -135,7 +204,10 @@ const init_scene = (selector) => {
 	controls.enableRotate = true;
 	controls.enableDamping = true;
 	controls.dampingFactor = 0.02;
-	controls.saveState()
+	// controls.saveState()
+	window.app.controls = controls
+
+	// rotationController = new RotationController(group)
 
 	eraserMaterial = new SpriteMaterial( { color: '#00ffff', transparent: true, opacity:1 } )
 	var eraser = new Sprite( eraserMaterial );
@@ -152,7 +224,20 @@ const init_scene = (selector) => {
 		eraserMaterial.opacity = K_ERASER_OPACITY
 	}, 100)
 
+
+	controls.update()
+	camera.lookAt( group.position );
 	renderer.render( scene, camera );
+	controls.saveState()
+
+	targetQuat = new Quaternion().setFromEuler(group.rotation)
+	originQuat = new Quaternion().setFromEuler(group.rotation)
+
+
+	setTimeout( () => {
+		K_AUTO_ROTATION = true
+		// toGrid()
+	}, 100 );
 }
 
 const OnWindowResize = () => {
@@ -191,6 +276,10 @@ const process_userpath = (fabricPath) => {
 	const parser = new DOMParser();
 	const doc = parser.parseFromString(`<svg xmlns="http://www.w3.org/2000/svg">${svg}</svg>`, 'image/svg+xml');
 	const path = doc.querySelector('path')
+
+	currentPath = path
+
+	// applyFilter('all')
 	
 	const length = path.getTotalLength()
 	const inc = length / numballs
@@ -266,19 +355,37 @@ const camZoom = () => {
 }
 
 
+const onDocumentMouseDown = () => {
+	console.log('onDocumentMouseDown', MODE);
+	if( MODE != 'free') toFree()
+}
 let MODE = 'free'
+
+window.toFree = () => {
+	controls.enableRotate  = true;
+	controls.enableDamping = true;
+	MODE = 'free'
+}
+
 window.toGrid = () => {
 	
 
 	MODE = 'grid'
-	// eraserMaterial.opacity = 1
+	eraserMaterial.opacity = 1
 	setTimeout( () => {
-		// eraserMaterial.opacity = K_ERASER_OPACITY
+		eraserMaterial.opacity = K_ERASER_OPACITY
 	}, 100)
 
 	controls.enableRotate  = false;
 	controls.enableDamping = false;
 	controls.reset()
+
+	// const q = new Quaternion() //.setFromAxisAngle( new Vector3(0, Math.PI, Math.PI) )
+	// _group.quaternion.slerp( q, 1);
+	_group.rotation.set( 0, Math.PI, Math.PI);
+
+	// targetQuat = originQuat.clone()
+	// group.quaternion.slerp( originQuat, 1);
 
 	const scale = 0.1
 
@@ -309,6 +416,8 @@ const init_balls = () => {
 	for(let i=0; i<numballs; i++){
 		balls.push( new Ball(group, i))
 	}
+
+	window.app.balls = balls
 }
 
 
@@ -316,35 +425,26 @@ const init_balls = () => {
 class Ball {
 	constructor(parent, i){
 		this.i = i
+		this.enabled = true
+		this.enabledSize = 0.1
+		this.disabledSize = 0.01
 
 		this.x = 0
 		this.y = 0
 		this.z = -0.25
-		this.r = 0.1 //0.1
+		this.r = this.enabledSize
 		
 		this.tx = -1 + (2*Math.random())
 		this.ty = -1 + (2*Math.random())
 		this.tz = Math.random() //* drawingSize
-		this.tr = 0.1 //Math.random() //* 50
+		this.tr = this.enabledSize
 
-		// const textureLoader = new TextureLoader();
-		// const map = textureLoader.load( "./circle-0.png" );
-
-		// const map = textureLoader.load( "circle-0.png" );
-		// const map = textureLoader.load( "./circle-0.png" );
-
-		// const map = textureLoader.load( "circle-1.png" );
-
-		// this.material = new SpriteMaterial( { map: map, color: 0xff0000, fog: true } );
-		// this.material = new SpriteMaterial( { map: map, color: Math.random() * 0xffffff, fog: true } );
-		// this.material = new SpriteMaterial( { map: map, color: 0xffffff , fog: true } );
-		
-		this.material = generated_texture.clone()
-		
+		this.material = generated_texture.clone()		
 
 		this.el = new Sprite( this.material );
 		this.el.position.set( this.x, this.y, this.z );
 		this.el.userData.i = this.i
+		this.el.userData.data = DATA.DATA_STUDENTS[this.i]
 
 		
 		this.el.scale.set(this.r,this.r,1);
@@ -362,7 +462,8 @@ class Ball {
 		
 		
 		this.tween = new Tween({x:this.x, y:this.y}).to({x:x, y:y}, 300)
-			.easing(Easing.Back.InOut)
+			// .easing(Easing.Back.InOut)
+			.easing(Easing.Bounce.InOut)
 			// .easing( Easing.Elastic.InOut )
 			.on('update', (o) => {
 	   			this.x = o.x
@@ -372,6 +473,32 @@ class Ball {
  		
 		
 	}
+
+
+	setEnabled(bool){
+		this.enabled = bool
+
+		// this.material.opacity = bool ? 1 : 0
+		// this.r = bool ? 0.1 : 0.01
+
+		new Tween({x:this.r}).to({x:bool?this.enabledSize:this.disabledSize}, 1000)
+			// .easing(Easing.Exponential.InOut)
+			.easing( Easing.Sinusoidal.InOut )
+			.on('update', (o) => {
+	   			this.r = o.x
+	 		})
+	 		.start()
+
+	 	new Tween({x:this.material.opacity}).to({x:bool?1:0}, 1000)
+			// .easing(Easing.Exponential.InOut)
+			.easing( Easing.Sinusoidal.InOut )
+			.on('update', (o) => {
+	   			this.material.opacity = o.x
+	 		})
+	 		.start()
+	}
+
+
 	update(){
 		// Lerp towards tx,ty
 	    // this.x = this.tx - (this.tx - this.x) * 0.9
@@ -392,6 +519,9 @@ class Ball {
 
 	    // this.r = 20 //this.tr - (this.tr - this.r) * 0.9
 
+	    
+	    // this.material.opacity = this.enabled ? 1 : 0.1
+	    
 	    this.el.scale.set(this.r,this.r,1);
 	    this.el.position.set(this.x, this.y, this.z)
 
@@ -404,8 +534,9 @@ const update = () => {
 	requestAnimationFrame(update)
 	balls.forEach( b => b.update() )
 
-	// TWEEN.update()
 	controls.update()
+
+	// rotationController.update()
 
 	camera.lookAt( group.position );
 
@@ -413,60 +544,70 @@ const update = () => {
 
 	const elapsedTime = clock.getElapsedTime();
 	if( K_AUTO_ROTATION && MODE === 'free'){
-		group.rotation.y = elapsedTime * speed;
-		group.rotation.x = elapsedTime * speed;
-		group.rotation.z = elapsedTime * speed;
+		// group.rotation.y = elapsedTime * speed;
+		// group.rotation.x = elapsedTime * speed;
+		// group.rotation.z = elapsedTime * speed;
+
+		_group.rotation.y = elapsedTime * speed;
+		_group.rotation.x = elapsedTime * speed;
+		_group.rotation.z = elapsedTime * speed;
+	
 	}
 
-	// let v = Math.ceil( elapsedTime  % 3.6) // 0..3.6 secs
-	// console.log(v);
-	// group.rotation.y = v;
-	// group.rotation.y = (Math.PI/180) * v
+	targetQuat = targetQuat.setFromEuler(_group.rotation)
+	group.quaternion.slerp(targetQuat, 0.01);
 
-
-	window.group = group
 
 	renderer.render( scene, camera );
 }
 
 
 let selectedObject = null;
+let previousSelectedObjectId = null
 
 function onDocumentMouseMove( event ) {
 	
-	// console.log(event.target.id )
+	if( MODE != 'grid' ) return
 	if( event.target.id != renderer.domElement.id ) return
 
 	event.preventDefault();
-	if ( selectedObject ) {
-
+	
+	if ( selectedObject ) {		
 		selectedObject.material.color.set( '#fff' );
 		selectedObject = null;
-
 	}
 
 
 	const intersects = getIntersects( event.layerX, event.layerY );
 
-	if ( intersects.length > 0 ) {
-
-		const res = intersects.filter( function ( res ) {
-
-			return res && res.object;
-
-		} )[ 0 ];
-
-		if ( res && res.object ) {
-
+	if( intersects.length > 0 ){
+		const res = intersects.filter(res => res && res.object)[0];
+		if( res && res.object ){
 			selectedObject = res.object;
-			selectedObject.material.color.set( '#f00' );
-
-			console.log(selectedObject.userData.i);
-
+			const data = selectedObject.userData
+			const ball = balls[ data.i ]
+			if( ball.enabled ){
+				if( previousSelectedObjectId != data.i ){
+					console.log(data.name);
+					window.app.actions.setStudentSelected( data.data )
+					if( document.querySelectorAll('#sidebar [data-key="students"].selected').length ){
+						window.app.actions.render_students('')
+					}
+				}
+				previousSelectedObjectId = data.i
+				selectedObject.material.color.set( '#f00' );
+			}
 		}
-
+	}else{
+		if( previousSelectedObjectId ){
+			previousSelectedObjectId = null
+			console.log('hide stud');
+			window.app.actions.setStudentSelected( {stub:''} )
+			if( document.querySelectorAll('#sidebar [data-key="students"].selected').length ){
+				window.app.actions.render_students('')
+			}
+		}
 	}
-
 }
 
 const raycaster = new Raycaster();

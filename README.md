@@ -17,7 +17,22 @@ Karen Kjærgaard <kje@aarch.dk>
 
 ## Tasks
 
+- check:
+- License
+- Meta description
+- Host stream with Vimeo (instead of Twitch)
 
+
+---
+
+- add label (CSS2) (showing theme). Mostly for debugging?
+
+- when filtering on a theme, re-apply path but only use theme nodes (hide others). also filter student list.
+- when searching for a student, -"-
+
+- zoom clicked node
+
+- render as "table" (col=theme, row=name.alphaSort)
 
 ---
 
@@ -52,18 +67,27 @@ Karen Kjærgaard <kje@aarch.dk>
 - [x] more 'arcitectural' sketches
 - [x] webshell
 - [x] subtitles with vimeo-player
+- [x] search
 - [ ] update subtitles to use VTT
 - [ ] send subtitles spec (VTT)
 - [ ] present and get feedback: meeting thursday @ 09
-
 - [ ] agree on menu, text-deliveries, integrations
 
 #### W49: Concept approval
 
 - [ ] test twitch
 - [ ] test twitch schedule
+- [ ] focus-node / student-page
+- [ ] text page
+- [ ] filtering
+- [ ] plan WP integration
+- [ ] plan Vimeo integration
 
 #### W50: Concept lock
+
+Demonstrate all features 
+
+
 #### W01: Plan production
 #### W02: Production
 #### W03: Production

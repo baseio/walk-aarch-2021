@@ -73,34 +73,55 @@ export const initSidebar = (selector) => {
 			const el = evnt.target
 			const trigger = el.getAttribute('data-trigger')
 			const key = el.getAttribute('data-key')
-			// console.log('clicked', trigger, key );
 
 			// const MODE = 'checkbox'
 			const MODE = 'radio'
 
 			const LIST = trigger === 'filter:feat' ? 'selectedFeatIds' : 'selectedThemeIds';
 
+			console.log('--- clicked', trigger, key, state[LIST] );
 			///
 
 			if( MODE === 'radio' ){
 				// radio bhv
 				state[LIST] = []
 				const elms = document.querySelectorAll(`#sidebar [data-trigger="${trigger}"]`)
+
+				let prevSelected
+
+				// deselect all
 				elms.forEach(elm => {
 					if( elm.classList.contains('selected') ){
 						elm.classList.remove('selected')
-						// console.log('hide', elm.getAttribute('data-key') );
+						prevSelected = elm.getAttribute('data-key')
 						action(trigger, 'hide', elm.getAttribute('data-key'))
-					}else{
-						if( el == elm ){
-							el.classList.add('selected')
-							state[LIST] = [key]
-							// console.log('show', key );		
-							action(trigger, 'show', key)
-						}
 					}
-
 				})
+
+				console.log('--- clicked2 toggleOff?', prevSelected, key );
+
+				if( prevSelected != key ){
+					console.log('--- clicked3 toggle ON', key );
+
+					el.classList.add('selected')
+					action(trigger, 'show', key)
+
+				}else{
+					console.log('--- clicked3 toggle OFF', key );
+
+				}
+
+				// enter/exit grid 
+				setTimeout( () => {
+					const any = document.querySelectorAll('#sidebar [data-trigger="filter:theme"].selected')
+					console.log('ANY', any, any.length);
+					if( any.length === 0 ){
+						window.toFree()
+					}else{
+						window.toGrid()
+					}
+				}, 100)
+
 			}
 
 			if( MODE === 'checkbox' ){
