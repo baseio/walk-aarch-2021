@@ -42185,13 +42185,13 @@
   var targetQuat;
   var originQuat;
   var cameraTarget;
+  var BACKGROUNDCOLOR_HEX = "#000000";
   var generate_texture = () => {
     const canvas = document.createElement("canvas");
     const size = window.innerWidth;
     canvas.width = size;
     canvas.height = size;
     const c = canvas.getContext("2d");
-    c.fillStyle = "#00ffff";
     c.fillStyle = "#fff";
     const s = size / 2;
     c.beginPath();
@@ -42218,14 +42218,14 @@
     } else {
       renderer = new WebGLRenderer({antialias: true});
     }
-    renderer.autoClearColor = "#00ffff";
+    renderer.autoClearColor = BACKGROUNDCOLOR_HEX;
     renderer.setPixelRatio(window.devicePixelRatio);
     renderer.setSize(width, window.innerHeight);
     renderer.domElement.id = "three";
     document.querySelector(selector).appendChild(renderer.domElement);
     clock = new Clock();
     scene = new Scene();
-    scene.background = new Color(65535);
+    scene.background = BACKGROUNDCOLOR_HEX;
     cameraTarget = scene.position;
     group = new Group();
     group.rotation.set(0, Math.PI, Math.PI);
@@ -42241,7 +42241,7 @@
     controls.enableDamping = true;
     controls.dampingFactor = 0.02;
     window.app.controls = controls;
-    eraserMaterial = new SpriteMaterial({color: "#00ffff", transparent: true, opacity: 1});
+    eraserMaterial = new SpriteMaterial({color: BACKGROUNDCOLOR_HEX, transparent: true, opacity: 1});
     var eraser = new Sprite(eraserMaterial);
     eraser.position.set(0, 0, -2);
     const s = 100;

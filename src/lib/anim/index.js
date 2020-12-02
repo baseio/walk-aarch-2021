@@ -128,6 +128,8 @@ let cameraTarget
 
 let rotationController
 
+let BACKGROUNDCOLOR_HEX = '#000000'
+
 const generate_texture = () => {
 	const canvas = document.createElement('canvas');
 	const size = window.innerWidth;
@@ -137,7 +139,7 @@ const generate_texture = () => {
 
 	// c.globalCompositeOperation = 'destination-in';
 
-    c.fillStyle = '#00ffff';
+    // c.fillStyle = '#00ffff';
     c.fillStyle = '#fff';
 	const s = size/2;
 	c.beginPath();
@@ -191,7 +193,7 @@ const init_scene = (selector) => {
 		renderer = new WebGLRenderer( { antialias: true } );
 	}
 
-	renderer.autoClearColor = '#00ffff';	
+	renderer.autoClearColor = BACKGROUNDCOLOR_HEX
 	renderer.setPixelRatio( window.devicePixelRatio );
 	renderer.setSize( width, window.innerHeight );
 	renderer.domElement.id = 'three'
@@ -200,7 +202,7 @@ const init_scene = (selector) => {
 	clock = new Clock();
 
 	scene = new Scene();
-	scene.background = new Color( 0x00ffff );
+	scene.background = BACKGROUNDCOLOR_HEX //new Color( BACKGROUNDCOLOR_BIN );
 	cameraTarget = scene.position
 
 	group = new Group();
@@ -224,7 +226,7 @@ const init_scene = (selector) => {
 
 	// rotationController = new RotationController(group)
 
-	eraserMaterial = new SpriteMaterial( { color: '#00ffff', transparent: true, opacity:1 } )
+	eraserMaterial = new SpriteMaterial( { color: BACKGROUNDCOLOR_HEX, transparent: true, opacity:1 } )
 	var eraser = new Sprite( eraserMaterial );
 	eraser.position.set( 0, 0, -2 );
 	const s = 100
