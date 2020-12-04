@@ -15826,7 +15826,7 @@
   // settings.js
   var settings = {
     document_title: "AAA-21: PROCESSING ARCHITECTURE",
-    title: "//PROCESSING ARCHITECTURE"
+    title: `//&nbsp;PROCESSING ARCHITECTURE`
   };
 
   // lib/data.js
@@ -41460,6 +41460,10 @@
     }}));
   }
 
+  // lib/anim/index.js
+  var es6_tween = __toModule(require_Tween_min());
+  var fabric = __toModule(require_fabric());
+
   // node_modules/three/examples/jsm/controls/OrbitControls.js
   var OrbitControls = function(object, domElement) {
     if (domElement === void 0)
@@ -42110,16 +42114,877 @@
   MapControls.prototype = Object.create(EventDispatcher.prototype);
   MapControls.prototype.constructor = MapControls;
 
-  // lib/anim/index.js
-  var es6_tween = __toModule(require_Tween_min());
+  // lib/anim/drawdemo.js
+  var DEMOS = [
+    `<path d="M2,2 L8,8" />`,
+    `<path d="M2,8 L5,2 L8,8" />`,
+    `<path d="M2,2 Q8,2 8,8" />`,
+    `<path d="M2,5 C2,8 8,8 8,5" />`,
+    `<path d="M2,2 L8,2 L2,5 L8,5 L2,8 L8,8" />`,
+    `<path d="M2,5 A 5 25 0 0 1 8 8" />`,
+    `<path d="M2,5 S2,-2 4,5 S7,8 8,4" />`,
+    `<path d="M5,2 Q 2,5 5,8" />`,
+    `<path d="M2,2 Q5,2 5,5 T8,8" />`
+  ];
+  var demoIndex = 0;
+  var playing = false;
+  var timeout = null;
+  var showDrawDemo = () => {
+    playing = true;
+    let el2 = document.querySelector("#drawdemoContainer");
+    if (!el2) {
+      el2 = document.createElement("div");
+      el2.id = "drawdemoContainer";
+      document.querySelector("#userdraw-wrapper").appendChild(el2);
+      el2.addEventListener("mousedown", () => {
+        hideDrawDemo();
+      });
+    }
+    el2.innerHTML = `
+		<svg viewBox="0 0 10 10">
+			${DEMOS[demoIndex]}
+		</svg>
+	`;
+    const p = el2.querySelector("path");
+    p.setAttribute("fill", "white");
+    p.setAttribute("stroke", "black");
+    p.setAttribute("stroke-width", "0.5");
+    timeout = setTimeout(() => {
+      if (playing) {
+        demoIndex = ++demoIndex % DEMOS.length;
+        console.log("demoIndex:", demoIndex);
+        showDrawDemo();
+      }
+    }, 3e3);
+  };
+  var hideDrawDemo = () => {
+    console.log("hideDrawDemo");
+    let el2 = document.querySelector("#drawdemoContainer");
+    if (el2) {
+      el2.remove();
+    }
+    clearTimeout(timeout);
+    playing = false;
+  };
 
-  // lib/anim/RotationController.js
-  var PI2 = Math.PI * 2;
-  var HPI = Math.PI / 2;
+  // node_modules/three/examples/jsm/shaders/CopyShader.js
+  var CopyShader = {
+    uniforms: {
+      tDiffuse: {value: null},
+      opacity: {value: 1}
+    },
+    vertexShader: [
+      "varying vec2 vUv;",
+      "void main() {",
+      "	vUv = uv;",
+      "	gl_Position = projectionMatrix * modelViewMatrix * vec4( position, 1.0 );",
+      "}"
+    ].join("\n"),
+    fragmentShader: [
+      "uniform float opacity;",
+      "uniform sampler2D tDiffuse;",
+      "varying vec2 vUv;",
+      "void main() {",
+      "	vec4 texel = texture2D( tDiffuse, vUv );",
+      "	gl_FragColor = opacity * texel;",
+      "}"
+    ].join("\n")
+  };
+
+  // node_modules/three/examples/jsm/postprocessing/Pass.js
+  function Pass() {
+    this.enabled = true;
+    this.needsSwap = true;
+    this.clear = false;
+    this.renderToScreen = false;
+  }
+  Object.assign(Pass.prototype, {
+    setSize: function() {
+    },
+    render: function() {
+      console.error("THREE.Pass: .render() must be implemented in derived pass.");
+    }
+  });
+  Pass.FullScreenQuad = function() {
+    var camera2 = new OrthographicCamera(-1, 1, 1, -1, 0, 1);
+    var geometry = new PlaneBufferGeometry(2, 2);
+    var FullScreenQuad = function(material) {
+      this._mesh = new Mesh(geometry, material);
+    };
+    Object.defineProperty(FullScreenQuad.prototype, "material", {
+      get: function() {
+        return this._mesh.material;
+      },
+      set: function(value) {
+        this._mesh.material = value;
+      }
+    });
+    Object.assign(FullScreenQuad.prototype, {
+      dispose: function() {
+        this._mesh.geometry.dispose();
+      },
+      render: function(renderer2) {
+        renderer2.render(this._mesh, camera2);
+      }
+    });
+    return FullScreenQuad;
+  }();
+
+  // node_modules/three/examples/jsm/postprocessing/ShaderPass.js
+  var ShaderPass = function(shader, textureID) {
+    Pass.call(this);
+    this.textureID = textureID !== void 0 ? textureID : "tDiffuse";
+    if (shader instanceof ShaderMaterial) {
+      this.uniforms = shader.uniforms;
+      this.material = shader;
+    } else if (shader) {
+      this.uniforms = UniformsUtils.clone(shader.uniforms);
+      this.material = new ShaderMaterial({
+        defines: Object.assign({}, shader.defines),
+        uniforms: this.uniforms,
+        vertexShader: shader.vertexShader,
+        fragmentShader: shader.fragmentShader
+      });
+    }
+    this.fsQuad = new Pass.FullScreenQuad(this.material);
+  };
+  ShaderPass.prototype = Object.assign(Object.create(Pass.prototype), {
+    constructor: ShaderPass,
+    render: function(renderer2, writeBuffer, readBuffer) {
+      if (this.uniforms[this.textureID]) {
+        this.uniforms[this.textureID].value = readBuffer.texture;
+      }
+      this.fsQuad.material = this.material;
+      if (this.renderToScreen) {
+        renderer2.setRenderTarget(null);
+        this.fsQuad.render(renderer2);
+      } else {
+        renderer2.setRenderTarget(writeBuffer);
+        if (this.clear)
+          renderer2.clear(renderer2.autoClearColor, renderer2.autoClearDepth, renderer2.autoClearStencil);
+        this.fsQuad.render(renderer2);
+      }
+    }
+  });
+
+  // node_modules/three/examples/jsm/postprocessing/MaskPass.js
+  var MaskPass = function(scene2, camera2) {
+    Pass.call(this);
+    this.scene = scene2;
+    this.camera = camera2;
+    this.clear = true;
+    this.needsSwap = false;
+    this.inverse = false;
+  };
+  MaskPass.prototype = Object.assign(Object.create(Pass.prototype), {
+    constructor: MaskPass,
+    render: function(renderer2, writeBuffer, readBuffer) {
+      var context = renderer2.getContext();
+      var state2 = renderer2.state;
+      state2.buffers.color.setMask(false);
+      state2.buffers.depth.setMask(false);
+      state2.buffers.color.setLocked(true);
+      state2.buffers.depth.setLocked(true);
+      var writeValue, clearValue;
+      if (this.inverse) {
+        writeValue = 0;
+        clearValue = 1;
+      } else {
+        writeValue = 1;
+        clearValue = 0;
+      }
+      state2.buffers.stencil.setTest(true);
+      state2.buffers.stencil.setOp(context.REPLACE, context.REPLACE, context.REPLACE);
+      state2.buffers.stencil.setFunc(context.ALWAYS, writeValue, 4294967295);
+      state2.buffers.stencil.setClear(clearValue);
+      state2.buffers.stencil.setLocked(true);
+      renderer2.setRenderTarget(readBuffer);
+      if (this.clear)
+        renderer2.clear();
+      renderer2.render(this.scene, this.camera);
+      renderer2.setRenderTarget(writeBuffer);
+      if (this.clear)
+        renderer2.clear();
+      renderer2.render(this.scene, this.camera);
+      state2.buffers.color.setLocked(false);
+      state2.buffers.depth.setLocked(false);
+      state2.buffers.stencil.setLocked(false);
+      state2.buffers.stencil.setFunc(context.EQUAL, 1, 4294967295);
+      state2.buffers.stencil.setOp(context.KEEP, context.KEEP, context.KEEP);
+      state2.buffers.stencil.setLocked(true);
+    }
+  });
+  var ClearMaskPass = function() {
+    Pass.call(this);
+    this.needsSwap = false;
+  };
+  ClearMaskPass.prototype = Object.create(Pass.prototype);
+  Object.assign(ClearMaskPass.prototype, {
+    render: function(renderer2) {
+      renderer2.state.buffers.stencil.setLocked(false);
+      renderer2.state.buffers.stencil.setTest(false);
+    }
+  });
+
+  // node_modules/three/examples/jsm/postprocessing/EffectComposer.js
+  var EffectComposer = function(renderer2, renderTarget) {
+    this.renderer = renderer2;
+    if (renderTarget === void 0) {
+      var parameters = {
+        minFilter: LinearFilter,
+        magFilter: LinearFilter,
+        format: RGBAFormat
+      };
+      var size = renderer2.getSize(new Vector2());
+      this._pixelRatio = renderer2.getPixelRatio();
+      this._width = size.width;
+      this._height = size.height;
+      renderTarget = new WebGLRenderTarget(this._width * this._pixelRatio, this._height * this._pixelRatio, parameters);
+      renderTarget.texture.name = "EffectComposer.rt1";
+    } else {
+      this._pixelRatio = 1;
+      this._width = renderTarget.width;
+      this._height = renderTarget.height;
+    }
+    this.renderTarget1 = renderTarget;
+    this.renderTarget2 = renderTarget.clone();
+    this.renderTarget2.texture.name = "EffectComposer.rt2";
+    this.writeBuffer = this.renderTarget1;
+    this.readBuffer = this.renderTarget2;
+    this.renderToScreen = true;
+    this.passes = [];
+    if (CopyShader === void 0) {
+      console.error("THREE.EffectComposer relies on CopyShader");
+    }
+    if (ShaderPass === void 0) {
+      console.error("THREE.EffectComposer relies on ShaderPass");
+    }
+    this.copyPass = new ShaderPass(CopyShader);
+    this.clock = new Clock();
+  };
+  Object.assign(EffectComposer.prototype, {
+    swapBuffers: function() {
+      var tmp2 = this.readBuffer;
+      this.readBuffer = this.writeBuffer;
+      this.writeBuffer = tmp2;
+    },
+    addPass: function(pass) {
+      this.passes.push(pass);
+      pass.setSize(this._width * this._pixelRatio, this._height * this._pixelRatio);
+    },
+    insertPass: function(pass, index) {
+      this.passes.splice(index, 0, pass);
+      pass.setSize(this._width * this._pixelRatio, this._height * this._pixelRatio);
+    },
+    removePass: function(pass) {
+      const index = this.passes.indexOf(pass);
+      if (index !== -1) {
+        this.passes.splice(index, 1);
+      }
+    },
+    isLastEnabledPass: function(passIndex) {
+      for (var i = passIndex + 1; i < this.passes.length; i++) {
+        if (this.passes[i].enabled) {
+          return false;
+        }
+      }
+      return true;
+    },
+    render: function(deltaTime) {
+      if (deltaTime === void 0) {
+        deltaTime = this.clock.getDelta();
+      }
+      var currentRenderTarget = this.renderer.getRenderTarget();
+      var maskActive = false;
+      var pass, i, il = this.passes.length;
+      for (i = 0; i < il; i++) {
+        pass = this.passes[i];
+        if (pass.enabled === false)
+          continue;
+        pass.renderToScreen = this.renderToScreen && this.isLastEnabledPass(i);
+        pass.render(this.renderer, this.writeBuffer, this.readBuffer, deltaTime, maskActive);
+        if (pass.needsSwap) {
+          if (maskActive) {
+            var context = this.renderer.getContext();
+            var stencil = this.renderer.state.buffers.stencil;
+            stencil.setFunc(context.NOTEQUAL, 1, 4294967295);
+            this.copyPass.render(this.renderer, this.writeBuffer, this.readBuffer, deltaTime);
+            stencil.setFunc(context.EQUAL, 1, 4294967295);
+          }
+          this.swapBuffers();
+        }
+        if (MaskPass !== void 0) {
+          if (pass instanceof MaskPass) {
+            maskActive = true;
+          } else if (pass instanceof ClearMaskPass) {
+            maskActive = false;
+          }
+        }
+      }
+      this.renderer.setRenderTarget(currentRenderTarget);
+    },
+    reset: function(renderTarget) {
+      if (renderTarget === void 0) {
+        var size = this.renderer.getSize(new Vector2());
+        this._pixelRatio = this.renderer.getPixelRatio();
+        this._width = size.width;
+        this._height = size.height;
+        renderTarget = this.renderTarget1.clone();
+        renderTarget.setSize(this._width * this._pixelRatio, this._height * this._pixelRatio);
+      }
+      this.renderTarget1.dispose();
+      this.renderTarget2.dispose();
+      this.renderTarget1 = renderTarget;
+      this.renderTarget2 = renderTarget.clone();
+      this.writeBuffer = this.renderTarget1;
+      this.readBuffer = this.renderTarget2;
+    },
+    setSize: function(width2, height) {
+      this._width = width2;
+      this._height = height;
+      var effectiveWidth = this._width * this._pixelRatio;
+      var effectiveHeight = this._height * this._pixelRatio;
+      this.renderTarget1.setSize(effectiveWidth, effectiveHeight);
+      this.renderTarget2.setSize(effectiveWidth, effectiveHeight);
+      for (var i = 0; i < this.passes.length; i++) {
+        this.passes[i].setSize(effectiveWidth, effectiveHeight);
+      }
+    },
+    setPixelRatio: function(pixelRatio) {
+      this._pixelRatio = pixelRatio;
+      this.setSize(this._width, this._height);
+    }
+  });
+  var Pass4 = function() {
+    this.enabled = true;
+    this.needsSwap = true;
+    this.clear = false;
+    this.renderToScreen = false;
+  };
+  Object.assign(Pass4.prototype, {
+    setSize: function() {
+    },
+    render: function() {
+      console.error("THREE.Pass: .render() must be implemented in derived pass.");
+    }
+  });
+  Pass4.FullScreenQuad = function() {
+    var camera2 = new OrthographicCamera(-1, 1, 1, -1, 0, 1);
+    var geometry = new PlaneBufferGeometry(2, 2);
+    var FullScreenQuad = function(material) {
+      this._mesh = new Mesh(geometry, material);
+    };
+    Object.defineProperty(FullScreenQuad.prototype, "material", {
+      get: function() {
+        return this._mesh.material;
+      },
+      set: function(value) {
+        this._mesh.material = value;
+      }
+    });
+    Object.assign(FullScreenQuad.prototype, {
+      dispose: function() {
+        this._mesh.geometry.dispose();
+      },
+      render: function(renderer2) {
+        renderer2.render(this._mesh, camera2);
+      }
+    });
+    return FullScreenQuad;
+  }();
+
+  // node_modules/three/examples/jsm/postprocessing/RenderPass.js
+  var RenderPass = function(scene2, camera2, overrideMaterial, clearColor, clearAlpha) {
+    Pass.call(this);
+    this.scene = scene2;
+    this.camera = camera2;
+    this.overrideMaterial = overrideMaterial;
+    this.clearColor = clearColor;
+    this.clearAlpha = clearAlpha !== void 0 ? clearAlpha : 0;
+    this.clear = true;
+    this.clearDepth = false;
+    this.needsSwap = false;
+  };
+  RenderPass.prototype = Object.assign(Object.create(Pass.prototype), {
+    constructor: RenderPass,
+    render: function(renderer2, writeBuffer, readBuffer) {
+      var oldAutoClear = renderer2.autoClear;
+      renderer2.autoClear = false;
+      var oldClearColor, oldClearAlpha, oldOverrideMaterial;
+      if (this.overrideMaterial !== void 0) {
+        oldOverrideMaterial = this.scene.overrideMaterial;
+        this.scene.overrideMaterial = this.overrideMaterial;
+      }
+      if (this.clearColor) {
+        oldClearColor = renderer2.getClearColor().getHex();
+        oldClearAlpha = renderer2.getClearAlpha();
+        renderer2.setClearColor(this.clearColor, this.clearAlpha);
+      }
+      if (this.clearDepth) {
+        renderer2.clearDepth();
+      }
+      renderer2.setRenderTarget(this.renderToScreen ? null : readBuffer);
+      if (this.clear)
+        renderer2.clear(renderer2.autoClearColor, renderer2.autoClearDepth, renderer2.autoClearStencil);
+      renderer2.render(this.scene, this.camera);
+      if (this.clearColor) {
+        renderer2.setClearColor(oldClearColor, oldClearAlpha);
+      }
+      if (this.overrideMaterial !== void 0) {
+        this.scene.overrideMaterial = oldOverrideMaterial;
+      }
+      renderer2.autoClear = oldAutoClear;
+    }
+  });
+
+  // node_modules/three/examples/jsm/shaders/AfterimageShader.js
+  var AfterimageShader = {
+    uniforms: {
+      damp: {value: 0.96},
+      tOld: {value: null},
+      tNew: {value: null}
+    },
+    vertexShader: [
+      "varying vec2 vUv;",
+      "void main() {",
+      "	vUv = uv;",
+      "	gl_Position = projectionMatrix * modelViewMatrix * vec4( position, 1.0 );",
+      "}"
+    ].join("\n"),
+    fragmentShader: [
+      "uniform float damp;",
+      "uniform sampler2D tOld;",
+      "uniform sampler2D tNew;",
+      "varying vec2 vUv;",
+      "vec4 when_gt( vec4 x, float y ) {",
+      "	return max( sign( x - y ), 0.0 );",
+      "}",
+      "void main() {",
+      "	vec4 texelOld = texture2D( tOld, vUv );",
+      "	vec4 texelNew = texture2D( tNew, vUv );",
+      "	texelOld *= damp * when_gt( texelOld, 0.1 );",
+      "	gl_FragColor = max(texelNew, texelOld);",
+      "}"
+    ].join("\n")
+  };
+
+  // node_modules/three/examples/jsm/postprocessing/AfterimagePass.js
+  var AfterimagePass = function(damp) {
+    Pass.call(this);
+    if (AfterimageShader === void 0)
+      console.error("AfterimagePass relies on AfterimageShader");
+    this.shader = AfterimageShader;
+    this.uniforms = UniformsUtils.clone(this.shader.uniforms);
+    this.uniforms["damp"].value = damp !== void 0 ? damp : 0.96;
+    this.textureComp = new WebGLRenderTarget(window.innerWidth, window.innerHeight, {
+      minFilter: LinearFilter,
+      magFilter: NearestFilter,
+      format: RGBAFormat
+    });
+    this.textureOld = new WebGLRenderTarget(window.innerWidth, window.innerHeight, {
+      minFilter: LinearFilter,
+      magFilter: NearestFilter,
+      format: RGBAFormat
+    });
+    this.shaderMaterial = new ShaderMaterial({
+      uniforms: this.uniforms,
+      vertexShader: this.shader.vertexShader,
+      fragmentShader: this.shader.fragmentShader
+    });
+    this.compFsQuad = new Pass.FullScreenQuad(this.shaderMaterial);
+    var material = new MeshBasicMaterial();
+    this.copyFsQuad = new Pass.FullScreenQuad(material);
+  };
+  AfterimagePass.prototype = Object.assign(Object.create(Pass.prototype), {
+    constructor: AfterimagePass,
+    render: function(renderer2, writeBuffer, readBuffer) {
+      this.uniforms["tOld"].value = this.textureOld.texture;
+      this.uniforms["tNew"].value = readBuffer.texture;
+      renderer2.setRenderTarget(this.textureComp);
+      this.compFsQuad.render(renderer2);
+      this.copyFsQuad.material.map = this.textureComp.texture;
+      if (this.renderToScreen) {
+        renderer2.setRenderTarget(null);
+        this.copyFsQuad.render(renderer2);
+      } else {
+        renderer2.setRenderTarget(writeBuffer);
+        if (this.clear)
+          renderer2.clear();
+        this.copyFsQuad.render(renderer2);
+      }
+      var temp = this.textureOld;
+      this.textureOld = this.textureComp;
+      this.textureComp = temp;
+    },
+    setSize: function(width2, height) {
+      this.textureComp.setSize(width2, height);
+      this.textureOld.setSize(width2, height);
+    }
+  });
+
+  // node_modules/three/examples/jsm/shaders/LuminosityShader.js
+  var LuminosityShader = {
+    uniforms: {
+      tDiffuse: {value: null}
+    },
+    vertexShader: [
+      "varying vec2 vUv;",
+      "void main() {",
+      "	vUv = uv;",
+      "	gl_Position = projectionMatrix * modelViewMatrix * vec4( position, 1.0 );",
+      "}"
+    ].join("\n"),
+    fragmentShader: [
+      "#include <common>",
+      "uniform sampler2D tDiffuse;",
+      "varying vec2 vUv;",
+      "void main() {",
+      "	vec4 texel = texture2D( tDiffuse, vUv );",
+      "	float l = linearToRelativeLuminance( texel.rgb );",
+      "	gl_FragColor = vec4( l, l, l, texel.w );",
+      "}"
+    ].join("\n")
+  };
+
+  // node_modules/three/examples/jsm/shaders/SobelOperatorShader.js
+  var SobelOperatorShader = {
+    uniforms: {
+      tDiffuse: {value: null},
+      resolution: {value: new Vector2()}
+    },
+    vertexShader: [
+      "varying vec2 vUv;",
+      "void main() {",
+      "	vUv = uv;",
+      "	gl_Position = projectionMatrix * modelViewMatrix * vec4( position, 1.0 );",
+      "}"
+    ].join("\n"),
+    fragmentShader: [
+      "uniform sampler2D tDiffuse;",
+      "uniform vec2 resolution;",
+      "varying vec2 vUv;",
+      "void main() {",
+      "	vec2 texel = vec2( 1.0 / resolution.x, 1.0 / resolution.y );",
+      "	const mat3 Gx = mat3( -1, -2, -1, 0, 0, 0, 1, 2, 1 );",
+      "	const mat3 Gy = mat3( -1, 0, 1, -2, 0, 2, -1, 0, 1 );",
+      "	float tx0y0 = texture2D( tDiffuse, vUv + texel * vec2( -1, -1 ) ).r;",
+      "	float tx0y1 = texture2D( tDiffuse, vUv + texel * vec2( -1,  0 ) ).r;",
+      "	float tx0y2 = texture2D( tDiffuse, vUv + texel * vec2( -1,  1 ) ).r;",
+      "	float tx1y0 = texture2D( tDiffuse, vUv + texel * vec2(  0, -1 ) ).r;",
+      "	float tx1y1 = texture2D( tDiffuse, vUv + texel * vec2(  0,  0 ) ).r;",
+      "	float tx1y2 = texture2D( tDiffuse, vUv + texel * vec2(  0,  1 ) ).r;",
+      "	float tx2y0 = texture2D( tDiffuse, vUv + texel * vec2(  1, -1 ) ).r;",
+      "	float tx2y1 = texture2D( tDiffuse, vUv + texel * vec2(  1,  0 ) ).r;",
+      "	float tx2y2 = texture2D( tDiffuse, vUv + texel * vec2(  1,  1 ) ).r;",
+      "	float valueGx = Gx[0][0] * tx0y0 + Gx[1][0] * tx1y0 + Gx[2][0] * tx2y0 + ",
+      "		Gx[0][1] * tx0y1 + Gx[1][1] * tx1y1 + Gx[2][1] * tx2y1 + ",
+      "		Gx[0][2] * tx0y2 + Gx[1][2] * tx1y2 + Gx[2][2] * tx2y2; ",
+      "	float valueGy = Gy[0][0] * tx0y0 + Gy[1][0] * tx1y0 + Gy[2][0] * tx2y0 + ",
+      "		Gy[0][1] * tx0y1 + Gy[1][1] * tx1y1 + Gy[2][1] * tx2y1 + ",
+      "		Gy[0][2] * tx0y2 + Gy[1][2] * tx1y2 + Gy[2][2] * tx2y2; ",
+      "	float G = sqrt( ( valueGx * valueGx ) + ( valueGy * valueGy ) );",
+      "	gl_FragColor = vec4( vec3( G ), 1 );",
+      "}"
+    ].join("\n")
+  };
+
+  // node_modules/three/examples/jsm/shaders/LuminosityHighPassShader.js
+  var LuminosityHighPassShader = {
+    shaderID: "luminosityHighPass",
+    uniforms: {
+      tDiffuse: {value: null},
+      luminosityThreshold: {value: 1},
+      smoothWidth: {value: 1},
+      defaultColor: {value: new Color(0)},
+      defaultOpacity: {value: 0}
+    },
+    vertexShader: [
+      "varying vec2 vUv;",
+      "void main() {",
+      "	vUv = uv;",
+      "	gl_Position = projectionMatrix * modelViewMatrix * vec4( position, 1.0 );",
+      "}"
+    ].join("\n"),
+    fragmentShader: [
+      "uniform sampler2D tDiffuse;",
+      "uniform vec3 defaultColor;",
+      "uniform float defaultOpacity;",
+      "uniform float luminosityThreshold;",
+      "uniform float smoothWidth;",
+      "varying vec2 vUv;",
+      "void main() {",
+      "	vec4 texel = texture2D( tDiffuse, vUv );",
+      "	vec3 luma = vec3( 0.299, 0.587, 0.114 );",
+      "	float v = dot( texel.xyz, luma );",
+      "	vec4 outputColor = vec4( defaultColor.rgb, defaultOpacity );",
+      "	float alpha = smoothstep( luminosityThreshold, luminosityThreshold + smoothWidth, v );",
+      "	gl_FragColor = mix( outputColor, texel, alpha );",
+      "}"
+    ].join("\n")
+  };
+
+  // node_modules/three/examples/jsm/postprocessing/UnrealBloomPass.js
+  var UnrealBloomPass = function(resolution, strength, radius, threshold) {
+    Pass.call(this);
+    this.strength = strength !== void 0 ? strength : 1;
+    this.radius = radius;
+    this.threshold = threshold;
+    this.resolution = resolution !== void 0 ? new Vector2(resolution.x, resolution.y) : new Vector2(256, 256);
+    this.clearColor = new Color(0, 0, 0);
+    var pars = {minFilter: LinearFilter, magFilter: LinearFilter, format: RGBAFormat};
+    this.renderTargetsHorizontal = [];
+    this.renderTargetsVertical = [];
+    this.nMips = 5;
+    var resx = Math.round(this.resolution.x / 2);
+    var resy = Math.round(this.resolution.y / 2);
+    this.renderTargetBright = new WebGLRenderTarget(resx, resy, pars);
+    this.renderTargetBright.texture.name = "UnrealBloomPass.bright";
+    this.renderTargetBright.texture.generateMipmaps = false;
+    for (var i = 0; i < this.nMips; i++) {
+      var renderTargetHorizonal = new WebGLRenderTarget(resx, resy, pars);
+      renderTargetHorizonal.texture.name = "UnrealBloomPass.h" + i;
+      renderTargetHorizonal.texture.generateMipmaps = false;
+      this.renderTargetsHorizontal.push(renderTargetHorizonal);
+      var renderTargetVertical = new WebGLRenderTarget(resx, resy, pars);
+      renderTargetVertical.texture.name = "UnrealBloomPass.v" + i;
+      renderTargetVertical.texture.generateMipmaps = false;
+      this.renderTargetsVertical.push(renderTargetVertical);
+      resx = Math.round(resx / 2);
+      resy = Math.round(resy / 2);
+    }
+    if (LuminosityHighPassShader === void 0)
+      console.error("UnrealBloomPass relies on LuminosityHighPassShader");
+    var highPassShader = LuminosityHighPassShader;
+    this.highPassUniforms = UniformsUtils.clone(highPassShader.uniforms);
+    this.highPassUniforms["luminosityThreshold"].value = threshold;
+    this.highPassUniforms["smoothWidth"].value = 0.01;
+    this.materialHighPassFilter = new ShaderMaterial({
+      uniforms: this.highPassUniforms,
+      vertexShader: highPassShader.vertexShader,
+      fragmentShader: highPassShader.fragmentShader,
+      defines: {}
+    });
+    this.separableBlurMaterials = [];
+    var kernelSizeArray = [3, 5, 7, 9, 11];
+    var resx = Math.round(this.resolution.x / 2);
+    var resy = Math.round(this.resolution.y / 2);
+    for (var i = 0; i < this.nMips; i++) {
+      this.separableBlurMaterials.push(this.getSeperableBlurMaterial(kernelSizeArray[i]));
+      this.separableBlurMaterials[i].uniforms["texSize"].value = new Vector2(resx, resy);
+      resx = Math.round(resx / 2);
+      resy = Math.round(resy / 2);
+    }
+    this.compositeMaterial = this.getCompositeMaterial(this.nMips);
+    this.compositeMaterial.uniforms["blurTexture1"].value = this.renderTargetsVertical[0].texture;
+    this.compositeMaterial.uniforms["blurTexture2"].value = this.renderTargetsVertical[1].texture;
+    this.compositeMaterial.uniforms["blurTexture3"].value = this.renderTargetsVertical[2].texture;
+    this.compositeMaterial.uniforms["blurTexture4"].value = this.renderTargetsVertical[3].texture;
+    this.compositeMaterial.uniforms["blurTexture5"].value = this.renderTargetsVertical[4].texture;
+    this.compositeMaterial.uniforms["bloomStrength"].value = strength;
+    this.compositeMaterial.uniforms["bloomRadius"].value = 0.1;
+    this.compositeMaterial.needsUpdate = true;
+    var bloomFactors = [1, 0.8, 0.6, 0.4, 0.2];
+    this.compositeMaterial.uniforms["bloomFactors"].value = bloomFactors;
+    this.bloomTintColors = [
+      new Vector3(1, 1, 1),
+      new Vector3(1, 1, 1),
+      new Vector3(1, 1, 1),
+      new Vector3(1, 1, 1),
+      new Vector3(1, 1, 1)
+    ];
+    this.compositeMaterial.uniforms["bloomTintColors"].value = this.bloomTintColors;
+    if (CopyShader === void 0) {
+      console.error("UnrealBloomPass relies on CopyShader");
+    }
+    var copyShader = CopyShader;
+    this.copyUniforms = UniformsUtils.clone(copyShader.uniforms);
+    this.copyUniforms["opacity"].value = 1;
+    this.materialCopy = new ShaderMaterial({
+      uniforms: this.copyUniforms,
+      vertexShader: copyShader.vertexShader,
+      fragmentShader: copyShader.fragmentShader,
+      blending: AdditiveBlending,
+      depthTest: false,
+      depthWrite: false,
+      transparent: true
+    });
+    this.enabled = true;
+    this.needsSwap = false;
+    this.oldClearColor = new Color();
+    this.oldClearAlpha = 1;
+    this.basic = new MeshBasicMaterial();
+    this.fsQuad = new Pass.FullScreenQuad(null);
+  };
+  UnrealBloomPass.prototype = Object.assign(Object.create(Pass.prototype), {
+    constructor: UnrealBloomPass,
+    dispose: function() {
+      for (var i = 0; i < this.renderTargetsHorizontal.length; i++) {
+        this.renderTargetsHorizontal[i].dispose();
+      }
+      for (var i = 0; i < this.renderTargetsVertical.length; i++) {
+        this.renderTargetsVertical[i].dispose();
+      }
+      this.renderTargetBright.dispose();
+    },
+    setSize: function(width2, height) {
+      var resx = Math.round(width2 / 2);
+      var resy = Math.round(height / 2);
+      this.renderTargetBright.setSize(resx, resy);
+      for (var i = 0; i < this.nMips; i++) {
+        this.renderTargetsHorizontal[i].setSize(resx, resy);
+        this.renderTargetsVertical[i].setSize(resx, resy);
+        this.separableBlurMaterials[i].uniforms["texSize"].value = new Vector2(resx, resy);
+        resx = Math.round(resx / 2);
+        resy = Math.round(resy / 2);
+      }
+    },
+    render: function(renderer2, writeBuffer, readBuffer, deltaTime, maskActive) {
+      this.oldClearColor.copy(renderer2.getClearColor());
+      this.oldClearAlpha = renderer2.getClearAlpha();
+      var oldAutoClear = renderer2.autoClear;
+      renderer2.autoClear = false;
+      renderer2.setClearColor(this.clearColor, 0);
+      if (maskActive)
+        renderer2.state.buffers.stencil.setTest(false);
+      if (this.renderToScreen) {
+        this.fsQuad.material = this.basic;
+        this.basic.map = readBuffer.texture;
+        renderer2.setRenderTarget(null);
+        renderer2.clear();
+        this.fsQuad.render(renderer2);
+      }
+      this.highPassUniforms["tDiffuse"].value = readBuffer.texture;
+      this.highPassUniforms["luminosityThreshold"].value = this.threshold;
+      this.fsQuad.material = this.materialHighPassFilter;
+      renderer2.setRenderTarget(this.renderTargetBright);
+      renderer2.clear();
+      this.fsQuad.render(renderer2);
+      var inputRenderTarget = this.renderTargetBright;
+      for (var i = 0; i < this.nMips; i++) {
+        this.fsQuad.material = this.separableBlurMaterials[i];
+        this.separableBlurMaterials[i].uniforms["colorTexture"].value = inputRenderTarget.texture;
+        this.separableBlurMaterials[i].uniforms["direction"].value = UnrealBloomPass.BlurDirectionX;
+        renderer2.setRenderTarget(this.renderTargetsHorizontal[i]);
+        renderer2.clear();
+        this.fsQuad.render(renderer2);
+        this.separableBlurMaterials[i].uniforms["colorTexture"].value = this.renderTargetsHorizontal[i].texture;
+        this.separableBlurMaterials[i].uniforms["direction"].value = UnrealBloomPass.BlurDirectionY;
+        renderer2.setRenderTarget(this.renderTargetsVertical[i]);
+        renderer2.clear();
+        this.fsQuad.render(renderer2);
+        inputRenderTarget = this.renderTargetsVertical[i];
+      }
+      this.fsQuad.material = this.compositeMaterial;
+      this.compositeMaterial.uniforms["bloomStrength"].value = this.strength;
+      this.compositeMaterial.uniforms["bloomRadius"].value = this.radius;
+      this.compositeMaterial.uniforms["bloomTintColors"].value = this.bloomTintColors;
+      renderer2.setRenderTarget(this.renderTargetsHorizontal[0]);
+      renderer2.clear();
+      this.fsQuad.render(renderer2);
+      this.fsQuad.material = this.materialCopy;
+      this.copyUniforms["tDiffuse"].value = this.renderTargetsHorizontal[0].texture;
+      if (maskActive)
+        renderer2.state.buffers.stencil.setTest(true);
+      if (this.renderToScreen) {
+        renderer2.setRenderTarget(null);
+        this.fsQuad.render(renderer2);
+      } else {
+        renderer2.setRenderTarget(readBuffer);
+        this.fsQuad.render(renderer2);
+      }
+      renderer2.setClearColor(this.oldClearColor, this.oldClearAlpha);
+      renderer2.autoClear = oldAutoClear;
+    },
+    getSeperableBlurMaterial: function(kernelRadius) {
+      return new ShaderMaterial({
+        defines: {
+          KERNEL_RADIUS: kernelRadius,
+          SIGMA: kernelRadius
+        },
+        uniforms: {
+          colorTexture: {value: null},
+          texSize: {value: new Vector2(0.5, 0.5)},
+          direction: {value: new Vector2(0.5, 0.5)}
+        },
+        vertexShader: "varying vec2 vUv;\n				void main() {\n					vUv = uv;\n					gl_Position = projectionMatrix * modelViewMatrix * vec4( position, 1.0 );\n				}",
+        fragmentShader: "#include <common>				varying vec2 vUv;\n				uniform sampler2D colorTexture;\n				uniform vec2 texSize;				uniform vec2 direction;								float gaussianPdf(in float x, in float sigma) {					return 0.39894 * exp( -0.5 * x * x/( sigma * sigma))/sigma;				}				void main() {\n					vec2 invSize = 1.0 / texSize;					float fSigma = float(SIGMA);					float weightSum = gaussianPdf(0.0, fSigma);					vec3 diffuseSum = texture2D( colorTexture, vUv).rgb * weightSum;					for( int i = 1; i < KERNEL_RADIUS; i ++ ) {						float x = float(i);						float w = gaussianPdf(x, fSigma);						vec2 uvOffset = direction * invSize * x;						vec3 sample1 = texture2D( colorTexture, vUv + uvOffset).rgb;						vec3 sample2 = texture2D( colorTexture, vUv - uvOffset).rgb;						diffuseSum += (sample1 + sample2) * w;						weightSum += 2.0 * w;					}					gl_FragColor = vec4(diffuseSum/weightSum, 1.0);\n				}"
+      });
+    },
+    getCompositeMaterial: function(nMips) {
+      return new ShaderMaterial({
+        defines: {
+          NUM_MIPS: nMips
+        },
+        uniforms: {
+          blurTexture1: {value: null},
+          blurTexture2: {value: null},
+          blurTexture3: {value: null},
+          blurTexture4: {value: null},
+          blurTexture5: {value: null},
+          dirtTexture: {value: null},
+          bloomStrength: {value: 1},
+          bloomFactors: {value: null},
+          bloomTintColors: {value: null},
+          bloomRadius: {value: 0}
+        },
+        vertexShader: "varying vec2 vUv;\n				void main() {\n					vUv = uv;\n					gl_Position = projectionMatrix * modelViewMatrix * vec4( position, 1.0 );\n				}",
+        fragmentShader: "varying vec2 vUv;				uniform sampler2D blurTexture1;				uniform sampler2D blurTexture2;				uniform sampler2D blurTexture3;				uniform sampler2D blurTexture4;				uniform sampler2D blurTexture5;				uniform sampler2D dirtTexture;				uniform float bloomStrength;				uniform float bloomRadius;				uniform float bloomFactors[NUM_MIPS];				uniform vec3 bloomTintColors[NUM_MIPS];								float lerpBloomFactor(const in float factor) { 					float mirrorFactor = 1.2 - factor;					return mix(factor, mirrorFactor, bloomRadius);				}								void main() {					gl_FragColor = bloomStrength * ( lerpBloomFactor(bloomFactors[0]) * vec4(bloomTintColors[0], 1.0) * texture2D(blurTexture1, vUv) + 													 lerpBloomFactor(bloomFactors[1]) * vec4(bloomTintColors[1], 1.0) * texture2D(blurTexture2, vUv) + 													 lerpBloomFactor(bloomFactors[2]) * vec4(bloomTintColors[2], 1.0) * texture2D(blurTexture3, vUv) + 													 lerpBloomFactor(bloomFactors[3]) * vec4(bloomTintColors[3], 1.0) * texture2D(blurTexture4, vUv) + 													 lerpBloomFactor(bloomFactors[4]) * vec4(bloomTintColors[4], 1.0) * texture2D(blurTexture5, vUv) );				}"
+      });
+    }
+  });
+  UnrealBloomPass.BlurDirectionX = new Vector2(1, 0);
+  UnrealBloomPass.BlurDirectionY = new Vector2(0, 1);
+
+  // node_modules/three/examples/jsm/shaders/BrightnessContrastShader.js
+  var BrightnessContrastShader = {
+    uniforms: {
+      tDiffuse: {value: null},
+      brightness: {value: 0},
+      contrast: {value: 0}
+    },
+    vertexShader: [
+      "varying vec2 vUv;",
+      "void main() {",
+      "	vUv = uv;",
+      "	gl_Position = projectionMatrix * modelViewMatrix * vec4( position, 1.0 );",
+      "}"
+    ].join("\n"),
+    fragmentShader: [
+      "uniform sampler2D tDiffuse;",
+      "uniform float brightness;",
+      "uniform float contrast;",
+      "varying vec2 vUv;",
+      "void main() {",
+      "	gl_FragColor = texture2D( tDiffuse, vUv );",
+      "	gl_FragColor.rgb += brightness;",
+      "	if (contrast > 0.0) {",
+      "		gl_FragColor.rgb = (gl_FragColor.rgb - 0.5) / (1.0 - contrast) + 0.5;",
+      "	} else {",
+      "		gl_FragColor.rgb = (gl_FragColor.rgb - 0.5) * (1.0 + contrast) + 0.5;",
+      "	}",
+      "}"
+    ].join("\n")
+  };
 
   // lib/anim/index.js
-  var fabric = __toModule(require_fabric());
+  var composer;
   var USERDRAW_SELECTOR = "userdraw";
+  var K_TRAILS_ENABLED = true;
+  var K_AUTO_ROTATION = false;
+  var K_ERASER_OPACITY = 0;
+  var BACKGROUNDCOLOR_HEX = "#000000";
+  var FOV = 50;
+  var camera;
+  var renderer;
+  var scene;
+  var controls;
+  var clock;
+  var group;
+  var eraserMaterial;
+  var generated_texture;
+  var targetQuat;
+  var originQuat;
+  var cameraTarget;
   var currentPath;
   var currentFilter;
   var currentThemeFilterValue = "";
@@ -42171,31 +43036,19 @@
   var uc = document.querySelector("#" + USERDRAW_SELECTOR);
   uc.setAttribute("width", `${drawingSize}px`);
   uc.setAttribute("height", `${drawingSize}px`);
-  var camera;
-  var renderer;
-  var scene;
-  var controls;
-  var clock;
-  var group;
-  var eraserMaterial;
-  var generated_texture;
-  var K_TRAILS_ENABLED = true;
-  var K_AUTO_ROTATION = false;
-  var K_ERASER_OPACITY = 0.01;
-  var targetQuat;
-  var originQuat;
-  var cameraTarget;
-  var BACKGROUNDCOLOR_HEX = "#000000";
   var generate_texture = () => {
     const canvas = document.createElement("canvas");
-    const size = window.innerWidth;
+    const size = 512;
     canvas.width = size;
     canvas.height = size;
     const c = canvas.getContext("2d");
+    c.lineWidth = 10;
+    c.strokeStyle = "#000";
     c.fillStyle = "#fff";
     const s = size / 2;
     c.beginPath();
-    c.arc(s, s, s - 10, 0, Math.PI * 2, false);
+    c.arc(s, s, s - c.lineWidth, 0, Math.PI * 2, false);
+    c.stroke();
     c.fill();
     c.closePath();
     const map = new Texture(canvas);
@@ -42230,8 +43083,16 @@
     group = new Group();
     group.rotation.set(0, Math.PI, Math.PI);
     scene.add(group);
-    camera = new PerspectiveCamera(50, width / window.innerHeight, 0.1, 10);
-    camera.position.set(0, 0, 2);
+    camera = new PerspectiveCamera(190, window.innerWidth / window.innerHeight, 1e-3, 10);
+    let dist = 1 / 2 / Math.tan(Math.PI * FOV / 360);
+    dist += 0.4;
+    const cameraTween = new es6_tween.Tween({z: 10, fov: camera.fov}).to({z: dist, fov: FOV}, 5e3).easing(es6_tween.Easing.Sinusoidal.InOut).on("update", (o) => {
+      if (MODE != "grid") {
+        camera.position.set(0, 0, o.z);
+        camera.fov = o.fov;
+        camera.updateProjectionMatrix();
+      }
+    }).start();
     camera.lookAt(cameraTarget);
     scene.add(camera);
     window.camera = camera;
@@ -42259,6 +43120,8 @@
     controls.saveState();
     targetQuat = new Quaternion().setFromEuler(group.rotation);
     originQuat = new Quaternion().setFromEuler(group.rotation);
+    composer = new EffectComposer(renderer);
+    composer.addPass(new RenderPass(scene, camera));
     setTimeout(() => {
       K_AUTO_ROTATION = true;
     }, 100);
@@ -42285,6 +43148,9 @@
       lastPath = e.path;
       process_userpath(lastPath);
     });
+    setTimeout(() => {
+      showDrawDemo();
+    }, 2e3);
   };
   var process_userpath = (fabricPath) => {
     const svg = fabricPath.toSVG();
@@ -42304,7 +43170,7 @@
       const sx = -1 + 2 * (p.x / drawingSize);
       const sy = -1 + 2 * (p.y / drawingSize);
       setTimeout(() => {
-        balls[i].setTarget(sx, sy);
+        balls[i].setTarget(sx, sy, 0);
       }, 10 + 10 * i);
     }
   };
@@ -42352,11 +43218,15 @@
   };
   window.toGrid = () => {
     MODE = "grid";
-    eraserMaterial.opacity = 0.1;
+    eraserMaterial.opacity = 1;
     setTimeout(() => {
       eraserMaterial.opacity = K_ERASER_OPACITY;
-    }, 100);
+    }, 1e3);
     reset_rotations();
+    camera.position.set(0, 0, 2);
+    camera.fov = FOV;
+    camera.updateProjectionMatrix();
+    const targetPositions = [];
     const scale = 0.1;
     const cols = Math.floor(Math.sqrt(numballs));
     let y = -(cols / 2) * scale;
@@ -42365,8 +43235,14 @@
       let x = sx + b.i % cols * scale;
       if (b.i % cols === 0)
         y += scale;
-      b.setTarget(x, y, 0);
+      targetPositions.push({x, y, z: 0});
     });
+    for (let i = 0; i < numballs; i++) {
+      const p = targetPositions[i];
+      setTimeout(() => {
+        balls[i].setTarget(p.x, p.y, p.z);
+      }, 10 + 10 * i);
+    }
   };
   var balls = [];
   var numballs = DATA_STUDENTS.length || 20;
@@ -42385,12 +43261,12 @@
       this.disabledSize = 0.01;
       this.x = 0;
       this.y = 0;
-      this.z = -0.25;
-      this.r = this.enabledSize;
-      this.tx = -1 + 2 * Math.random();
-      this.ty = -1 + 2 * Math.random();
-      this.tz = Math.random();
-      this.tr = this.enabledSize;
+      this.z = 0;
+      this.r = 0;
+      this.tx = 0;
+      this.ty = 0;
+      this.tz = 0;
+      this.tr = 0;
       this.material = generated_texture.clone();
       this.el = new Sprite(this.material);
       this.el.position.set(this.x, this.y, this.z);
@@ -42399,14 +43275,23 @@
       this.el.scale.set(this.r, this.r, 1);
       parent.add(this.el);
       this.setTarget(this.tx, this.ty);
+      setTimeout(() => {
+        this.r = this.enabledSize;
+        this.tr = this.enabledSize;
+        this.tx = -1 + 2 * Math.random();
+        this.ty = -1 + 2 * Math.random();
+        this.tz = -1 + 2 * Math.random();
+        this.setTarget(this.tx, this.ty, this.tz);
+      }, 1e3);
     }
     setTarget(x, y, z) {
       this.tx = x || this.x;
       this.ty = y || this.y;
-      this.tz = z || -1 + Math.random() * 2;
-      this.tween = new es6_tween.Tween({x: this.x, y: this.y}).to({x, y}, 300).easing(es6_tween.Easing.Bounce.InOut).on("update", (o) => {
+      this.tz = z || 0;
+      this.tween = new es6_tween.Tween({x: this.x, y: this.y, z: this.z}).to({x, y, z}, 300).easing(es6_tween.Easing.Bounce.InOut).on("update", (o) => {
         this.x = o.x;
         this.y = o.y;
+        this.z = o.z;
       }).start();
     }
     normal() {
@@ -42458,7 +43343,7 @@
     }
     targetQuat = targetQuat.setFromEuler(group.rotation);
     group.quaternion.slerp(targetQuat, 0.01);
-    renderer.render(scene, camera);
+    composer.render();
   };
   var selectedObject = null;
   var previousSelectedObjectId = null;

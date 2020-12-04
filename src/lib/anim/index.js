@@ -1,5 +1,3 @@
-// import * as THREE from 'three';
-
 import {
 	WebGLRenderer,
 	Scene,
@@ -9,36 +7,66 @@ import {
 	PerspectiveCamera,
 	SpriteMaterial,
 	Sprite,
-	// TextureLoader,
 	Raycaster,
+	Vector2,
 	Vector3,
 	Quaternion,
-	Texture
+	Texture,
+	ACESFilmicToneMapping
 } from 'three';
 
-import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
 import TWEEN, { Tween, Easing, Interpolation, autoPlay } from 'es6-tween';
-
-import { RotationController } from './RotationController.js'
-
-import { fabric } from "fabric"
 
 // TODO: investigate custom build at http://fabricjs.com/build/
 // import { fabric } from "../../vendor/fabric.all.js" // all things included - wont bundle :(
+import { fabric } from "fabric"
+
+import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
+
+
+import {showDrawDemo, hideDrawDemo} from './drawdemo.js'
+
+
+import { EffectComposer } from 'three/examples/jsm/postprocessing/EffectComposer.js';
+import { RenderPass } from 'three/examples/jsm/postprocessing/RenderPass.js';
+import { ShaderPass } from 'three/examples/jsm/postprocessing/ShaderPass.js';
+import { AfterimagePass } from 'three/examples/jsm/postprocessing/AfterimagePass.js';
+import { LuminosityShader } from 'three/examples/jsm/shaders/LuminosityShader.js';
+import { SobelOperatorShader } from 'three/examples/jsm/shaders/SobelOperatorShader.js';
+import { UnrealBloomPass } from 'three/examples/jsm/postprocessing/UnrealBloomPass.js';
+import { BrightnessContrastShader } from 'three/examples/jsm/shaders/BrightnessContrastShader.js';
+
+let composer, afterimagePass, effectSobel
+
+
 
 import * as DATA from '../data.js'
 
 import './styles.anim.css'
 
 const USERDRAW_SELECTOR = 'userdraw'
+const K_TRAILS_ENABLED 	= true
+let K_AUTO_ROTATION 	= false
+const K_JAGGED_ROTATION	= false
+const K_ERASER_OPACITY 	= 0 //0.01 // 0.065 //0.05 // 0.01
+let BACKGROUNDCOLOR_HEX = '#000000'
 
+let FOV = 50 //130 //190
+
+let camera, renderer, scene
+let controls, clock, group
+let fadeMesh
+let eraserMaterial
+let generated_texture
+let targetQuat, originQuat
+let cameraTarget
 
 let currentPath;
 let currentFilter;
 let currentThemeFilterValue = ''
 
 export const initAnimation = (selector) => {
-	autoPlay(true); // TWEEN auto-runs the loop-frames
+	autoPlay(true)
 	
 	init_userdraw()
 	init_scene(selector)
@@ -111,48 +139,25 @@ uc.setAttribute('height', `${drawingSize}px`)
 
 
 
-let camera, renderer, scene;
-let controls, clock, group;
-let fadeMesh;
-let eraserMaterial;
-let generated_texture;
-
-const K_TRAILS_ENABLED 	= true
-let K_AUTO_ROTATION 	= false
-const K_JAGGED_ROTATION	= false
-const K_ERASER_OPACITY 	= 0.01
-
-
-let targetQuat, originQuat
-let cameraTarget
-
-let rotationController
-
-let BACKGROUNDCOLOR_HEX = '#000000'
 
 const generate_texture = () => {
 	const canvas = document.createElement('canvas');
-	const size = window.innerWidth;
+	const size = 512 //window.innerWidth;
 	canvas.width = size;
 	canvas.height = size;
 	const c = canvas.getContext('2d');
 
-	// c.globalCompositeOperation = 'destination-in';
-
-    // c.fillStyle = '#00ffff';
+    c.lineWidth = 10
+    c.strokeStyle = '#000';
     c.fillStyle = '#fff';
 	const s = size/2;
 	c.beginPath();
-    c.arc(s, s, s-10, 0, Math.PI * 2, false);
+    c.arc(s, s, s-c.lineWidth, 0, Math.PI * 2, false);
+
+    c.stroke();
+
     c.fill();
     c.closePath();
-
- //    c.globalCompositeOperation = 'copy'
- //    c.fillStyle = '#fff';
-	// c.beginPath();
- //    c.arc(s, s, s-10, 0, Math.PI * 2, false);
- //    c.fill();
- //    c.closePath();
 
     const map = new Texture(canvas);
 	map.needsUpdate = true;
@@ -182,9 +187,6 @@ const init_scene = (selector) => {
 
 	window.addEventListener( 'resize', OnWindowResize, false );
 	window.addEventListener( 'mousemove', onDocumentMouseMove, false );
-	// window.addEventListener( 'mousedown', onDocumentMouseDown, false );
-
-	// document.querySelector('#animation').addEventListener('click', (e) => console.log('AAA', e));
 	document.querySelector('#animation').addEventListener('click', onDocumentMouseDown );
 
 	if( K_TRAILS_ENABLED ){
@@ -210,8 +212,28 @@ const init_scene = (selector) => {
 	scene.add( group );
 
 
-	camera = new PerspectiveCamera( 50, width / window.innerHeight, 0.1, 10 );
-	camera.position.set( 0, 0, 2 );
+	camera = new PerspectiveCamera( 190, window.innerWidth / window.innerHeight, 0.001, 10 );
+	// camera.position.set( 0, 0, 20 );
+
+	let dist = 1 / 2 / Math.tan(Math.PI * FOV / 360);
+	dist += 0.4
+	
+	// camera.position.set(0,0,dist)
+	const cameraTween = new Tween({z:10, fov:camera.fov}).to({z:dist, fov:FOV}, 5000)
+			// .easing(Easing.Back.InOut)
+			// .easing(Easing.Bounce.InOut)
+			.easing( Easing.Sinusoidal.InOut )
+			.on('update', (o) => {
+				if( MODE != 'grid') {
+		   			camera.position.set(0,0,o.z)
+		   			camera.fov = o.fov
+		   			camera.updateProjectionMatrix();
+		   		}
+	 		})
+	 		.start()
+ 		
+
+
 	camera.lookAt( cameraTarget );
 	scene.add( camera );
 	window.camera = camera
@@ -221,12 +243,14 @@ const init_scene = (selector) => {
 	controls.enableRotate = true;
 	controls.enableDamping = true;
 	controls.dampingFactor = 0.02;
+	// controls.minDistance = 10;
+	// controls.maxDistance = 100;
+	// controls.maxPolarAngle = Math.PI * 0.5;
 	// controls.saveState()
 	window.app.controls = controls
 
-	// rotationController = new RotationController(group)
-
 	eraserMaterial = new SpriteMaterial( { color: BACKGROUNDCOLOR_HEX, transparent: true, opacity:1 } )
+	// eraserMaterial = new SpriteMaterial( { color: BACKGROUNDCOLOR_HEX, transparent: false, opacity:1 } )
 	var eraser = new Sprite( eraserMaterial );
 	eraser.position.set( 0, 0, -2 );
 	const s = 100
@@ -249,6 +273,46 @@ const init_scene = (selector) => {
 
 	targetQuat = new Quaternion().setFromEuler(group.rotation)
 	originQuat = new Quaternion().setFromEuler(group.rotation)
+
+
+
+	composer = new EffectComposer( renderer );
+	composer.addPass( new RenderPass( scene, camera ) );
+
+
+	// composer.addPass( new AfterimagePass(0.99) );
+	
+
+	// color to grayscale conversion
+	// const effectGrayScale = new ShaderPass( LuminosityShader );
+	// composer.addPass( effectGrayScale );
+
+	// // Sobel operator
+	// effectSobel = new ShaderPass( SobelOperatorShader );
+	// effectSobel.uniforms[ 'resolution' ].value.x = window.innerWidth * window.devicePixelRatio;
+	// effectSobel.uniforms[ 'resolution' ].value.y = window.innerHeight * window.devicePixelRatio;
+	// composer.addPass( effectSobel );
+
+	// const bloomPass = new UnrealBloomPass( new Vector2( window.innerWidth, window.innerHeight ), 1.5, 0.4, 0.85 );
+	// const params = {
+	// 	exposure: 1,
+	// 	bloomStrength: 1.5,
+	// 	bloomThreshold: 0,
+	// 	bloomRadius: 0
+	// };
+	// bloomPass.threshold = params.bloomThreshold;
+	// bloomPass.strength = params.bloomStrength;
+	// bloomPass.radius = params.bloomRadius;
+	// composer.addPass( bloomPass );
+
+	// renderer.toneMapping = ACESFilmicToneMapping
+	// renderer.toneMappingExposure = 2 //0.1;
+
+	// const brightnessContrast = new ShaderPass( BrightnessContrastShader )
+	// brightnessContrast.brightness = -1
+	// brightnessContrast.contrast = -1
+	// composer.addPass( brightnessContrast );
+	
 
 
 	setTimeout( () => {
@@ -286,6 +350,10 @@ const init_userdraw = () => {
 	    process_userpath(lastPath)
 	});
 
+    // demo
+    setTimeout( () => {
+    	showDrawDemo()
+    }, 2000 )
 }
 
 const process_userpath = (fabricPath) => {
@@ -317,7 +385,7 @@ const process_userpath = (fabricPath) => {
 		const sx = -1 + (2* (p.x / drawingSize ))
 		const sy = -1 + (2* (p.y / drawingSize )) //p.y / width	
 		setTimeout( () => {
-			balls[i].setTarget(sx, sy)
+			balls[i].setTarget(sx, sy, 0)
 		}, 10 + 10 * i)
 	}
 
@@ -437,46 +505,40 @@ window.toNode = (id) => {
 
 window.toGrid = () => {
 	
-
 	MODE = 'grid'
-	eraserMaterial.opacity = 0.1
+	eraserMaterial.opacity = 1 //0.1
 	setTimeout( () => {
 		eraserMaterial.opacity = K_ERASER_OPACITY
-	}, 100)
-
-	reset_rotations()
-	// controls.enableRotate  = false;
-	// controls.enableDamping = false;
-	// controls.reset()
-	// group.rotation.set( 0, Math.PI, Math.PI);
-
-	// balls.forEach( b => {
-	// 	const x = -1 + (2*Math.random())
-	// 	const y = -1 + (2*Math.random())
-	// 	// b.setTarget(x,y)
-	// 	// b.setTarget(0,0,0)
-	// 	b.normal()
-	// })
-
-	// setTimeout( () => {
-
+	}, 1000)
 	
-		const scale = 0.1
-		const cols = Math.floor( Math.sqrt(numballs))
+	reset_rotations()
 
-		let y = -(cols / 2) * scale
-		let sx = -(cols / 2) * scale
+	camera.position.set(0,0,2)
+	camera.fov = FOV
+	camera.updateProjectionMatrix();
 
-		balls.forEach( b => {
+	const targetPositions = []
+		
+	const scale = 0.1
+	const cols = Math.floor( Math.sqrt(numballs))
 
-			let x = sx + ( b.i % cols ) * scale
-			if( b.i % cols === 0 ) y += scale
-			
+	let y = -(cols / 2) * scale
+	let sx = -(cols / 2) * scale
 
-			b.setTarget(x, y, 0)
-		})
+	balls.forEach( b => {
 
-	// }, 1000)
+		let x = sx + ( b.i % cols ) * scale
+		if( b.i % cols === 0 ) y += scale
+		
+		targetPositions.push({x,y,z:0})
+	})
+
+	for(let i=0; i<numballs; i++){	
+		const p = targetPositions[i]
+		setTimeout( () => {
+			balls[i].setTarget(p.x, p.y, p.z)
+		}, 10 + 10 * i)
+	}
 }
 
 
@@ -505,13 +567,15 @@ class Ball {
 
 		this.x = 0
 		this.y = 0
-		this.z = -0.25
-		this.r = this.enabledSize
+		this.z = 0 //-0.25
+		this.r = 0 //this.enabledSize
+
+
 		
-		this.tx = -1 + (2*Math.random())
-		this.ty = -1 + (2*Math.random())
-		this.tz = Math.random() //* drawingSize
-		this.tr = this.enabledSize
+		this.tx = 0 //-1 + (2*Math.random())
+		this.ty = 0 //-1 + (2*Math.random())
+		this.tz = 0 //Math.random() //* drawingSize
+		this.tr = 0 //this.enabledSize
 
 		this.material = generated_texture.clone()		
 
@@ -525,23 +589,32 @@ class Ball {
 		parent.add( this.el );
 
 		this.setTarget(this.tx, this.ty)
+		setTimeout( () => {
+			this.r  = this.enabledSize
+			this.tr = this.enabledSize
+			this.tx = -1 + (2*Math.random())
+			this.ty = -1 + (2*Math.random())
+			this.tz = -1 + (2*Math.random())
+			this.setTarget(this.tx, this.ty, this.tz)
+		}, 1000)
 	}
 	setTarget(x, y, z){
 		// console.log(x, y);
 		this.tx = x || this.x
 		this.ty = y || this.y
-		this.tz = z || -1 + Math.random() * 2
+		this.tz = z || 0 //-1 + Math.random() * 2
 		// this.r = 0
 
 		
 		
-		this.tween = new Tween({x:this.x, y:this.y}).to({x:x, y:y}, 300)
+		this.tween = new Tween({x:this.x, y:this.y, z:this.z}).to({x:x, y:y, z:z}, 300)
 			// .easing(Easing.Back.InOut)
 			.easing(Easing.Bounce.InOut)
 			// .easing( Easing.Elastic.InOut )
 			.on('update', (o) => {
 	   			this.x = o.x
 	   			this.y = o.y
+	   			this.z = o.z
 	 		})
 	 		.start()
  		
@@ -666,8 +739,8 @@ const update = () => {
 	targetQuat = targetQuat.setFromEuler(group.rotation)
 	group.quaternion.slerp(targetQuat, 0.01);
 
-
-	renderer.render( scene, camera );
+	composer.render();
+	// renderer.render( scene, camera );
 }
 
 

@@ -25,3 +25,36 @@
     /*border-radius: 20px;
     overflow: hidden;*/
 }
+
+#drawdemoContainer {
+	position: absolute;
+    width: 185px;
+    height: 185px;
+    z-index: 9999;
+    /*background: #e55959;*/
+    top: 6px;
+    left: 6px;
+    pointer-events: all;
+}
+#drawdemoContainer * {
+	pointer-events: none;
+}
+
+#drawdemoContainer > svg > path {
+	stroke-linecap: round;
+  	stroke-linejoin: round;
+  stroke-dasharray: 100;
+  stroke-dashoffset: 0;
+  animation: dash 15s ease-out infinite;
+  /*animation: dash 5s linear alternate infinite;*/
+  /*animation: dash 5s linear;*/
+}
+
+@keyframes dash {
+  0% {
+    stroke-dashoffset: 100;
+  }
+  90% {
+    stroke-dashoffset: 0;
+  }
+}
