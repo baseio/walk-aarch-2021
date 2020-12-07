@@ -12,7 +12,9 @@ import {
 	Vector3,
 	Quaternion,
 	Texture,
-	ACESFilmicToneMapping
+	WebGLRenderTarget,
+	ShaderMaterial,
+	OrthographicCamera
 } from 'three';
 
 import TWEEN, { Tween, Easing, Interpolation, autoPlay } from 'es6-tween';
@@ -27,16 +29,23 @@ import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
 import {showDrawDemo, hideDrawDemo} from './drawdemo.js'
 
 
+import {Logo, LogoShader} from './Logo.js'
+
 import { EffectComposer } from 'three/examples/jsm/postprocessing/EffectComposer.js';
 import { RenderPass } from 'three/examples/jsm/postprocessing/RenderPass.js';
 import { ShaderPass } from 'three/examples/jsm/postprocessing/ShaderPass.js';
 import { AfterimagePass } from 'three/examples/jsm/postprocessing/AfterimagePass.js';
-import { LuminosityShader } from 'three/examples/jsm/shaders/LuminosityShader.js';
-import { SobelOperatorShader } from 'three/examples/jsm/shaders/SobelOperatorShader.js';
-import { UnrealBloomPass } from 'three/examples/jsm/postprocessing/UnrealBloomPass.js';
-import { BrightnessContrastShader } from 'three/examples/jsm/shaders/BrightnessContrastShader.js';
 
-let composer, afterimagePass, effectSobel
+import { LogoShaderPass } from './LogoShaderPass.js';
+
+
+// import { LuminosityShader } from 'three/examples/jsm/shaders/LuminosityShader.js';
+// import { SobelOperatorShader } from 'three/examples/jsm/shaders/SobelOperatorShader.js';
+// import { UnrealBloomPass } from 'three/examples/jsm/postprocessing/UnrealBloomPass.js';
+// import { BrightnessContrastShader } from 'three/examples/jsm/shaders/BrightnessContrastShader.js';
+
+let composer
+let afterimagePass
 
 
 
@@ -55,8 +64,8 @@ let FOV = 50 //130 //190
 
 let camera, renderer, scene
 let controls, clock, group
-let fadeMesh
-let eraserMaterial
+let eraser, logo
+
 let generated_texture
 let targetQuat, originQuat
 let cameraTarget
@@ -72,7 +81,7 @@ export const initAnimation = (selector) => {
 	init_scene(selector)
 	init_balls()
 	update()
-	// jaggedCamera()
+	
 
 	return this
 }
@@ -121,10 +130,11 @@ export const applyFilter = (key, val) => {
 
 	// 
 
-	eraserMaterial.opacity = 0.1
-	setTimeout( () => {
-		eraserMaterial.opacity = K_ERASER_OPACITY
-	}, 100)
+	// eraserMaterial.opacity = 0.1
+	// setTimeout( () => {
+	// 	eraserMaterial.opacity = K_ERASER_OPACITY
+	// }, 100)
+	eraser.upDown()
 	
 }
 
@@ -149,6 +159,7 @@ const generate_texture = () => {
 
     c.lineWidth = 10
     c.strokeStyle = '#000';
+    c.strokeStyle = '#eee';
     c.fillStyle = '#fff';
 	const s = size/2;
 	c.beginPath();
@@ -171,15 +182,64 @@ const generate_texture = () => {
 	    color: 0xffffff
 	});
 
-    // new SpriteMaterial( { map: map, color: 0xffffff , fog: true } );
-
-	// context.fillStyle = '#ff0000'; // CHANGED
-	// context.textAlign = 'center';
-	// context.font = '24px Arial';
-	// context.fillText("some text", size / 2, size / 2);
 }
 
 
+const ERASER_OPACITY_HIGH = 0.1
+const ERASER_OPACITY_LOW = 0.001
+
+class Eraser {
+
+
+	constructor(){
+		const s = 100 // size
+
+		this.to = 0
+		
+		this.material = new SpriteMaterial( { color: BACKGROUNDCOLOR_HEX, transparent: true, opacity:0 } )
+		this.el = new Sprite( this.material );
+		this.el.position.set( 0, 0, -2 );
+		this.el.scale.set( s, s, 1 );
+
+		console.log('Eraser', ERASER_OPACITY_HIGH, ERASER_OPACITY_LOW);
+	}
+
+	setTargetOpacity( opacity, time=300 ){
+		this.tween = new Tween({v:this.material.opacity}).to({v:opacity}, time)
+			// .easing(Easing.Back.InOut)
+			// .easing(Easing.Bounce.InOut)
+			// .easing( Easing.Elastic.InOut )
+			.easing( Easing.Sinusoidal.InOut )
+			.on('update', (o) => {
+	   			this.material.opacity = o.v
+	 		})
+	 		.start()
+	}
+
+	// tweens opacity to OPACITY_HIGH
+	blendUp(){
+		this.setTargetOpacity( ERASER_OPACITY_HIGH )
+	}
+
+	// tweens opacity to OPACITY_LOW
+	blendDown(){
+		this.setTargetOpacity( ERASER_OPACITY_LOW )
+	}
+
+	// tweens up, then down after delay
+	upDown( delay = 1000 ){
+		this.blendUp()
+		setTimeout( () => {
+			this.blendDown()
+		}, delay )	
+	}
+
+}
+
+
+let overlayBuffer, overlayCamera, overlayMaterial, overlayShaderPass, overlayScene
+let sceneRenderPass
+let logoShaderPass
 
 const init_scene = (selector) => {
 
@@ -204,7 +264,11 @@ const init_scene = (selector) => {
 	clock = new Clock();
 
 	scene = new Scene();
-	scene.background = BACKGROUNDCOLOR_HEX //new Color( BACKGROUNDCOLOR_BIN );
+	scene.background = BACKGROUNDCOLOR_HEX
+
+	
+
+
 	cameraTarget = scene.position
 
 	group = new Group();
@@ -249,23 +313,6 @@ const init_scene = (selector) => {
 	// controls.saveState()
 	window.app.controls = controls
 
-	eraserMaterial = new SpriteMaterial( { color: BACKGROUNDCOLOR_HEX, transparent: true, opacity:1 } )
-	// eraserMaterial = new SpriteMaterial( { color: BACKGROUNDCOLOR_HEX, transparent: false, opacity:1 } )
-	var eraser = new Sprite( eraserMaterial );
-	eraser.position.set( 0, 0, -2 );
-	const s = 100
-	eraser.scale.set( s, s, 1 );
-	
-	if( K_TRAILS_ENABLED ){
-		renderer.autoClearColor = false;
-		scene.add( eraser );
-	}
-
-	setTimeout( () => {
-		eraserMaterial.opacity = K_ERASER_OPACITY
-	}, 100)
-
-
 	controls.update()
 	camera.lookAt( group.position );
 	renderer.render( scene, camera );
@@ -274,51 +321,78 @@ const init_scene = (selector) => {
 	targetQuat = new Quaternion().setFromEuler(group.rotation)
 	originQuat = new Quaternion().setFromEuler(group.rotation)
 
-
-
-	composer = new EffectComposer( renderer );
-	composer.addPass( new RenderPass( scene, camera ) );
-
-
-	// composer.addPass( new AfterimagePass(0.99) );
 	
-
-	// color to grayscale conversion
-	// const effectGrayScale = new ShaderPass( LuminosityShader );
-	// composer.addPass( effectGrayScale );
-
-	// // Sobel operator
-	// effectSobel = new ShaderPass( SobelOperatorShader );
-	// effectSobel.uniforms[ 'resolution' ].value.x = window.innerWidth * window.devicePixelRatio;
-	// effectSobel.uniforms[ 'resolution' ].value.y = window.innerHeight * window.devicePixelRatio;
-	// composer.addPass( effectSobel );
-
-	// const bloomPass = new UnrealBloomPass( new Vector2( window.innerWidth, window.innerHeight ), 1.5, 0.4, 0.85 );
-	// const params = {
-	// 	exposure: 1,
-	// 	bloomStrength: 1.5,
-	// 	bloomThreshold: 0,
-	// 	bloomRadius: 0
-	// };
-	// bloomPass.threshold = params.bloomThreshold;
-	// bloomPass.strength = params.bloomStrength;
-	// bloomPass.radius = params.bloomRadius;
-	// composer.addPass( bloomPass );
-
-	// renderer.toneMapping = ACESFilmicToneMapping
-	// renderer.toneMappingExposure = 2 //0.1;
-
-	// const brightnessContrast = new ShaderPass( BrightnessContrastShader )
-	// brightnessContrast.brightness = -1
-	// brightnessContrast.contrast = -1
-	// composer.addPass( brightnessContrast );
+	eraser = new Eraser()
 	
-
+	if( K_TRAILS_ENABLED ){
+		renderer.autoClearColor = false;
+		scene.add( eraser.el );
+		eraser.blendDown()
+	}
 
 	setTimeout( () => {
 		K_AUTO_ROTATION = true
-		// toGrid()
 	}, 100 );
+
+
+
+	// ---------
+	/*
+
+	const w = window.innerWidth
+	const h = window.innerHeight
+	composer = new EffectComposer( renderer );
+
+	// sceneRenderPass = new RenderPass( scene, camera )
+
+	// composer.addPass( sceneRenderPass );
+
+	// composer.addPass( new AfterimagePass(0.99) );
+
+	
+
+	overlayBuffer = new WebGLRenderTarget(w, h)
+	overlayCamera = new OrthographicCamera(-w/2, w/2, h/2, -h/2, 1, 2000)
+	// overlayCamera.position.z = 10
+
+	overlayScene = new Scene()
+	logo = new Logo(overlayScene)
+
+
+	const sceneRT = new WebGLRenderTarget(w, h)
+	const logoRT = new WebGLRenderTarget(w, h)
+
+	// camera.renderToScreen = false
+	renderer.setRenderTarget( sceneRT )
+	// logoRenderer.setRenderTarget( logoRT )
+	
+	// renderer.render(scene, camera)
+	// logoRenderer.render(overlayScene, overlayCamera)
+
+	logoShaderPass = new LogoShaderPass()
+	// logoShaderPass.uniforms.overlayBuffer = logo
+	composer.addPass( new RenderPass( scene, camera ) );
+	composer.addPass( new RenderPass( overlayScene, overlayCamera) );
+	composer.addPass( logoShaderPass );
+
+	// renderer.render( scene, camera );
+
+
+
+	// render logo to a rt, send it to logoshaderpasss
+
+
+	// overlayMaterial = new ShaderMaterial(LogoShader)
+	// overlayMaterial.uniforms.overlayBuffer.value = overlayBuffer.texture
+	
+
+	// overlayShaderPass = new ShaderPass(overlayMaterial)
+	// // overlayShaderPass.renderToScreen = true
+
+	// composer.addPass(overlayShaderPass)
+
+	*/
+
 }
 
 const OnWindowResize = () => {
@@ -326,8 +400,6 @@ const OnWindowResize = () => {
 	camera.updateProjectionMatrix();
 	renderer.setSize( window.innerWidth, window.innerHeight );
 }
-
-
 
 const init_userdraw = () => {
 	var lastPath = null
@@ -372,22 +444,32 @@ const process_userpath = (fabricPath) => {
 	// const elapsedTime = clock.getElapsedTime();
 	// scene.rotation.y = elapsedTime * 0.5;
 
-	eraserMaterial.opacity = 1
-	setTimeout( () => {
-		eraserMaterial.opacity = K_ERASER_OPACITY
-	}, 100)
+	// eraserMaterial.opacity = 1
+	// eraserMaterial.opacity = 0.1
+	eraser.blendUp()
+	// setTimeout( () => {
+	// 	eraserMaterial.opacity = K_ERASER_OPACITY
+	// }, 100)
 
 	MODE = 'free'
 
+	let delay = 0
 	for(let i=0; i<numballs; i++){	
 		const p = path.getPointAtLength( inc * i)
 		// console.log(drawingSize, p.x, p.y);
 		const sx = -1 + (2* (p.x / drawingSize ))
 		const sy = -1 + (2* (p.y / drawingSize )) //p.y / width	
+
+		delay = i * 10
 		setTimeout( () => {
 			balls[i].setTarget(sx, sy, 0)
-		}, 10 + 10 * i)
+		}, delay)
 	}
+
+	setTimeout( () => {
+		// eraserMaterial.opacity = K_ERASER_OPACITY
+		eraser.blendDown()
+	}, delay + 1000)
 
 	
 
@@ -497,7 +579,9 @@ window.toNode = (id) => {
 	sball.focus()
 
 	let dist = 1 / 2 / Math.tan(Math.PI * camera.fov / 360);
-	dist += 0.1
+	dist += 0.1 // fits in screen
+	
+	dist = 0.5 // fills screen
 	camera.position.set(0,0,dist)
 
 	console.log('dist', dist);
@@ -506,10 +590,11 @@ window.toNode = (id) => {
 window.toGrid = () => {
 	
 	MODE = 'grid'
-	eraserMaterial.opacity = 1 //0.1
-	setTimeout( () => {
-		eraserMaterial.opacity = K_ERASER_OPACITY
-	}, 1000)
+	// eraserMaterial.opacity = 1 //0.1
+	// setTimeout( () => {
+	// 	eraserMaterial.opacity = K_ERASER_OPACITY
+	// }, 1000)
+	eraser.upDown()
 	
 	reset_rotations()
 
@@ -609,8 +694,9 @@ class Ball {
 		
 		this.tween = new Tween({x:this.x, y:this.y, z:this.z}).to({x:x, y:y, z:z}, 300)
 			// .easing(Easing.Back.InOut)
-			.easing(Easing.Bounce.InOut)
+			// .easing(Easing.Bounce.InOut)
 			// .easing( Easing.Elastic.InOut )
+			.easing( Easing.Sinusoidal.InOut )
 			.on('update', (o) => {
 	   			this.x = o.x
 	   			this.y = o.y
@@ -686,32 +772,8 @@ class Ball {
 
 
 	update(){
-		// Lerp towards tx,ty
-	    // this.x = this.tx - (this.tx - this.x) * 0.9
-	    // this.y = this.ty - (this.ty - this.y) * 0.9
-	    // // this.z = this.tz - (this.tz - this.z) * 0.9	    
-	    // this.r = this.tr - (this.tr - this.r) * 0.9
-
-	    // if( this.i > 0 ){
-	    // 	let p = balls[this.i-1]
-	    // 	if( Math.abs(p.x - p.tx) < 1 && Math.abs(p.y - p.ty) < 1 ){
-	    // 		this.x = this.tx // - (this.tx - this.x) * 0.9
-	    // 		this.y = this.ty // - (this.ty - this.y) * 0.9
-	    // 	}else{
-	    // 		this.x = p.tx - (p.tx - this.x) * 0.9
-	    // 		this.y = p.ty - (p.ty - this.y) * 0.9
-	    // 	}
-	    // }
-
-	    // this.r = 20 //this.tr - (this.tr - this.r) * 0.9
-
-	    
-	    // this.material.opacity = this.enabled ? 1 : 0.1
-	    
-	    this.el.scale.set(this.r,this.r,1);
+		this.el.scale.set(this.r,this.r,1);
 	    this.el.position.set(this.x, this.y, this.z)
-
-		// this.el.style = `left:${this.x}px;top:${this.y}px;width:${this.r}px;height:${this.r}px;margin-top:${-this.r/2}px;margin-left:${-this.r/2}px`;
 	}
 }
 
@@ -722,9 +784,6 @@ const update = () => {
 	balls.forEach( b => b.update() )
 
 	controls.update()
-
-	// camera.lookAt( group.position );
-	// camera.lookAt( cameraTarget );
 
 	const speed = 0.5 //2.7
 
@@ -739,8 +798,8 @@ const update = () => {
 	targetQuat = targetQuat.setFromEuler(group.rotation)
 	group.quaternion.slerp(targetQuat, 0.01);
 
-	composer.render();
-	// renderer.render( scene, camera );
+	// composer.render();
+	renderer.render( scene, camera );
 }
 
 

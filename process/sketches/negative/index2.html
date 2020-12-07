@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>negative</title>
+	<style type="text/css">
+		
+		* { margin: 0; padding: 0; }
+		
+	</style>
+</head>
+<body>
+
+<div id="three"></div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/88/three.min.js"></script>
+
+<script type="module">
+	
+let w = window.innerWidth
+let h = window.innerHeight
+
+const scene = new THREE.Scene()
+const camera = new THREE.PerspectiveCamera(60, w / h, 0.1, 1000)
+const renderer = new THREE.WebGLRenderer()
+const clock = new THREE.Clock()
+
+let sceneTarget = createRenderTarget()
+let previousTarget  = sceneTarget.clone();
+let resultTarget  = sceneTarget.clone();
+
+const blendScene = new THREE.Scene();
+const blendCamera = new THREE.OrthographicCamera(-w/2, w/2, -h/2, h/2, -1000, 1000);
+const blendMaterial = new THREE.ShaderMaterial({
+  uniforms: {
+    tDiffuse1: { value: previousTarget.texture },
+    tDiffuse2: { value: sceneTarget.texture },
+  },
+  vertexShader: `
+    varying vec2 vUv;
+
+    void main () {
+      gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+
+      vUv = uv;
+    }
+  `,
+  fragmentShader: `
+    uniform sampler2D tDiffuse1;
+    uniform sampler2D tDiffuse2;
+
+    varying vec2 vUv;
+
+    void main () {
+      gl_FragColor = mix(texture2D(tDiffuse1, vUv), texture2D(tDiffuse2, vUv), 0.25);
+    }
+  `,
+});
+const blendMesh = new THREE.Mesh(
+  new THREE.PlaneBufferGeometry(w, h),
+  blendMaterial
+);
+blendMesh.rotation.x = Math.PI;
+blendScene.add(blendMesh);
+
+const resultScene = new THREE.Scene();
+const resultCamera = new THREE.OrthographicCamera(-w/2, w/2, -h/2, h/2, -1000, 1000);
+const resultMaterial = new THREE.MeshBasicMaterial({
+  map: resultTarget.texture,
+});
+const resultMesh = new THREE.Mesh(
+  new THREE.PlaneBufferGeometry(w, h),
+  resultMaterial
+);
+resultMesh.rotation.x = Math.PI;
+resultScene.add(resultMesh);
+
+let shape
+
+setMainScene()
+renderFrame(0)
+
+function createRenderTarget () {
+  let type = THREE.FloatType
+  if( renderer.extensions.get( 'OES_texture_float_linear' ) === null ) type = THREE.HalfFloatType
+
+  let renderTarget = new THREE.WebGLRenderTarget( 1, 1, {
+    type,
+    wrapS: THREE.ClampToEdgeWrapping,
+    wrapT: THREE.ClampToEdgeWrapping,
+    format: THREE.RGBAFormat,
+    minFilter: THREE.NearestFilter,
+    magFilter: THREE.NearestFilter,
+    stencilBuffer: false,
+    depthBuffer: true
+  })
+  
+  renderTarget.texture.generateMipmaps = false
+  renderTarget.setSize(w, h)
+
+  return renderTarget
+}
+
+function swapBuffers () {
+  const temp = previousTarget;
+  previousTarget = resultTarget;
+  resultTarget = temp;
+}
+
+function setMainScene () {
+  renderer.setSize(w, h)
+  renderer.setClearColor(0x111111)
+  renderer.setPixelRatio(window.devicePixelRatio || 1)
+  document.body.appendChild(renderer.domElement)
+
+  camera.position.set(0, 20, 100);
+  camera.lookAt(new THREE.Vector3());
+
+  shape = new THREE.Mesh(
+    new THREE.SphereBufferGeometry(10, 20, 20),
+    new THREE.MeshBasicMaterial({ color: 0xFF0000 })
+  );
+  scene.add(shape);
+}
+
+function renderFrame (timeElapsed) {
+  timeElapsed *= 0.001;
+  
+  renderer.render(scene, camera, sceneTarget);
+  
+  blendMaterial.uniforms.tDiffuse1.value = previousTarget.texture;
+  blendMaterial.uniforms.tDiffuse2.value = sceneTarget.texture;
+  renderer.render(blendScene, blendCamera, resultTarget);
+  
+  resultMaterial.map = resultTarget.texture;
+  renderer.render(resultScene, resultCamera);
+  swapBuffers();
+
+  shape.position.x = Math.sin(timeElapsed) * 20.0;
+  shape.position.y = Math.cos(timeElapsed * Math.PI) * 20.0;
+  
+  requestAnimationFrame(renderFrame);
+  
+}
+
+
+</script>
+</body>
+</html>

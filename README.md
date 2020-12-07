@@ -17,22 +17,26 @@ Karen Kjærgaard <kje@aarch.dk>
 
 ## Tasks
 
-- check:
-- License
-- Meta description
-- Host stream with Vimeo (instead of Twitch)
+
+- Font License
+- Code License
+- HTML Meta description
+- Hosting
+- Can we Host live-stream with Vimeo (instead of Twitch)
+- WP content workflow
+- WP slug
+- WP api of sorts? get images for project/student
+- Sort students
+
+- auto-inverting logo
+- de-select-able theme buttons
+- zoom all the way into the white student circle
+- bubble-student list
+- rollover ikon/image
+- pull main project image from wp?
 
 
----
 
-- add label (CSS2) (showing theme). Mostly for debugging?
-
-- when filtering on a theme, re-apply path but only use theme nodes (hide others). also filter student list.
-- when searching for a student, -"-
-
-- zoom clicked node
-
-- render as "table" (col=theme, row=name.alphaSort)
 
 ---
 
@@ -85,8 +89,9 @@ Karen Kjærgaard <kje@aarch.dk>
 
 #### W50: Concept lock
 
-Demonstrate all features 
-
+- [ ] Demonstrate all features 
+- [ ] Solve color theme
+- [ ] Static layouts
 
 #### W01: Plan production
 #### W02: Production

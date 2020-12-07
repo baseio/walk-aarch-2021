@@ -43,7 +43,7 @@ export const showDrawDemo = () => {
 	timeout = setTimeout( () => {
 		if( playing ){
 			demoIndex = ++demoIndex % DEMOS.length
-			console.log('demoIndex:', demoIndex);
+			// console.log('demoIndex:', demoIndex);
 			showDrawDemo()
 		}
 	}, 3000 )

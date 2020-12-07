@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>negative</title>
+	<style type="text/css">
+		
+		* { margin: 0; padding: 0; }
+
+	</style>
+</head>
+<body>
+
+<!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/88/three.min.js"></script> -->
+<script src="three.min.js"></script>
+
+<script>
+
+/// from: https://stackoverflow.com/questions/47326436/persistence-postprocessing-in-three-js-with-2-rendertargetss
+
+const clock = new THREE.Clock()
+
+const width  = window.innerWidth;
+const height = window.innerHeight;
+
+let shape
+let camera, scene, renderer
+let overlay_camera, overlay_scene, overlay_renderer
+let blend_camera, blend_scene, blend_renderer
+let blend_material
+let result_camera, result_scene
+
+// rt's
+let sceneTarget = createRenderTarget()
+let previousTarget  = sceneTarget.clone();
+let resultTarget  = sceneTarget.clone();
+
+let overlay_rt = sceneTarget.clone()
+let content_rt = sceneTarget.clone()
+let result_rt  = sceneTarget.clone()
+
+
+const setup_content = () => {
+	scene = new THREE.Scene()
+
+	camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.1, 1000)
+	camera.position.set(0, 0, 100);
+
+	renderer = new THREE.WebGLRenderer({ antialias: true })
+	renderer.setSize(window.innerWidth, window.innerHeight)
+  	renderer.setClearColor(0x000000)
+  	renderer.setPixelRatio(window.devicePixelRatio || 1)
+  	document.body.appendChild(renderer.domElement)
+
+  	shape = new THREE.Mesh(
+    	new THREE.SphereBufferGeometry(10, 20, 20),
+    	new THREE.MeshBasicMaterial({ color: 0xFFFFFF })
+  	);
+  	shape.scale.set(2,2,2)
+  	scene.add(shape);
+}
+
+const setup_overlay = () => {
+	overlay_scene = new THREE.Scene()	
+
+	overlay_camera = new THREE.OrthographicCamera( - width / 2, width / 2, height / 2, - height / 2, 1, 10 )
+	overlay_camera.position.z = 10;
+
+	const textureLoader = new THREE.TextureLoader();
+	// textureLoader.load( './test.jpg', (texture) => {
+	textureLoader.load( './tmp-logo.png', (texture) => {
+		const material = new THREE.SpriteMaterial({
+			map: texture,
+			color: 0xffffff,
+			transparent: true
+		});
+		const width = material.map.image.width;
+		const height = material.map.image.height;
+		console.log('loaded test.jpg', width, height);
+		
+		const logo = new THREE.Sprite( material );
+		logo.scale.set( width, height, 1 );
+		logo.center.set( 0.0, 1.0 );	
+		overlay_scene.add( logo )
+		logo.position.set( -(window.innerWidth/2), window.innerHeight/2, 1 ); // top left
+
+
+	} );
+}
+
+const setup_blend = () => {
+	blend_scene = new THREE.Scene();
+
+	blend_camera = new THREE.OrthographicCamera( - width / 2, width / 2, height / 2, - height / 2, -1000, 1000)
+	blend_camera.position.z = 10;
+
+	blend_material = new THREE.ShaderMaterial({
+	  uniforms: {
+	    tDiffuse1: { value: previousTarget.texture },
+	    tDiffuse2: { value: sceneTarget.texture },
+	  },
+	  vertexShader: `
+	    varying vec2 vUv;
+
+	    void main () {
+	      gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+	      vUv = uv;
+	    }
+	  `,
+
+	  fragmentShader: `
+	    uniform sampler2D tDiffuse1;
+	    uniform sampler2D tDiffuse2;
+
+	    varying vec2 vUv;
+
+	    void main () {
+	      vec4 texel1 = texture2D(tDiffuse1, vUv);
+		  vec4 texel2 = texture2D(tDiffuse2, vUv);
+		  vec3 diff = abs(texel1.rgb - texel2.rgb);
+		  gl_FragColor = vec4(diff, 1.0);
+	    }
+	  `
+	});
+
+
+	const blendMesh = new THREE.Mesh(
+	  	new THREE.PlaneBufferGeometry(width, height),
+  		blend_material
+	);
+	// blendMesh.rotation.x = Math.PI;
+	blend_scene.add(blendMesh);
+
+	new THREE.TextureLoader().load('./a.jpg', (texture) => {
+		console.log('@blend loaded map a');
+		blend_material.uniforms.tDiffuse1.value = texture
+	})
+	new THREE.TextureLoader().load('./b.jpg', (texture) => {
+		console.log('@blend loaded map b');
+		blend_material.uniforms.tDiffuse2.value = texture;
+	})
+
+
+	//	
+
+	result_scene = new THREE.Scene();
+	
+	result_camera = new THREE.OrthographicCamera( - width / 2, width / 2, height / 2, - height / 2, -1000, 1000)
+	
+	result_material = new THREE.MeshBasicMaterial({
+  		map: result_rt.texture,
+	});
+
+
+	const resultMesh = new THREE.Mesh(
+  		new THREE.PlaneBufferGeometry(width, height),
+  		result_material
+	);
+	// resultMesh.rotation.x = Math.PI;
+	result_scene.add(resultMesh);
+}
+
+setup_overlay()
+setup_content()
+setup_blend()
+
+// renderFrame()
+
+setTimeout( () => {
+	renderFrame()
+}, 500)
+
+/*
+
+const blendScene = new THREE.Scene();
+const blendCamera = new THREE.OrthographicCamera(-w/2, w/2, -h/2, h/2, -1000, 1000);
+const blendMaterial = new THREE.ShaderMaterial({
+  uniforms: {
+    tDiffuse1: { value: previousTarget.texture },
+    tDiffuse2: { value: sceneTarget.texture },
+  },
+  vertexShader: `
+    varying vec2 vUv;
+
+    void main () {
+      gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+
+      vUv = uv;
+    }
+  `,
+  fragmentShader: `
+    uniform sampler2D tDiffuse1;
+    uniform sampler2D tDiffuse2;
+
+    varying vec2 vUv;
+
+    void main () {
+      gl_FragColor = mix(texture2D(tDiffuse1, vUv), texture2D(tDiffuse2, vUv), 0.25);
+    }
+  `,
+});
+const blendMesh = new THREE.Mesh(
+  new THREE.PlaneBufferGeometry(w, h),
+  blendMaterial
+);
+blendMesh.rotation.x = Math.PI;
+blendScene.add(blendMesh);
+
+const resultScene = new THREE.Scene();
+const resultCamera = new THREE.OrthographicCamera(-w/2, w/2, -h/2, h/2, -1000, 1000);
+const resultMaterial = new THREE.MeshBasicMaterial({
+  map: resultTarget.texture,
+});
+const resultMesh = new THREE.Mesh(
+  new THREE.PlaneBufferGeometry(w, h),
+  resultMaterial
+);
+resultMesh.rotation.x = Math.PI;
+resultScene.add(resultMesh);
+
+
+function swapBuffers () {
+  const temp = previousTarget;
+  previousTarget = resultTarget;
+  resultTarget = temp;
+}
+
+
+
+
+*/
+
+function renderFrame (timeElapsed = 0) {
+
+
+	timeElapsed *= 0.001;
+	shape.position.x = Math.sin(timeElapsed) * 30.0;
+  	shape.position.y = Math.cos(timeElapsed * Math.PI) * 30.0;
+	
+  	renderer.clear()
+
+	// render overlay to overlay_rt
+	renderer.setRenderTarget(overlay_rt)
+	renderer.render( overlay_scene, overlay_camera)
+		
+	// render content to content_rt
+	renderer.setRenderTarget( content_rt )
+	renderer.render(scene, camera);
+	
+
+	// //// test:
+	// result_material.map = overlay_rt.texture;
+	// renderer.setRenderTarget(null)
+	// renderer.render(result_scene, result_camera);
+	
+
+	// upload those to rt's to the blend_material's shader
+	blend_material.uniforms.tDiffuse1.value = overlay_rt.texture;
+ 	blend_material.uniforms.tDiffuse2.value = content_rt.texture;
+	
+
+  	// render blend to result_rt
+  	renderer.setRenderTarget( result_rt )
+  	renderer.render(blend_scene, blend_camera );
+  	
+  	// apply the result_rt to the result scene
+  	result_material.map = result_rt.texture;
+
+
+  	// render result scene to screen
+  	// renderer.clear()
+  	renderer.setRenderTarget(null)
+  	renderer.render(result_scene, result_camera);
+
+
+	///
+
+	// timeElapsed *= 0.001;
+  
+ //  renderer.render(scene, camera, sceneTarget);
+  
+ //  blendMaterial.uniforms.tDiffuse1.value = previousTarget.texture;
+ //  blendMaterial.uniforms.tDiffuse2.value = sceneTarget.texture;
+ //  renderer.render(blendScene, blendCamera, resultTarget);
+  
+ //  resultMaterial.map = resultTarget.texture;
+ //  renderer.render(resultScene, resultCamera);
+ //  swapBuffers();
+
+ //  shape.position.x = Math.sin(timeElapsed) * 20.0;
+ //  shape.position.y = Math.cos(timeElapsed * Math.PI) * 20.0;
+  
+  requestAnimationFrame(renderFrame);
+  
+}
+
+function createRenderTarget () {
+
+	return new THREE.WebGLRenderTarget( window.innerWidth, window.innerHeight, {
+		minFilter: THREE.LinearFilter, 
+		magFilter: THREE.NearestFilter, 
+		format: THREE.RGBFormat
+	} );
+
+///
+
+	/*
+  let type = THREE.FloatType
+  if( renderer.extensions.get( 'OES_texture_float_linear' ) === null ) type = THREE.HalfFloatType
+
+  let renderTarget = new THREE.WebGLRenderTarget( 1, 1, {
+    type,
+    wrapS: THREE.ClampToEdgeWrapping,
+    wrapT: THREE.ClampToEdgeWrapping,
+    format: THREE.RGBAFormat,
+    minFilter: THREE.NearestFilter,
+    magFilter: THREE.NearestFilter,
+    stencilBuffer: false,
+    depthBuffer: true
+  })
+  
+  renderTarget.texture.generateMipmaps = false
+  renderTarget.setSize(width, height)
+
+  return renderTarget
+  */
+}
+
+
+</script>
+</body>
+</html>	

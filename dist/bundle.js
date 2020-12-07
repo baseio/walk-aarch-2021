@@ -42152,7 +42152,6 @@
     timeout = setTimeout(() => {
       if (playing) {
         demoIndex = ++demoIndex % DEMOS.length;
-        console.log("demoIndex:", demoIndex);
         showDrawDemo();
       }
     }, 3e3);
@@ -42622,356 +42621,85 @@
     }
   });
 
-  // node_modules/three/examples/jsm/shaders/LuminosityShader.js
-  var LuminosityShader = {
+  // lib/anim/LogoShaderPass.js
+  var LogoShader = {
     uniforms: {
-      tDiffuse: {value: null}
+      inputBuffer: {value: null},
+      overlayBuffer: {value: null}
     },
-    vertexShader: [
-      "varying vec2 vUv;",
-      "void main() {",
-      "	vUv = uv;",
-      "	gl_Position = projectionMatrix * modelViewMatrix * vec4( position, 1.0 );",
-      "}"
-    ].join("\n"),
-    fragmentShader: [
-      "#include <common>",
-      "uniform sampler2D tDiffuse;",
-      "varying vec2 vUv;",
-      "void main() {",
-      "	vec4 texel = texture2D( tDiffuse, vUv );",
-      "	float l = linearToRelativeLuminance( texel.rgb );",
-      "	gl_FragColor = vec4( l, l, l, texel.w );",
-      "}"
-    ].join("\n")
+    vertexShader: `
+		varying vec2 vUv;
+		void main() {
+			vUv = uv;
+			gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+		}
+	`,
+    fragmentShader: `
+		uniform sampler2D inputBuffer;
+		uniform sampler2D overlayBuffer;
+		varying vec2 vUv;
+		void main() {
+			vec4 texel1 = texture2D(inputBuffer, vUv);
+			vec4 texel2 = texture2D(overlayBuffer, vUv);
+			vec3 diff = abs(texel1.rgb - texel2.rgb);
+			gl_FragColor = vec4(diff, 1.0);
+		}
+	`
   };
-
-  // node_modules/three/examples/jsm/shaders/SobelOperatorShader.js
-  var SobelOperatorShader = {
-    uniforms: {
-      tDiffuse: {value: null},
-      resolution: {value: new Vector2()}
-    },
-    vertexShader: [
-      "varying vec2 vUv;",
-      "void main() {",
-      "	vUv = uv;",
-      "	gl_Position = projectionMatrix * modelViewMatrix * vec4( position, 1.0 );",
-      "}"
-    ].join("\n"),
-    fragmentShader: [
-      "uniform sampler2D tDiffuse;",
-      "uniform vec2 resolution;",
-      "varying vec2 vUv;",
-      "void main() {",
-      "	vec2 texel = vec2( 1.0 / resolution.x, 1.0 / resolution.y );",
-      "	const mat3 Gx = mat3( -1, -2, -1, 0, 0, 0, 1, 2, 1 );",
-      "	const mat3 Gy = mat3( -1, 0, 1, -2, 0, 2, -1, 0, 1 );",
-      "	float tx0y0 = texture2D( tDiffuse, vUv + texel * vec2( -1, -1 ) ).r;",
-      "	float tx0y1 = texture2D( tDiffuse, vUv + texel * vec2( -1,  0 ) ).r;",
-      "	float tx0y2 = texture2D( tDiffuse, vUv + texel * vec2( -1,  1 ) ).r;",
-      "	float tx1y0 = texture2D( tDiffuse, vUv + texel * vec2(  0, -1 ) ).r;",
-      "	float tx1y1 = texture2D( tDiffuse, vUv + texel * vec2(  0,  0 ) ).r;",
-      "	float tx1y2 = texture2D( tDiffuse, vUv + texel * vec2(  0,  1 ) ).r;",
-      "	float tx2y0 = texture2D( tDiffuse, vUv + texel * vec2(  1, -1 ) ).r;",
-      "	float tx2y1 = texture2D( tDiffuse, vUv + texel * vec2(  1,  0 ) ).r;",
-      "	float tx2y2 = texture2D( tDiffuse, vUv + texel * vec2(  1,  1 ) ).r;",
-      "	float valueGx = Gx[0][0] * tx0y0 + Gx[1][0] * tx1y0 + Gx[2][0] * tx2y0 + ",
-      "		Gx[0][1] * tx0y1 + Gx[1][1] * tx1y1 + Gx[2][1] * tx2y1 + ",
-      "		Gx[0][2] * tx0y2 + Gx[1][2] * tx1y2 + Gx[2][2] * tx2y2; ",
-      "	float valueGy = Gy[0][0] * tx0y0 + Gy[1][0] * tx1y0 + Gy[2][0] * tx2y0 + ",
-      "		Gy[0][1] * tx0y1 + Gy[1][1] * tx1y1 + Gy[2][1] * tx2y1 + ",
-      "		Gy[0][2] * tx0y2 + Gy[1][2] * tx1y2 + Gy[2][2] * tx2y2; ",
-      "	float G = sqrt( ( valueGx * valueGx ) + ( valueGy * valueGy ) );",
-      "	gl_FragColor = vec4( vec3( G ), 1 );",
-      "}"
-    ].join("\n")
-  };
-
-  // node_modules/three/examples/jsm/shaders/LuminosityHighPassShader.js
-  var LuminosityHighPassShader = {
-    shaderID: "luminosityHighPass",
-    uniforms: {
-      tDiffuse: {value: null},
-      luminosityThreshold: {value: 1},
-      smoothWidth: {value: 1},
-      defaultColor: {value: new Color(0)},
-      defaultOpacity: {value: 0}
-    },
-    vertexShader: [
-      "varying vec2 vUv;",
-      "void main() {",
-      "	vUv = uv;",
-      "	gl_Position = projectionMatrix * modelViewMatrix * vec4( position, 1.0 );",
-      "}"
-    ].join("\n"),
-    fragmentShader: [
-      "uniform sampler2D tDiffuse;",
-      "uniform vec3 defaultColor;",
-      "uniform float defaultOpacity;",
-      "uniform float luminosityThreshold;",
-      "uniform float smoothWidth;",
-      "varying vec2 vUv;",
-      "void main() {",
-      "	vec4 texel = texture2D( tDiffuse, vUv );",
-      "	vec3 luma = vec3( 0.299, 0.587, 0.114 );",
-      "	float v = dot( texel.xyz, luma );",
-      "	vec4 outputColor = vec4( defaultColor.rgb, defaultOpacity );",
-      "	float alpha = smoothstep( luminosityThreshold, luminosityThreshold + smoothWidth, v );",
-      "	gl_FragColor = mix( outputColor, texel, alpha );",
-      "}"
-    ].join("\n")
-  };
-
-  // node_modules/three/examples/jsm/postprocessing/UnrealBloomPass.js
-  var UnrealBloomPass = function(resolution, strength, radius, threshold) {
+  var LogoShaderPass = function(damp) {
     Pass.call(this);
-    this.strength = strength !== void 0 ? strength : 1;
-    this.radius = radius;
-    this.threshold = threshold;
-    this.resolution = resolution !== void 0 ? new Vector2(resolution.x, resolution.y) : new Vector2(256, 256);
-    this.clearColor = new Color(0, 0, 0);
-    var pars = {minFilter: LinearFilter, magFilter: LinearFilter, format: RGBAFormat};
-    this.renderTargetsHorizontal = [];
-    this.renderTargetsVertical = [];
-    this.nMips = 5;
-    var resx = Math.round(this.resolution.x / 2);
-    var resy = Math.round(this.resolution.y / 2);
-    this.renderTargetBright = new WebGLRenderTarget(resx, resy, pars);
-    this.renderTargetBright.texture.name = "UnrealBloomPass.bright";
-    this.renderTargetBright.texture.generateMipmaps = false;
-    for (var i = 0; i < this.nMips; i++) {
-      var renderTargetHorizonal = new WebGLRenderTarget(resx, resy, pars);
-      renderTargetHorizonal.texture.name = "UnrealBloomPass.h" + i;
-      renderTargetHorizonal.texture.generateMipmaps = false;
-      this.renderTargetsHorizontal.push(renderTargetHorizonal);
-      var renderTargetVertical = new WebGLRenderTarget(resx, resy, pars);
-      renderTargetVertical.texture.name = "UnrealBloomPass.v" + i;
-      renderTargetVertical.texture.generateMipmaps = false;
-      this.renderTargetsVertical.push(renderTargetVertical);
-      resx = Math.round(resx / 2);
-      resy = Math.round(resy / 2);
-    }
-    if (LuminosityHighPassShader === void 0)
-      console.error("UnrealBloomPass relies on LuminosityHighPassShader");
-    var highPassShader = LuminosityHighPassShader;
-    this.highPassUniforms = UniformsUtils.clone(highPassShader.uniforms);
-    this.highPassUniforms["luminosityThreshold"].value = threshold;
-    this.highPassUniforms["smoothWidth"].value = 0.01;
-    this.materialHighPassFilter = new ShaderMaterial({
-      uniforms: this.highPassUniforms,
-      vertexShader: highPassShader.vertexShader,
-      fragmentShader: highPassShader.fragmentShader,
-      defines: {}
+    this.shader = LogoShader;
+    this.uniforms = UniformsUtils.clone(this.shader.uniforms);
+    this.textureComp = new WebGLRenderTarget(window.innerWidth, window.innerHeight, {
+      minFilter: LinearFilter,
+      magFilter: NearestFilter,
+      format: RGBAFormat
     });
-    this.separableBlurMaterials = [];
-    var kernelSizeArray = [3, 5, 7, 9, 11];
-    var resx = Math.round(this.resolution.x / 2);
-    var resy = Math.round(this.resolution.y / 2);
-    for (var i = 0; i < this.nMips; i++) {
-      this.separableBlurMaterials.push(this.getSeperableBlurMaterial(kernelSizeArray[i]));
-      this.separableBlurMaterials[i].uniforms["texSize"].value = new Vector2(resx, resy);
-      resx = Math.round(resx / 2);
-      resy = Math.round(resy / 2);
-    }
-    this.compositeMaterial = this.getCompositeMaterial(this.nMips);
-    this.compositeMaterial.uniforms["blurTexture1"].value = this.renderTargetsVertical[0].texture;
-    this.compositeMaterial.uniforms["blurTexture2"].value = this.renderTargetsVertical[1].texture;
-    this.compositeMaterial.uniforms["blurTexture3"].value = this.renderTargetsVertical[2].texture;
-    this.compositeMaterial.uniforms["blurTexture4"].value = this.renderTargetsVertical[3].texture;
-    this.compositeMaterial.uniforms["blurTexture5"].value = this.renderTargetsVertical[4].texture;
-    this.compositeMaterial.uniforms["bloomStrength"].value = strength;
-    this.compositeMaterial.uniforms["bloomRadius"].value = 0.1;
-    this.compositeMaterial.needsUpdate = true;
-    var bloomFactors = [1, 0.8, 0.6, 0.4, 0.2];
-    this.compositeMaterial.uniforms["bloomFactors"].value = bloomFactors;
-    this.bloomTintColors = [
-      new Vector3(1, 1, 1),
-      new Vector3(1, 1, 1),
-      new Vector3(1, 1, 1),
-      new Vector3(1, 1, 1),
-      new Vector3(1, 1, 1)
-    ];
-    this.compositeMaterial.uniforms["bloomTintColors"].value = this.bloomTintColors;
-    if (CopyShader === void 0) {
-      console.error("UnrealBloomPass relies on CopyShader");
-    }
-    var copyShader = CopyShader;
-    this.copyUniforms = UniformsUtils.clone(copyShader.uniforms);
-    this.copyUniforms["opacity"].value = 1;
-    this.materialCopy = new ShaderMaterial({
-      uniforms: this.copyUniforms,
-      vertexShader: copyShader.vertexShader,
-      fragmentShader: copyShader.fragmentShader,
-      blending: AdditiveBlending,
-      depthTest: false,
-      depthWrite: false,
-      transparent: true
+    this.textureOld = new WebGLRenderTarget(window.innerWidth, window.innerHeight, {
+      minFilter: LinearFilter,
+      magFilter: NearestFilter,
+      format: RGBAFormat
     });
-    this.enabled = true;
-    this.needsSwap = false;
-    this.oldClearColor = new Color();
-    this.oldClearAlpha = 1;
-    this.basic = new MeshBasicMaterial();
-    this.fsQuad = new Pass.FullScreenQuad(null);
+    this.shaderMaterial = new ShaderMaterial({
+      uniforms: this.uniforms,
+      vertexShader: this.shader.vertexShader,
+      fragmentShader: this.shader.fragmentShader
+    });
+    this.compFsQuad = new Pass.FullScreenQuad(this.shaderMaterial);
+    var material = new MeshBasicMaterial();
+    this.copyFsQuad = new Pass.FullScreenQuad(material);
   };
-  UnrealBloomPass.prototype = Object.assign(Object.create(Pass.prototype), {
-    constructor: UnrealBloomPass,
-    dispose: function() {
-      for (var i = 0; i < this.renderTargetsHorizontal.length; i++) {
-        this.renderTargetsHorizontal[i].dispose();
+  LogoShaderPass.prototype = Object.assign(Object.create(Pass.prototype), {
+    constructor: LogoShaderPass,
+    render: function(renderer2, writeBuffer, readBuffer) {
+      this.uniforms["inputBuffer"].value = readBuffer.texture;
+      this.uniforms["overlayBuffer"].value = this.textureOld.texture;
+      renderer2.setRenderTarget(this.textureComp);
+      this.compFsQuad.render(renderer2);
+      this.copyFsQuad.material.map = this.textureComp.texture;
+      if (this.renderToScreen) {
+        renderer2.setRenderTarget(null);
+        this.copyFsQuad.render(renderer2);
+      } else {
+        renderer2.setRenderTarget(writeBuffer);
+        if (this.clear)
+          renderer2.clear();
+        this.copyFsQuad.render(renderer2);
       }
-      for (var i = 0; i < this.renderTargetsVertical.length; i++) {
-        this.renderTargetsVertical[i].dispose();
-      }
-      this.renderTargetBright.dispose();
+      var temp = this.textureOld;
+      this.textureOld = this.textureComp;
+      this.textureComp = temp;
     },
     setSize: function(width2, height) {
-      var resx = Math.round(width2 / 2);
-      var resy = Math.round(height / 2);
-      this.renderTargetBright.setSize(resx, resy);
-      for (var i = 0; i < this.nMips; i++) {
-        this.renderTargetsHorizontal[i].setSize(resx, resy);
-        this.renderTargetsVertical[i].setSize(resx, resy);
-        this.separableBlurMaterials[i].uniforms["texSize"].value = new Vector2(resx, resy);
-        resx = Math.round(resx / 2);
-        resy = Math.round(resy / 2);
-      }
-    },
-    render: function(renderer2, writeBuffer, readBuffer, deltaTime, maskActive) {
-      this.oldClearColor.copy(renderer2.getClearColor());
-      this.oldClearAlpha = renderer2.getClearAlpha();
-      var oldAutoClear = renderer2.autoClear;
-      renderer2.autoClear = false;
-      renderer2.setClearColor(this.clearColor, 0);
-      if (maskActive)
-        renderer2.state.buffers.stencil.setTest(false);
-      if (this.renderToScreen) {
-        this.fsQuad.material = this.basic;
-        this.basic.map = readBuffer.texture;
-        renderer2.setRenderTarget(null);
-        renderer2.clear();
-        this.fsQuad.render(renderer2);
-      }
-      this.highPassUniforms["tDiffuse"].value = readBuffer.texture;
-      this.highPassUniforms["luminosityThreshold"].value = this.threshold;
-      this.fsQuad.material = this.materialHighPassFilter;
-      renderer2.setRenderTarget(this.renderTargetBright);
-      renderer2.clear();
-      this.fsQuad.render(renderer2);
-      var inputRenderTarget = this.renderTargetBright;
-      for (var i = 0; i < this.nMips; i++) {
-        this.fsQuad.material = this.separableBlurMaterials[i];
-        this.separableBlurMaterials[i].uniforms["colorTexture"].value = inputRenderTarget.texture;
-        this.separableBlurMaterials[i].uniforms["direction"].value = UnrealBloomPass.BlurDirectionX;
-        renderer2.setRenderTarget(this.renderTargetsHorizontal[i]);
-        renderer2.clear();
-        this.fsQuad.render(renderer2);
-        this.separableBlurMaterials[i].uniforms["colorTexture"].value = this.renderTargetsHorizontal[i].texture;
-        this.separableBlurMaterials[i].uniforms["direction"].value = UnrealBloomPass.BlurDirectionY;
-        renderer2.setRenderTarget(this.renderTargetsVertical[i]);
-        renderer2.clear();
-        this.fsQuad.render(renderer2);
-        inputRenderTarget = this.renderTargetsVertical[i];
-      }
-      this.fsQuad.material = this.compositeMaterial;
-      this.compositeMaterial.uniforms["bloomStrength"].value = this.strength;
-      this.compositeMaterial.uniforms["bloomRadius"].value = this.radius;
-      this.compositeMaterial.uniforms["bloomTintColors"].value = this.bloomTintColors;
-      renderer2.setRenderTarget(this.renderTargetsHorizontal[0]);
-      renderer2.clear();
-      this.fsQuad.render(renderer2);
-      this.fsQuad.material = this.materialCopy;
-      this.copyUniforms["tDiffuse"].value = this.renderTargetsHorizontal[0].texture;
-      if (maskActive)
-        renderer2.state.buffers.stencil.setTest(true);
-      if (this.renderToScreen) {
-        renderer2.setRenderTarget(null);
-        this.fsQuad.render(renderer2);
-      } else {
-        renderer2.setRenderTarget(readBuffer);
-        this.fsQuad.render(renderer2);
-      }
-      renderer2.setClearColor(this.oldClearColor, this.oldClearAlpha);
-      renderer2.autoClear = oldAutoClear;
-    },
-    getSeperableBlurMaterial: function(kernelRadius) {
-      return new ShaderMaterial({
-        defines: {
-          KERNEL_RADIUS: kernelRadius,
-          SIGMA: kernelRadius
-        },
-        uniforms: {
-          colorTexture: {value: null},
-          texSize: {value: new Vector2(0.5, 0.5)},
-          direction: {value: new Vector2(0.5, 0.5)}
-        },
-        vertexShader: "varying vec2 vUv;\n				void main() {\n					vUv = uv;\n					gl_Position = projectionMatrix * modelViewMatrix * vec4( position, 1.0 );\n				}",
-        fragmentShader: "#include <common>				varying vec2 vUv;\n				uniform sampler2D colorTexture;\n				uniform vec2 texSize;				uniform vec2 direction;								float gaussianPdf(in float x, in float sigma) {					return 0.39894 * exp( -0.5 * x * x/( sigma * sigma))/sigma;				}				void main() {\n					vec2 invSize = 1.0 / texSize;					float fSigma = float(SIGMA);					float weightSum = gaussianPdf(0.0, fSigma);					vec3 diffuseSum = texture2D( colorTexture, vUv).rgb * weightSum;					for( int i = 1; i < KERNEL_RADIUS; i ++ ) {						float x = float(i);						float w = gaussianPdf(x, fSigma);						vec2 uvOffset = direction * invSize * x;						vec3 sample1 = texture2D( colorTexture, vUv + uvOffset).rgb;						vec3 sample2 = texture2D( colorTexture, vUv - uvOffset).rgb;						diffuseSum += (sample1 + sample2) * w;						weightSum += 2.0 * w;					}					gl_FragColor = vec4(diffuseSum/weightSum, 1.0);\n				}"
-      });
-    },
-    getCompositeMaterial: function(nMips) {
-      return new ShaderMaterial({
-        defines: {
-          NUM_MIPS: nMips
-        },
-        uniforms: {
-          blurTexture1: {value: null},
-          blurTexture2: {value: null},
-          blurTexture3: {value: null},
-          blurTexture4: {value: null},
-          blurTexture5: {value: null},
-          dirtTexture: {value: null},
-          bloomStrength: {value: 1},
-          bloomFactors: {value: null},
-          bloomTintColors: {value: null},
-          bloomRadius: {value: 0}
-        },
-        vertexShader: "varying vec2 vUv;\n				void main() {\n					vUv = uv;\n					gl_Position = projectionMatrix * modelViewMatrix * vec4( position, 1.0 );\n				}",
-        fragmentShader: "varying vec2 vUv;				uniform sampler2D blurTexture1;				uniform sampler2D blurTexture2;				uniform sampler2D blurTexture3;				uniform sampler2D blurTexture4;				uniform sampler2D blurTexture5;				uniform sampler2D dirtTexture;				uniform float bloomStrength;				uniform float bloomRadius;				uniform float bloomFactors[NUM_MIPS];				uniform vec3 bloomTintColors[NUM_MIPS];								float lerpBloomFactor(const in float factor) { 					float mirrorFactor = 1.2 - factor;					return mix(factor, mirrorFactor, bloomRadius);				}								void main() {					gl_FragColor = bloomStrength * ( lerpBloomFactor(bloomFactors[0]) * vec4(bloomTintColors[0], 1.0) * texture2D(blurTexture1, vUv) + 													 lerpBloomFactor(bloomFactors[1]) * vec4(bloomTintColors[1], 1.0) * texture2D(blurTexture2, vUv) + 													 lerpBloomFactor(bloomFactors[2]) * vec4(bloomTintColors[2], 1.0) * texture2D(blurTexture3, vUv) + 													 lerpBloomFactor(bloomFactors[3]) * vec4(bloomTintColors[3], 1.0) * texture2D(blurTexture4, vUv) + 													 lerpBloomFactor(bloomFactors[4]) * vec4(bloomTintColors[4], 1.0) * texture2D(blurTexture5, vUv) );				}"
-      });
+      this.textureComp.setSize(width2, height);
+      this.textureOld.setSize(width2, height);
     }
   });
-  UnrealBloomPass.BlurDirectionX = new Vector2(1, 0);
-  UnrealBloomPass.BlurDirectionY = new Vector2(0, 1);
-
-  // node_modules/three/examples/jsm/shaders/BrightnessContrastShader.js
-  var BrightnessContrastShader = {
-    uniforms: {
-      tDiffuse: {value: null},
-      brightness: {value: 0},
-      contrast: {value: 0}
-    },
-    vertexShader: [
-      "varying vec2 vUv;",
-      "void main() {",
-      "	vUv = uv;",
-      "	gl_Position = projectionMatrix * modelViewMatrix * vec4( position, 1.0 );",
-      "}"
-    ].join("\n"),
-    fragmentShader: [
-      "uniform sampler2D tDiffuse;",
-      "uniform float brightness;",
-      "uniform float contrast;",
-      "varying vec2 vUv;",
-      "void main() {",
-      "	gl_FragColor = texture2D( tDiffuse, vUv );",
-      "	gl_FragColor.rgb += brightness;",
-      "	if (contrast > 0.0) {",
-      "		gl_FragColor.rgb = (gl_FragColor.rgb - 0.5) / (1.0 - contrast) + 0.5;",
-      "	} else {",
-      "		gl_FragColor.rgb = (gl_FragColor.rgb - 0.5) * (1.0 + contrast) + 0.5;",
-      "	}",
-      "}"
-    ].join("\n")
-  };
 
   // lib/anim/index.js
-  var composer;
   var USERDRAW_SELECTOR = "userdraw";
   var K_TRAILS_ENABLED = true;
   var K_AUTO_ROTATION = false;
-  var K_ERASER_OPACITY = 0;
   var BACKGROUNDCOLOR_HEX = "#000000";
   var FOV = 50;
   var camera;
@@ -42980,7 +42708,7 @@
   var controls;
   var clock;
   var group;
-  var eraserMaterial;
+  var eraser;
   var generated_texture;
   var targetQuat;
   var originQuat;
@@ -43026,10 +42754,7 @@
     }
     if (currentFilter === "student") {
     }
-    eraserMaterial.opacity = 0.1;
-    setTimeout(() => {
-      eraserMaterial.opacity = K_ERASER_OPACITY;
-    }, 100);
+    eraser.upDown();
   };
   var width = window.innerWidth;
   var drawingSize = 200;
@@ -43044,6 +42769,7 @@
     const c = canvas.getContext("2d");
     c.lineWidth = 10;
     c.strokeStyle = "#000";
+    c.strokeStyle = "#eee";
     c.fillStyle = "#fff";
     const s = size / 2;
     c.beginPath();
@@ -43060,6 +42786,36 @@
       depthWrite: false,
       color: 16777215
     });
+  };
+  var ERASER_OPACITY_HIGH = 0.1;
+  var ERASER_OPACITY_LOW = 1e-3;
+  var Eraser = class {
+    constructor() {
+      const s = 100;
+      this.to = 0;
+      this.material = new SpriteMaterial({color: BACKGROUNDCOLOR_HEX, transparent: true, opacity: 0});
+      this.el = new Sprite(this.material);
+      this.el.position.set(0, 0, -2);
+      this.el.scale.set(s, s, 1);
+      console.log("Eraser", ERASER_OPACITY_HIGH, ERASER_OPACITY_LOW);
+    }
+    setTargetOpacity(opacity, time = 300) {
+      this.tween = new es6_tween.Tween({v: this.material.opacity}).to({v: opacity}, time).easing(es6_tween.Easing.Sinusoidal.InOut).on("update", (o) => {
+        this.material.opacity = o.v;
+      }).start();
+    }
+    blendUp() {
+      this.setTargetOpacity(ERASER_OPACITY_HIGH);
+    }
+    blendDown() {
+      this.setTargetOpacity(ERASER_OPACITY_LOW);
+    }
+    upDown(delay = 1e3) {
+      this.blendUp();
+      setTimeout(() => {
+        this.blendDown();
+      }, delay);
+    }
   };
   var init_scene = (selector) => {
     generated_texture = generate_texture();
@@ -43102,26 +42858,18 @@
     controls.enableDamping = true;
     controls.dampingFactor = 0.02;
     window.app.controls = controls;
-    eraserMaterial = new SpriteMaterial({color: BACKGROUNDCOLOR_HEX, transparent: true, opacity: 1});
-    var eraser = new Sprite(eraserMaterial);
-    eraser.position.set(0, 0, -2);
-    const s = 100;
-    eraser.scale.set(s, s, 1);
-    if (K_TRAILS_ENABLED) {
-      renderer.autoClearColor = false;
-      scene.add(eraser);
-    }
-    setTimeout(() => {
-      eraserMaterial.opacity = K_ERASER_OPACITY;
-    }, 100);
     controls.update();
     camera.lookAt(group.position);
     renderer.render(scene, camera);
     controls.saveState();
     targetQuat = new Quaternion().setFromEuler(group.rotation);
     originQuat = new Quaternion().setFromEuler(group.rotation);
-    composer = new EffectComposer(renderer);
-    composer.addPass(new RenderPass(scene, camera));
+    eraser = new Eraser();
+    if (K_TRAILS_ENABLED) {
+      renderer.autoClearColor = false;
+      scene.add(eraser.el);
+      eraser.blendDown();
+    }
     setTimeout(() => {
       K_AUTO_ROTATION = true;
     }, 100);
@@ -43160,19 +42908,21 @@
     currentPath = path;
     const length = path.getTotalLength();
     const inc = length / numballs;
-    eraserMaterial.opacity = 1;
-    setTimeout(() => {
-      eraserMaterial.opacity = K_ERASER_OPACITY;
-    }, 100);
+    eraser.blendUp();
     MODE = "free";
+    let delay = 0;
     for (let i = 0; i < numballs; i++) {
       const p = path.getPointAtLength(inc * i);
       const sx = -1 + 2 * (p.x / drawingSize);
       const sy = -1 + 2 * (p.y / drawingSize);
+      delay = i * 10;
       setTimeout(() => {
         balls[i].setTarget(sx, sy, 0);
-      }, 10 + 10 * i);
+      }, delay);
     }
+    setTimeout(() => {
+      eraser.blendDown();
+    }, delay + 1e3);
   };
   var onDocumentMouseDown = () => {
     console.log("onDocumentMouseDown", MODE, previousSelectedObjectId);
@@ -43213,15 +42963,13 @@
     sball.focus();
     let dist = 1 / 2 / Math.tan(Math.PI * camera.fov / 360);
     dist += 0.1;
+    dist = 0.5;
     camera.position.set(0, 0, dist);
     console.log("dist", dist);
   };
   window.toGrid = () => {
     MODE = "grid";
-    eraserMaterial.opacity = 1;
-    setTimeout(() => {
-      eraserMaterial.opacity = K_ERASER_OPACITY;
-    }, 1e3);
+    eraser.upDown();
     reset_rotations();
     camera.position.set(0, 0, 2);
     camera.fov = FOV;
@@ -43288,7 +43036,7 @@
       this.tx = x || this.x;
       this.ty = y || this.y;
       this.tz = z || 0;
-      this.tween = new es6_tween.Tween({x: this.x, y: this.y, z: this.z}).to({x, y, z}, 300).easing(es6_tween.Easing.Bounce.InOut).on("update", (o) => {
+      this.tween = new es6_tween.Tween({x: this.x, y: this.y, z: this.z}).to({x, y, z}, 300).easing(es6_tween.Easing.Sinusoidal.InOut).on("update", (o) => {
         this.x = o.x;
         this.y = o.y;
         this.z = o.z;
@@ -43343,7 +43091,7 @@
     }
     targetQuat = targetQuat.setFromEuler(group.rotation);
     group.quaternion.slerp(targetQuat, 0.01);
-    composer.render();
+    renderer.render(scene, camera);
   };
   var selectedObject = null;
   var previousSelectedObjectId = null;
