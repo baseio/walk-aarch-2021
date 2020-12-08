@@ -48,13 +48,13 @@ parse(sourcefile, {
  		let version = (new Date()).toDateString()
  		
  		let str = `
-const DATA_ORIGIN   = "${org_fn}"
-const DATA_PARSEDAT = "${version}"
-const DATA_STUDENTS = ${ JSON.stringify(data, null, '  ')}
+export const DATA_ORIGIN   = "${org_fn}"
+export const DATA_PARSEDATE = "${version}"
+export const DATA_STUDENTS = ${ JSON.stringify(data, null, '  ')}
 `
  		// console.log('data', str)
 		
-		fs.writeFileSync(`./AAA-21.js`, str)
+		fs.writeFileSync(`../src/lib/data/students.js`, str)
 
  })
 

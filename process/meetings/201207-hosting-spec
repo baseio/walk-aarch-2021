@@ -1,0 +1,58 @@
+Hej Tony,
+
+
+
+Hyggeligt at mødes i en anden sammenhæng en netværket på new neighbour!
+
+
+
+
+
+Talte med Lars, og som jeg forstod det, skal jeg bare bede dig om en server til at hoste afgangs-websitet.
+
+
+
+Det er et lille, statisk site, nok ikke mere en 10MB (men det kommer liiidt an på assets).
+
+
+
+- Debian-flavoured Linux
+- SSH adgang (min public key er vedlagt)
+
+- lets-encrypt (med auto-renew sat op)
+
+- Nginx
+
+- Nginx config: Forward all http requests to https
+
+- Nginx config: Server wwwroot below my homedir (eg /home/jorgen/www )
+
+- Nginx config: "A+ rating" on https://www.ssllabs.com/ssltest/ (howto: https://scotthelme.co.uk/a-plus-rating-qualys-ssl-test/) 
+
+- Nginx config: Domæne (Snak med Karen / Casper om hvad sitet skal hede)
+
+
+
+- Cloudflare CDN / Cache så vi kan få hurtigst mulig load på det her.
+
+
+
+
+
+Jeg tænker at I er ansvarlige for provisioning, setup, monitorering, drift og vedligehold;
+
+og jeg blot uploader sitet. OK?
+
+
+
+
+
+
+
+
+
+
+
+
+
+

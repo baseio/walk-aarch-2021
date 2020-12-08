@@ -1,5 +1,3 @@
-// console.log('index.main.js');
-
 import {injectCSS, initHashRouter} from './lib/utils.js'
 import {settings} from './settings.js'
 import * as DATA from './lib/data.js'
@@ -23,19 +21,13 @@ const studentFromHash = (hash) => {
 	return DATA.DATA_STUDENTS.filter(s => s.stub === hash)[0] || false
 }
 
-// let _animation;
-// let _sidebar;
-// let _search;
 
 const init = () => {
 
 	document.title = settings.document_title
+	document.querySelector('#logo').innerHTML = settings.title
 
 	initHashRouter( OnHashChanged )
-
-
-	// _sidebar   	= initSidebar('#sidebar-menu')
-	// _search 	= initSearch('#search')
 
 	window.app = {
 		sidebar: initSidebar('#sidebar-menu'),
@@ -46,19 +38,7 @@ const init = () => {
 
 	Animation.initAnimation('#animation')
 
-
-	document.querySelector('#overlay').innerHTML = `
-		<h1 class="title">${settings.title}</h1>
-		<div id="content"></div>
-	`
 	
-	// let html = ''
-	// DATA.DATA_STUDENTS.forEach( s => {
-	// 	html += `<a class="student" href="/#${s.stub}">${s.name}</a>`
-	// })
-	// document.querySelector('#content').innerHTML = html
 }
-
-
 
 init()

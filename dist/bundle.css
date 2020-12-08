@@ -9,20 +9,23 @@ body {
   font-family: helvetica;
   font-size: 24px;
 }
-h1.title {
-  line-height: 100%;
-  width: 10px;
-  margin-bottom: 20px;
-  color: #fff;
-}
-h1 {
-  margin: 0;
-}
 a {
   pointer-events: all;
 }
 .selectedHilite {
   background: #f00;
+}
+#logo {
+  position: absolute;
+  top: 20px;
+  left: 20px;
+  z-index: 100;
+  mix-blend-mode: difference;
+  font-size: 48px;
+  font-weight: 600;
+  line-height: 100%;
+  width: 10px;
+  color: #fff;
 }
 #animation {
   position: absolute;

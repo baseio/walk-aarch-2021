@@ -6,7 +6,7 @@ let el;
 
 export const initSearch = (selector) => {
 
-	const default_value = 'SØG'
+	const default_value = 'SEARCH'
 
 	document.querySelector(selector).innerHTML = `
 		<input id="searchfield" name="Search" type="search" value="${default_value}" />

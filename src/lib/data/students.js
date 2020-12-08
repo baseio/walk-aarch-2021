@@ -1,6 +1,6 @@
 
-export const DATA_ORIGIN = "Afgang Efteråret 2020_inkl forsinkede.xlsx"
-export const DATA_PARSEDATE = "Wed Nov 18 2020"
+export const DATA_ORIGIN   = "Afgang Efteråret 2020_inkl forsinkede.xlsx"
+export const DATA_PARSEDATE = "Tue Dec 08 2020"
 export const DATA_STUDENTS = [
   {
     "id": "4008524",

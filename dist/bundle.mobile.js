@@ -5,7 +5,7 @@
     title: `//&nbsp;PROCESSING ARCHITECTURE`
   };
 
-  // lib/data.js
+  // lib/data/students.js
   var DATA_STUDENTS = [
     {
       id: "4008524",
