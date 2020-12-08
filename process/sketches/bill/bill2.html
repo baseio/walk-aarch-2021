@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<title>three.js webgl - particles - billboards</title>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+		<style type="text/css">
+		
+			* { margin: 0; padding: 0; }
+
+		</style>
+	</head>
+	<body>
+
+
+		<script type="x-shader/x-vertex" id="vertexshader">
+
+			attribute float size;
+			attribute vec3 ca;
+
+			varying vec3 vColor;
+
+			void main() {
+
+				vColor = ca;
+
+				vec4 mvPosition = modelViewMatrix * vec4( position, 1.0 );
+
+				gl_PointSize = size * ( 300.0 / -mvPosition.z );
+
+				gl_Position = projectionMatrix * mvPosition;
+
+			}
+
+		</script>
+
+		<script type="x-shader/x-fragment" id="fragmentshader">
+
+			uniform vec3 color;
+			uniform sampler2D pointTexture;
+
+			varying vec3 vColor;
+
+			void main() {
+
+				vec4 color = vec4( color * vColor, 1.0 ) * texture2D( pointTexture, gl_PointCoord );
+
+				gl_FragColor = color;
+
+			}
+
+		</script>
+
+
+		<script type="module">
+
+			import * as THREE from './three.module.js';
+
+			import Stats from './stats.module.js';
+
+			import { GUI } from './dat.gui.module.js';
+
+			let camera, scene, renderer, stats, material;
+			let mouseX = 0, mouseY = 0;
+
+			let windowHalfX = window.innerWidth / 2;
+			let windowHalfY = window.innerHeight / 2;
+
+			init();
+			animate();
+
+			function init() {
+
+				camera = new THREE.PerspectiveCamera( 55, window.innerWidth / window.innerHeight, 2, 2000 );
+				camera.position.z = 1000;
+
+				scene = new THREE.Scene();
+				scene.fog = new THREE.FogExp2( 0x000000, 0.001 );
+
+				const texture = new THREE.TextureLoader().load( './disc.png' );
+				texture.wrapS = THREE.RepeatWrapping;
+				texture.wrapT = THREE.RepeatWrapping;
+				
+				const NUM = 10000
+				
+				const vertices = []
+				const colors = []
+				const sizes = []
+
+				const c = new THREE.Color();
+				c.set(0xffffff);
+				const R = c.r
+				const G = c.g
+				const B = c.g
+
+				for ( let i = 0; i < NUM; i ++ ) {
+
+					const x = 2000 * Math.random() - 1000;
+					const y = 2000 * Math.random() - 1000;
+					const z = 2000 * Math.random() - 1000;
+
+					vertices.push( x, y, z );
+					sizes.push( 100 )
+					colors.push(R,G,B);
+				}
+
+				let geometry = new THREE.BufferGeometry()
+				geometry.setAttribute( 'position', new THREE.BufferAttribute( new Float32Array(vertices), 3 ) );
+				geometry.setAttribute( 'size', new THREE.BufferAttribute( new Float32Array(sizes), 1 ) );
+				geometry.setAttribute( 'ca', new THREE.BufferAttribute( new Float32Array(colors), 3 ) );
+
+				const material = new THREE.ShaderMaterial( {
+					uniforms: {
+						color: { value: new THREE.Color( 0xffffff ) },
+						pointTexture: { value: texture },
+						transparent: true
+					},
+					vertexShader: document.getElementById( 'vertexshader' ).textContent,
+					fragmentShader: document.getElementById( 'fragmentshader' ).textContent,
+					transparent: true
+
+				} );
+
+
+
+
+
+
+
+
+
+
+
+
+
+				const particles = new THREE.Points( geometry, material );
+				scene.add( particles );
+
+				//
+
+				renderer = new THREE.WebGLRenderer();
+				renderer.setPixelRatio( window.devicePixelRatio );
+				renderer.setSize( window.innerWidth, window.innerHeight );
+				document.body.appendChild( renderer.domElement );
+
+				//
+
+				stats = new Stats();
+				document.body.appendChild( stats.dom );
+
+				
+
+				//
+
+				document.body.style.touchAction = 'none';
+				document.body.addEventListener( 'pointermove', onPointerMove, false );
+
+				//
+
+				window.addEventListener( 'resize', onWindowResize, false );
+
+			}
+
+			function onWindowResize() {
+
+				windowHalfX = window.innerWidth / 2;
+				windowHalfY = window.innerHeight / 2;
+
+				camera.aspect = window.innerWidth / window.innerHeight;
+				camera.updateProjectionMatrix();
+
+				renderer.setSize( window.innerWidth, window.innerHeight );
+
+			}
+
+			function onPointerMove( event ) {
+
+				if ( event.isPrimary === false ) return;
+
+				mouseX = event.clientX - windowHalfX;
+				mouseY = event.clientY - windowHalfY;
+
+			}
+
+			//
+
+			function animate() {
+
+				requestAnimationFrame( animate );
+
+				render();
+				stats.update();
+
+			}
+
+			function render() {
+
+				const time = Date.now() * 0.00005;
+
+				camera.position.x += ( mouseX - camera.position.x ) * 0.05;
+				camera.position.y += ( - mouseY - camera.position.y ) * 0.05;
+
+				camera.lookAt( scene.position );
+
+				// const h = ( 360 * ( 1.0 + time ) % 360 ) / 360;
+				// material.color.setHSL( h, 0.5, 0.5 );
+
+				renderer.render( scene, camera );
+
+			}
+
+		</script>
+	</body>
+</html>

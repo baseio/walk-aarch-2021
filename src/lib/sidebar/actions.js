@@ -56,6 +56,8 @@ const render_theme = (val) => {
 	}
 }
 
+// image placeholder;
+// https://dummyimage.com/600x400/222/fff.png&text=Nikolai+Thyregaard+Nielsen
 
 const render_text = (id) => {
 	container.innerHTML = 'render_text:'+ id

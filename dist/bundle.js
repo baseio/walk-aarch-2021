@@ -17145,7 +17145,7 @@
     }
   };
   var textureId = 0;
-  function Texture2(image = Texture2.DEFAULT_IMAGE, mapping = Texture2.DEFAULT_MAPPING, wrapS = ClampToEdgeWrapping, wrapT = ClampToEdgeWrapping, magFilter = LinearFilter, minFilter = LinearMipmapLinearFilter, format = RGBAFormat, type = UnsignedByteType, anisotropy = 1, encoding = LinearEncoding) {
+  function Texture(image = Texture.DEFAULT_IMAGE, mapping = Texture.DEFAULT_MAPPING, wrapS = ClampToEdgeWrapping, wrapT = ClampToEdgeWrapping, magFilter = LinearFilter, minFilter = LinearMipmapLinearFilter, format = RGBAFormat, type = UnsignedByteType, anisotropy = 1, encoding = LinearEncoding) {
     Object.defineProperty(this, "id", {value: textureId++});
     this.uuid = MathUtils.generateUUID();
     this.name = "";
@@ -17174,10 +17174,10 @@
     this.version = 0;
     this.onUpdate = null;
   }
-  Texture2.DEFAULT_IMAGE = void 0;
-  Texture2.DEFAULT_MAPPING = UVMapping;
-  Texture2.prototype = Object.assign(Object.create(EventDispatcher.prototype), {
-    constructor: Texture2,
+  Texture.DEFAULT_IMAGE = void 0;
+  Texture.DEFAULT_MAPPING = UVMapping;
+  Texture.prototype = Object.assign(Object.create(EventDispatcher.prototype), {
+    constructor: Texture,
     isTexture: true,
     updateMatrix: function() {
       this.matrix.setUvTransform(this.offset.x, this.offset.y, this.repeat.x, this.repeat.y, this.rotation, this.center.x, this.center.y);
@@ -17318,7 +17318,7 @@
       return uv;
     }
   });
-  Object.defineProperty(Texture2.prototype, "needsUpdate", {
+  Object.defineProperty(Texture.prototype, "needsUpdate", {
     set: function(value) {
       if (value === true)
         this.version++;
@@ -17723,7 +17723,7 @@
     this.scissorTest = false;
     this.viewport = new Vector4(0, 0, width, height);
     options = options || {};
-    this.texture = new Texture2(void 0, options.mapping, options.wrapS, options.wrapT, options.magFilter, options.minFilter, options.format, options.type, options.anisotropy, options.encoding);
+    this.texture = new Texture(void 0, options.mapping, options.wrapS, options.wrapT, options.magFilter, options.minFilter, options.format, options.type, options.anisotropy, options.encoding);
     this.texture.image = {};
     this.texture.image.width = width;
     this.texture.image.height = height;
@@ -23500,11 +23500,11 @@
     images = images !== void 0 ? images : [];
     mapping = mapping !== void 0 ? mapping : CubeReflectionMapping;
     format = format !== void 0 ? format : RGBFormat;
-    Texture2.call(this, images, mapping, wrapS, wrapT, magFilter, minFilter, format, type, anisotropy, encoding);
+    Texture.call(this, images, mapping, wrapS, wrapT, magFilter, minFilter, format, type, anisotropy, encoding);
     this.flipY = false;
     this._needsFlipEnvMap = true;
   }
-  CubeTexture.prototype = Object.create(Texture2.prototype);
+  CubeTexture.prototype = Object.create(Texture.prototype);
   CubeTexture.prototype.constructor = CubeTexture;
   CubeTexture.prototype.isCubeTexture = true;
   Object.defineProperty(CubeTexture.prototype, "images", {
@@ -23607,7 +23607,7 @@
     renderer2.setRenderTarget(currentRenderTarget);
   };
   function DataTexture(data, width, height, format, type, mapping, wrapS, wrapT, magFilter, minFilter, anisotropy, encoding) {
-    Texture2.call(this, null, mapping, wrapS, wrapT, magFilter, minFilter, format, type, anisotropy, encoding);
+    Texture.call(this, null, mapping, wrapS, wrapT, magFilter, minFilter, format, type, anisotropy, encoding);
     this.image = {data: data || null, width: width || 1, height: height || 1};
     this.magFilter = magFilter !== void 0 ? magFilter : NearestFilter;
     this.minFilter = minFilter !== void 0 ? minFilter : NearestFilter;
@@ -23616,7 +23616,7 @@
     this.unpackAlignment = 1;
     this.needsUpdate = true;
   }
-  DataTexture.prototype = Object.create(Texture2.prototype);
+  DataTexture.prototype = Object.create(Texture.prototype);
   DataTexture.prototype.constructor = DataTexture;
   DataTexture.prototype.isDataTexture = true;
   var _sphere$1 = /* @__PURE__ */ new Sphere();
@@ -25541,7 +25541,7 @@
     };
   }
   function DataTexture2DArray(data = null, width = 1, height = 1, depth = 1) {
-    Texture2.call(this, null);
+    Texture.call(this, null);
     this.image = {data, width, height, depth};
     this.magFilter = NearestFilter;
     this.minFilter = NearestFilter;
@@ -25550,11 +25550,11 @@
     this.flipY = false;
     this.needsUpdate = true;
   }
-  DataTexture2DArray.prototype = Object.create(Texture2.prototype);
+  DataTexture2DArray.prototype = Object.create(Texture.prototype);
   DataTexture2DArray.prototype.constructor = DataTexture2DArray;
   DataTexture2DArray.prototype.isDataTexture2DArray = true;
   function DataTexture3D(data = null, width = 1, height = 1, depth = 1) {
-    Texture2.call(this, null);
+    Texture.call(this, null);
     this.image = {data, width, height, depth};
     this.magFilter = NearestFilter;
     this.minFilter = NearestFilter;
@@ -25563,10 +25563,10 @@
     this.flipY = false;
     this.needsUpdate = true;
   }
-  DataTexture3D.prototype = Object.create(Texture2.prototype);
+  DataTexture3D.prototype = Object.create(Texture.prototype);
   DataTexture3D.prototype.constructor = DataTexture3D;
   DataTexture3D.prototype.isDataTexture3D = true;
-  var emptyTexture = new Texture2();
+  var emptyTexture = new Texture();
   var emptyTexture2dArray = new DataTexture2DArray();
   var emptyTexture3d = new DataTexture3D();
   var emptyCubeTexture = new CubeTexture();
@@ -31984,7 +31984,7 @@
     }
   }
   function VideoTexture(video, mapping, wrapS, wrapT, magFilter, minFilter, format, type, anisotropy) {
-    Texture2.call(this, video, mapping, wrapS, wrapT, magFilter, minFilter, format, type, anisotropy);
+    Texture.call(this, video, mapping, wrapS, wrapT, magFilter, minFilter, format, type, anisotropy);
     this.format = format !== void 0 ? format : RGBFormat;
     this.minFilter = minFilter !== void 0 ? minFilter : LinearFilter;
     this.magFilter = magFilter !== void 0 ? magFilter : LinearFilter;
@@ -31998,7 +31998,7 @@
       video.requestVideoFrameCallback(updateVideo);
     }
   }
-  VideoTexture.prototype = Object.assign(Object.create(Texture2.prototype), {
+  VideoTexture.prototype = Object.assign(Object.create(Texture.prototype), {
     constructor: VideoTexture,
     clone: function() {
       return new this.constructor(this.image).copy(this);
@@ -32013,20 +32013,20 @@
     }
   });
   function CompressedTexture(mipmaps, width, height, format, type, mapping, wrapS, wrapT, magFilter, minFilter, anisotropy, encoding) {
-    Texture2.call(this, null, mapping, wrapS, wrapT, magFilter, minFilter, format, type, anisotropy, encoding);
+    Texture.call(this, null, mapping, wrapS, wrapT, magFilter, minFilter, format, type, anisotropy, encoding);
     this.image = {width, height};
     this.mipmaps = mipmaps;
     this.flipY = false;
     this.generateMipmaps = false;
   }
-  CompressedTexture.prototype = Object.create(Texture2.prototype);
+  CompressedTexture.prototype = Object.create(Texture.prototype);
   CompressedTexture.prototype.constructor = CompressedTexture;
   CompressedTexture.prototype.isCompressedTexture = true;
   function CanvasTexture(canvas, mapping, wrapS, wrapT, magFilter, minFilter, format, type, anisotropy) {
-    Texture2.call(this, canvas, mapping, wrapS, wrapT, magFilter, minFilter, format, type, anisotropy);
+    Texture.call(this, canvas, mapping, wrapS, wrapT, magFilter, minFilter, format, type, anisotropy);
     this.needsUpdate = true;
   }
-  CanvasTexture.prototype = Object.create(Texture2.prototype);
+  CanvasTexture.prototype = Object.create(Texture.prototype);
   CanvasTexture.prototype.constructor = CanvasTexture;
   CanvasTexture.prototype.isCanvasTexture = true;
   function DepthTexture(width, height, type, mapping, wrapS, wrapT, magFilter, minFilter, anisotropy, format) {
@@ -32038,14 +32038,14 @@
       type = UnsignedShortType;
     if (type === void 0 && format === DepthStencilFormat)
       type = UnsignedInt248Type;
-    Texture2.call(this, null, mapping, wrapS, wrapT, magFilter, minFilter, format, type, anisotropy);
+    Texture.call(this, null, mapping, wrapS, wrapT, magFilter, minFilter, format, type, anisotropy);
     this.image = {width, height};
     this.magFilter = magFilter !== void 0 ? magFilter : NearestFilter;
     this.minFilter = minFilter !== void 0 ? minFilter : NearestFilter;
     this.flipY = false;
     this.generateMipmaps = false;
   }
-  DepthTexture.prototype = Object.create(Texture2.prototype);
+  DepthTexture.prototype = Object.create(Texture.prototype);
   DepthTexture.prototype.constructor = DepthTexture;
   DepthTexture.prototype.isDepthTexture = true;
   var _geometryId = 0;
@@ -35729,7 +35729,7 @@
   TextureLoader.prototype = Object.assign(Object.create(Loader.prototype), {
     constructor: TextureLoader,
     load: function(url, onLoad, onProgress, onError) {
-      const texture = new Texture2();
+      const texture = new Texture();
       const loader = new ImageLoader(this.manager);
       loader.setCrossOrigin(this.crossOrigin);
       loader.setPath(this.path);
@@ -42262,11 +42262,8 @@
     }
     setEnabled(bool) {
       this.enabled = bool;
-      new es6_tween.Tween({x: this.r}).to({x: bool ? this.enabledSize : this.disabledSize}, 1e3).easing(es6_tween.Easing.Sinusoidal.InOut).on("update", (o) => {
-        this.r = o.x;
-      }).start();
-      new es6_tween.Tween({x: this.material.opacity}).to({x: bool ? 1 : 0}, 1e3).easing(es6_tween.Easing.Sinusoidal.InOut).on("update", (o) => {
-        this.material.opacity = o.x;
+      new es6_tween.Tween({r: this.r}).to({r: bool ? this.enabledSize : this.disabledSize}, 1e3).easing(es6_tween.Easing.Sinusoidal.InOut).on("update", (o) => {
+        this.r = o.r;
       }).start();
     }
     update() {
@@ -42281,29 +42278,37 @@
   var ERASER_OPACITY_LOW = 1e-3;
   var Eraser = class {
     constructor() {
-      const s = 100;
+      const s = Math.max(window.innerWidth, window.innerHeight);
       this.to = 0;
       this.material = new SpriteMaterial({color: 0, transparent: true, opacity: 0});
       this.el = new Sprite(this.material);
-      this.el.position.set(0, 0, -2);
+      this.el.position.set(0, 0, -100);
       this.el.scale.set(s, s, 1);
     }
     setTargetOpacity(opacity, time = 300) {
+      console.log("# Eraser setTargetOpacity", opacity);
       this.tween = new es6_tween2.Tween({v: this.material.opacity}).to({v: opacity}, time).easing(es6_tween2.Easing.Sinusoidal.InOut).on("update", (o) => {
         this.material.opacity = o.v;
       }).start();
     }
-    blendUp() {
-      this.setTargetOpacity(ERASER_OPACITY_HIGH);
+    blendUp(target) {
+      this.setTargetOpacity(target || ERASER_OPACITY_HIGH);
     }
-    blendDown() {
-      this.setTargetOpacity(ERASER_OPACITY_LOW);
+    blendDown(target) {
+      this.setTargetOpacity(target || ERASER_OPACITY_LOW);
     }
     upDown(delay = 1e3) {
       this.blendUp();
       setTimeout(() => {
         this.blendDown();
       }, delay);
+    }
+    clearScreen() {
+      console.log("clearScreen");
+      this.material.transparent = false;
+      setTimeout(() => {
+        this.material.transparent = true;
+      }, 100);
     }
   };
 
@@ -42324,7 +42329,7 @@
     c.stroke();
     c.fill();
     c.closePath();
-    const map = new Texture2(canvas);
+    const map = new Texture(canvas);
     map.needsUpdate = true;
     return new SpriteMaterial({
       map,
@@ -42367,6 +42372,7 @@
     currentFilter = key;
   };
   var applyFilter = (key, val) => {
+    eraser.clearScreen();
     if (key) {
       currentFilter = key;
     }
@@ -42378,22 +42384,22 @@
       const t = THEMES_EN.filter((t2) => t2.id === val)[0];
       const includedBalls = [];
       balls.forEach((ball) => {
-        ball.tween.stop();
         if (val === false || ball.el.userData.data.theme === currentThemeFilterValue) {
           includedBalls.push(ball.i);
         }
       });
       balls.forEach((ball) => {
         if (includedBalls.includes(ball.i)) {
-          ball.setEnabled(true);
+          ball.enabled = true;
+          ball.normal();
         } else {
-          ball.setEnabled(false);
+          ball.enabled = false;
+          ball.hide();
         }
       });
     }
     if (currentFilter === "student") {
     }
-    eraser.upDown();
   };
   var init_scene = (selector) => {
     generated_texture = GenerateTexture();
@@ -42413,7 +42419,7 @@
     group = new Group();
     group.rotation.set(0, Math.PI, Math.PI);
     scene.add(group);
-    camera = new PerspectiveCamera(190, window.innerWidth / window.innerHeight, 1e-3, 10);
+    camera = new PerspectiveCamera(190, window.innerWidth / window.innerHeight, 1e-3, 1e3);
     let dist = 1 / 2 / Math.tan(Math.PI * FOV / 360);
     dist += 0.4;
     const cameraTween = new es6_tween3.Tween({z: 10, fov: camera.fov}).to({z: dist, fov: FOV}, 5e3).easing(es6_tween3.Easing.Sinusoidal.InOut).on("update", (o) => {
@@ -42446,23 +42452,18 @@
     renderer.setSize(window.innerWidth, window.innerHeight);
   };
   var onPathCreated = (path) => {
-    eraser.blendUp();
+    MODE = "free";
     const length = path.getTotalLength();
     const inc = length / numballs;
-    MODE = "free";
-    let delay = 0;
+    const positions = [];
     for (let i = 0; i < numballs; i++) {
       const p = path.getPointAtLength(inc * i);
-      const sx = -1 + 2 * (p.x / DRAWING_SIZE);
-      const sy = -1 + 2 * (p.y / DRAWING_SIZE);
-      delay = i * 10;
-      setTimeout(() => {
-        balls[i].setTarget(sx, sy, 0);
-      }, delay);
+      const x = -1 + 2 * (p.x / DRAWING_SIZE);
+      const y = -1 + 2 * (p.y / DRAWING_SIZE);
+      const z = 0;
+      positions.push({x, y, z});
     }
-    setTimeout(() => {
-      eraser.blendDown();
-    }, delay + 1e3);
+    applyPositions(positions);
   };
   var onDocumentMouseDown = () => {
     console.log("onDocumentMouseDown", MODE, previousSelectedObjectId);
@@ -42480,6 +42481,21 @@
     controls.enableDamping = false;
     controls.reset();
     group.rotation.set(0, Math.PI, Math.PI);
+  };
+  var applyPositions = (positions, blendMax = null, blendMin = null, hideTrailsFor = 1e3) => {
+    console.log("# applyPositions", blendMax, blendMin);
+    eraser.blendUp(blendMax);
+    let delay = 0;
+    for (let i = 0; i < numballs; i++) {
+      delay = i * 10;
+      setTimeout(() => {
+        balls[i].setTarget(positions[i].x, positions[i].y, positions[i].z);
+      }, delay);
+    }
+    setTimeout(() => {
+      console.log("applyPositions reveal trails");
+      eraser.blendDown(blendMin);
+    }, delay + hideTrailsFor);
   };
   window.toFree = () => {
     console.log("toFree");
@@ -42508,28 +42524,22 @@
   };
   window.toGrid = () => {
     MODE = "grid";
-    eraser.upDown();
     reset_rotations();
     camera.position.set(0, 0, 2);
     camera.fov = FOV;
     camera.updateProjectionMatrix();
-    const targetPositions = [];
     const scale = 0.1;
-    const cols = Math.floor(Math.sqrt(numballs));
+    const cols = Math.ceil(Math.sqrt(numballs));
     let y = -(cols / 2) * scale;
     let sx = -(cols / 2) * scale;
-    balls.forEach((b) => {
-      let x = sx + b.i % cols * scale;
-      if (b.i % cols === 0)
-        y += scale;
-      targetPositions.push({x, y, z: 0});
-    });
+    const positions = [];
     for (let i = 0; i < numballs; i++) {
-      const p = targetPositions[i];
-      setTimeout(() => {
-        balls[i].setTarget(p.x, p.y, p.z);
-      }, 10 + 10 * i);
+      let x = sx + i % cols * scale;
+      if (i % cols === 0)
+        y += scale;
+      positions.push({x, y, z: 0});
     }
+    applyPositions(positions, 1, null, 4e3);
   };
   var init_balls = () => {
     for (let i = 0; i < numballs; i++) {
@@ -42540,7 +42550,6 @@
   var update = () => {
     requestAnimationFrame(update);
     balls.forEach((b) => b.update());
-    controls.update();
     const speed = 0.5;
     const elapsedTime = clock.getElapsedTime();
     if (K_AUTO_ROTATION && MODE === "free") {

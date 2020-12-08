@@ -5,30 +5,23 @@ import {
 	Color,
 	Group,
 	PerspectiveCamera,
-	SpriteMaterial,
-	Sprite,
+	
+	// Sprite,
 	Raycaster,
-	Vector2,
+	// Vector2,
 	Vector3,
 	Quaternion,
-	Texture,
-	WebGLRenderTarget,
-	ShaderMaterial,
-	OrthographicCamera
+	// Texture,
+	
 } from 'three';
 
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
-
 import TWEEN, { Tween, Easing, Interpolation, autoPlay } from 'es6-tween';
-
 import {init_userdraw, showDrawDemo, hideDrawDemo} from './UserDraw.js'
-
 import {CircleSprite} from './CircleSprite.js'
 import {Eraser} from './Eraser.js'
 import {GenerateTexture} from './GenerateTexture.js'
-
 import * as DATA from '../data.js'
-
 import './styles.anim.css'
 
 // config
@@ -78,6 +71,8 @@ export const setFilter = (key) => {
 export const applyFilter = (key, val) => {
 	// we want to be able to filter on a theme AND search for a NAME at the same time
 	// console.log('#A Animation applyFilter', key, val);
+
+	eraser.clearScreen()
 	
 	if( key ){
 		currentFilter = key
@@ -94,7 +89,7 @@ export const applyFilter = (key, val) => {
 
 		const includedBalls = []
 		balls.forEach( ball => {
-			ball.tween.stop()
+			// ball.tween.stop()
 			if( val === false || ball.el.userData.data.theme === currentThemeFilterValue ){
 				includedBalls.push(ball.i)
 			}
@@ -102,9 +97,13 @@ export const applyFilter = (key, val) => {
 
 		balls.forEach( ball => {
 			if( includedBalls.includes( ball.i ) ){
-				ball.setEnabled(true)	
+				// ball.setEnabled(true)
+				ball.enabled = true
+				ball.normal()
 			}else{
-				ball.setEnabled(false)		
+				// ball.setEnabled(false)		
+				ball.enabled = false
+				ball.hide()
 			}
 		})
 	}
@@ -113,7 +112,7 @@ export const applyFilter = (key, val) => {
 
 	}
 
-	eraser.upDown()
+	// eraser.upDown()
 	
 }
 
@@ -143,7 +142,7 @@ const init_scene = (selector) => {
 	group.rotation.set( 0, Math.PI, Math.PI);
 	scene.add( group );
 
-	camera = new PerspectiveCamera( 190, window.innerWidth / window.innerHeight, 0.001, 10 );
+	camera = new PerspectiveCamera( 190, window.innerWidth / window.innerHeight, 0.001, 1000 );
 
 	let dist = 1 / 2 / Math.tan(Math.PI * FOV / 360);
 	dist += 0.4
@@ -196,28 +195,20 @@ const OnWindowResize = () => {
 
 
 const onPathCreated = (path /* svg */) => {
-	eraser.blendUp()
-
+	
+	MODE = 'free'
+	
 	const length = path.getTotalLength()
 	const inc = length / numballs
-
-	MODE = 'free'
-
-	let delay = 0
+	const positions = []
 	for(let i=0; i<numballs; i++){	
 		const p = path.getPointAtLength( inc * i)
-		const sx = -1 + (2* (p.x / DRAWING_SIZE ))
-		const sy = -1 + (2* (p.y / DRAWING_SIZE ))
-
-		delay = i * 10
-		setTimeout( () => {
-			balls[i].setTarget(sx, sy, 0)
-		}, delay)
+		const x = -1 + (2* (p.x / DRAWING_SIZE ))
+		const y = -1 + (2* (p.y / DRAWING_SIZE ))
+		const z = 0
+		positions.push({x,y,z})
 	}
-
-	setTimeout( () => {
-		eraser.blendDown()
-	}, delay + 1000)
+	applyPositions(positions)
 }
 
 
@@ -241,6 +232,24 @@ const reset_rotations = () => {
 	controls.reset()
 
 	group.rotation.set( 0, Math.PI, Math.PI);
+}
+
+const applyPositions = (positions, blendMax=null, blendMin=null, hideTrailsFor=1000) => {
+	console.log('# applyPositions', blendMax, blendMin);
+	eraser.blendUp(blendMax)
+
+	let delay = 0
+	for(let i=0; i<numballs; i++){
+		delay = i * 10
+		setTimeout( () => {
+			balls[i].setTarget(positions[i].x, positions[i].y, positions[i].z)
+		}, delay)			
+	}
+
+	setTimeout( () => {
+		console.log('applyPositions reveal trails');
+		eraser.blendDown(blendMin)
+	}, delay + hideTrailsFor)
 }
 
 window.toFree = () => {
@@ -288,7 +297,8 @@ window.toGrid = () => {
 	
 	MODE = 'grid'
 	
-	eraser.upDown()
+	// eraser.upDown(1500)
+	// eraser.blendUp()
 	
 	reset_rotations()
 
@@ -296,28 +306,23 @@ window.toGrid = () => {
 	camera.fov = FOV
 	camera.updateProjectionMatrix();
 
-	const targetPositions = []
 		
 	const scale = 0.1
-	const cols = Math.floor( Math.sqrt(numballs))
+	const cols = Math.ceil( Math.sqrt(numballs))
 
 	let y = -(cols / 2) * scale
 	let sx = -(cols / 2) * scale
+	// sx += sx/2
 
-	balls.forEach( b => {
-
-		let x = sx + ( b.i % cols ) * scale
-		if( b.i % cols === 0 ) y += scale
-		
-		targetPositions.push({x,y,z:0})
-	})
-
+	//
+	const positions = []
 	for(let i=0; i<numballs; i++){	
-		const p = targetPositions[i]
-		setTimeout( () => {
-			balls[i].setTarget(p.x, p.y, p.z)
-		}, 10 + 10 * i)
+		let x = sx + ( i % cols ) * scale
+		if( i % cols === 0 ) y += scale
+		
+		positions.push({x,y,z:0})
 	}
+	applyPositions(positions, 1, null, 4000)
 }
 
 
@@ -325,7 +330,6 @@ const init_balls = () => {
 	for(let i=0; i<numballs; i++){
 		balls.push( new CircleSprite(group, i, generated_texture))
 	}
-
 	window.app.balls = balls
 }
 
@@ -338,7 +342,7 @@ const update = () => {
 
 	balls.forEach( b => b.update() )
 
-	controls.update()
+	// controls.update()
 
 	const speed = 0.5 //2.7
 
