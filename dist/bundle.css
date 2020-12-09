@@ -154,9 +154,9 @@ a {
   top: -3px;
 }
 #sidebar .toggle:hover .label {
+  text-decoration: underline;
 }
 #sidebar .toggle:hover .circle {
-  background: #000;
 }
 #sidebar .toggle.selected .label {
 }

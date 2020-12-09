@@ -5,14 +5,9 @@ import {
 	Color,
 	Group,
 	PerspectiveCamera,
-	
-	// Sprite,
 	Raycaster,
-	// Vector2,
 	Vector3,
 	Quaternion,
-	// Texture,
-	
 } from 'three';
 
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
@@ -28,13 +23,12 @@ import './styles.anim.css'
 const DRAWING_SIZE = 200 // size of the userdraw canvas
 
 // flags
+let MODE = 'free'
 let K_AUTO_ROTATION 	= true
 
 // props
-
 let balls = []
 let numballs = DATA.DATA_STUDENTS.length || 20
-
 
 let FOV = 50 //130 //190
 
@@ -49,10 +43,9 @@ let cameraTarget
 let currentFilter;
 let currentThemeFilterValue = ''
 
-let MODE = 'free'
+// setup
 
-
-
+// main
 export const initAnimation = (selector) => {
 	autoPlay(true) // tween
 	
@@ -64,61 +57,9 @@ export const initAnimation = (selector) => {
 	return this
 }
 
-export const setFilter = (key) => {
-	currentFilter = key
-}
-
-export const applyFilter = (key, val) => {
-	// we want to be able to filter on a theme AND search for a NAME at the same time
-	// console.log('#A Animation applyFilter', key, val);
-
-	eraser.clearScreen()
-	
-	if( key ){
-		currentFilter = key
-	}
-
-
-	if( currentFilter === 'all' ){
-		return;
-	}
-
-	if( currentFilter === 'theme' ){
-		currentThemeFilterValue = val
-		const t = DATA.THEMES_EN.filter(t => t.id === val)[0]
-
-		const includedBalls = []
-		balls.forEach( ball => {
-			// ball.tween.stop()
-			if( val === false || ball.el.userData.data.theme === currentThemeFilterValue ){
-				includedBalls.push(ball.i)
-			}
-		})
-
-		balls.forEach( ball => {
-			if( includedBalls.includes( ball.i ) ){
-				// ball.setEnabled(true)
-				ball.enabled = true
-				ball.normal()
-			}else{
-				// ball.setEnabled(false)		
-				ball.enabled = false
-				ball.hide()
-			}
-		})
-	}
-
-	if( currentFilter === 'student' ){
-
-	}
-
-	// eraser.upDown()
-	
-}
-
 const init_scene = (selector) => {
 
-	generated_texture = GenerateTexture()
+	// generated_texture = GenerateTexture()
 
 	window.addEventListener( 'resize', OnWindowResize, false );
 	window.addEventListener( 'mousemove', onDocumentMouseMove, false );
@@ -143,11 +84,13 @@ const init_scene = (selector) => {
 	scene.add( group );
 
 	camera = new PerspectiveCamera( 190, window.innerWidth / window.innerHeight, 0.001, 1000 );
+	window.app.camera = camera
 
-	let dist = 1 / 2 / Math.tan(Math.PI * FOV / 360);
-	dist += 0.4
+	// let dist = 1 / 2 / Math.tan(Math.PI * FOV / 360);
+	// dist += 0.4
+	// dist = 2
 
-	const cameraTween = new Tween({z:10, fov:camera.fov}).to({z:dist, fov:FOV}, 5000)
+	const cameraTween = new Tween({z:10, fov:camera.fov}).to({z:2, fov:FOV}, 5000)
 		.easing( Easing.Sinusoidal.InOut )
 		.on('update', (o) => {
 			if( MODE != 'grid') {
@@ -172,10 +115,11 @@ const init_scene = (selector) => {
 	// controls.maxPolarAngle = Math.PI * 0.5;
 	// controls.saveState()
 	window.app.controls = controls
+	
 
 	controls.update()
 	camera.lookAt( group.position );
-	renderer.render( scene, camera );
+	// renderer.render( scene, camera );
 	controls.saveState()
 
 	targetQuat = new Quaternion().setFromEuler(group.rotation)
@@ -187,17 +131,65 @@ const init_scene = (selector) => {
 	eraser.blendDown()
 }
 
+
+const init_balls = () => {
+
+	const normalTexture = GenerateTexture('#eee', '#fff', 10)
+	const hoverTexture  = GenerateTexture('#fff', '#000', 20)
+
+	for(let i=0; i<numballs; i++){
+		balls.push( new CircleSprite(group, i, normalTexture, hoverTexture))
+	}
+	window.app.balls = balls
+}
+
+// loop
+
+const update = () => {
+	requestAnimationFrame(update)
+
+	balls.forEach( b => b.update() )
+
+	eraser.update()
+	controls.update()
+	// console.log(eraser.material.opacity);
+
+	const speed = 0.5 //2.7
+
+	const elapsedTime = clock.getElapsedTime();
+	if( K_AUTO_ROTATION && MODE === 'free'){
+		group.rotation.y = elapsedTime * speed;
+		group.rotation.x = elapsedTime * speed;
+		group.rotation.z = elapsedTime * speed;
+	
+	}
+
+	targetQuat = targetQuat.setFromEuler(group.rotation)
+	group.quaternion.slerp(targetQuat, 0.01);
+
+	if( MODE === 'grid') {
+		eraser.material.transparent = false
+	}
+
+	renderer.render( scene, camera );
+}
+
+
+// events
+
 const OnWindowResize = () => {
 	camera.aspect = window.innerWidth / window.innerHeight;
 	camera.updateProjectionMatrix();
 	renderer.setSize( window.innerWidth, window.innerHeight );
 }
 
+// called by user-draw
+// distribute balls evenly along the path
+const onPathCreated = (path /* svg */) => {	
+	// MODE = 'free'
 
-const onPathCreated = (path /* svg */) => {
-	
-	MODE = 'free'
-	
+	eraser.clearScreen()
+
 	const length = path.getTotalLength()
 	const inc = length / numballs
 	const positions = []
@@ -209,21 +201,33 @@ const onPathCreated = (path /* svg */) => {
 		positions.push({x,y,z})
 	}
 	applyPositions(positions)
+	window.toFree()
 }
 
+// set ball positions to provided array
+const applyPositions = (positions, blendMax=null, blendMin=null, hideTrailsFor=100) => {
+	// console.log('# applyPositions', 'blendMax:', blendMax, 'blendMin:', blendMin);
 
-const onDocumentMouseDown = () => {
-	console.log('onDocumentMouseDown', MODE, previousSelectedObjectId);
-	if( previousSelectedObjectId ){
-		console.log('select node', DATA.DATA_STUDENTS[previousSelectedObjectId].name );
-		window.location.href = '#'+ DATA.DATA_STUDENTS[previousSelectedObjectId].stub
+	// eraser.material.opacity = 1
+	// renderer.render( scene, camera );
+	// eraser.blendUp(blendMax)
 
-		toNode( previousSelectedObjectId )
+	eraser.clearScreen()
 
-	}else{
-	 	if( MODE != 'free') toFree()
+	let delay = 0
+	for(let i=0; i<numballs; i++){
+		delay = i * 10
+		setTimeout( () => {
+			balls[i].setTarget( positions[i] )
+		}, delay)			
 	}
+
+	setTimeout( () => {
+		console.log('applyPositions reveal trails');
+		eraser.blendDown(blendMin)
+	}, delay + hideTrailsFor)
 }
+
 
 
 const reset_rotations = () => {
@@ -234,26 +238,60 @@ const reset_rotations = () => {
 	group.rotation.set( 0, Math.PI, Math.PI);
 }
 
-const applyPositions = (positions, blendMax=null, blendMin=null, hideTrailsFor=1000) => {
-	console.log('# applyPositions', blendMax, blendMin);
-	eraser.blendUp(blendMax)
 
-	let delay = 0
-	for(let i=0; i<numballs; i++){
-		delay = i * 10
-		setTimeout( () => {
-			balls[i].setTarget(positions[i].x, positions[i].y, positions[i].z)
-		}, delay)			
-	}
 
-	setTimeout( () => {
-		console.log('applyPositions reveal trails');
-		eraser.blendDown(blendMin)
-	}, delay + hideTrailsFor)
+
+// filters
+
+
+export const setFilter = (key) => {
+	currentFilter = key
 }
 
+export const applyFilter = (key, val) => {
+	// we want to be able to filter on a theme AND search for a NAME at the same time
+	// console.log('#A Animation applyFilter', key, val);
+
+	eraser.clearScreen()
+	
+	if( key ){
+		currentFilter = key
+	}
+
+
+	if( currentFilter === 'all' ){
+		return;
+	}
+
+	if( currentFilter === 'theme' ){
+		currentThemeFilterValue = val
+		// const t = DATA.THEMES_EN.filter(t => t.id === val)[0]
+
+		console.log('applyFilter', key, val);
+
+		balls.forEach( ball => {
+			if( val === false || ball.el.userData.data.theme === currentThemeFilterValue ){
+				ball.setEnabled(true)
+			}else{
+				ball.setEnabled(false)
+			}
+		})
+	}
+
+	if( currentFilter === 'student' ){
+
+	}
+
+	// eraser.upDown()
+	
+}
+
+// layouts
+
+// release focus/grid to normal drawing mode
 window.toFree = () => {
 	console.log('toFree');
+	// todo: reset sidebar theme chooser
 	controls.enableRotate  = true;
 	controls.enableDamping = true;
 	MODE = 'free'
@@ -263,6 +301,7 @@ window.toFree = () => {
 	})
 }
 
+// brings one node to front
 window.toNode = (id) => {
 	MODE = 'node'
 	const sball = balls[id]
@@ -278,21 +317,25 @@ window.toNode = (id) => {
 		}
 	})
 	
-	// sball.material.color.set( '#fff' );
-	//sball.r = 1
+	sball.material.color.set( '#09f' );
+	sball.tr = 10 // big enough to cover screen
 	// sball.setTarget(0, 0, 0)
 	// sball.setTarget(0, 0, -0.25)
 	sball.focus()
 
+	/*
 	let dist = 1 / 2 / Math.tan(Math.PI * camera.fov / 360);
 	dist += 0.1 // fits in screen
 	
-	dist = 0.5 // fills screen
+	// dist = 0.5 // fills screen
 	camera.position.set(0,0,dist)
 
 	console.log('dist', dist);
+	*/
 }
 
+
+// arrange balls in a 2d grid
 window.toGrid = () => {
 	
 	MODE = 'grid'
@@ -300,11 +343,27 @@ window.toGrid = () => {
 	// eraser.upDown(1500)
 	// eraser.blendUp()
 	
-	reset_rotations()
+	// reset_rotations()
+	controls.enableRotate  = false;
+	controls.enableDamping = false;
+	controls.reset()
+
+	group.rotation.set( 0, Math.PI, Math.PI);
 
 	camera.position.set(0,0,2)
-	camera.fov = FOV
-	camera.updateProjectionMatrix();
+	// camera.fov = FOV
+	// camera.updateProjectionMatrix();
+
+	// const cameraTween = new Tween({z:camera.position.z, fov:camera.fov}).to({z:2, fov:FOV}, 1000)
+	// 	.easing( Easing.Sinusoidal.InOut )
+	// 	.on('update', (o) => {
+	// 		// if( MODE != 'grid') {
+	//    			camera.position.set(0,0,o.z)
+	//    			camera.fov = o.fov
+	//    			camera.updateProjectionMatrix();
+	//    		// }
+ // 		})
+ // 		.start()
 
 		
 	const scale = 0.1
@@ -312,9 +371,6 @@ window.toGrid = () => {
 
 	let y = -(cols / 2) * scale
 	let sx = -(cols / 2) * scale
-	// sx += sx/2
-
-	//
 	const positions = []
 	for(let i=0; i<numballs; i++){	
 		let x = sx + ( i % cols ) * scale
@@ -326,43 +382,26 @@ window.toGrid = () => {
 }
 
 
-const init_balls = () => {
-	for(let i=0; i<numballs; i++){
-		balls.push( new CircleSprite(group, i, generated_texture))
-	}
-	window.app.balls = balls
-}
-
-
-
-
-const update = () => {
-
-	requestAnimationFrame(update)
-
-	balls.forEach( b => b.update() )
-
-	// controls.update()
-
-	const speed = 0.5 //2.7
-
-	const elapsedTime = clock.getElapsedTime();
-	if( K_AUTO_ROTATION && MODE === 'free'){
-		group.rotation.y = elapsedTime * speed;
-		group.rotation.x = elapsedTime * speed;
-		group.rotation.z = elapsedTime * speed;
-	
-	}
-
-	targetQuat = targetQuat.setFromEuler(group.rotation)
-	group.quaternion.slerp(targetQuat, 0.01);
-
-	renderer.render( scene, camera );
-}
-
+// interactions
 
 let selectedObject = null;
+let selectedBall = null;
 let previousSelectedObjectId = null
+const raycaster = new Raycaster();
+const mouseVector = new Vector3();
+
+const onDocumentMouseDown = () => {
+	console.log('onDocumentMouseDown', MODE, previousSelectedObjectId);
+	if( previousSelectedObjectId ){
+		console.log('select node', DATA.DATA_STUDENTS[previousSelectedObjectId].name );
+		window.location.href = '#'+ DATA.DATA_STUDENTS[previousSelectedObjectId].stub
+
+		toNode( previousSelectedObjectId )
+
+	}else{
+	 	if( MODE != 'free') toFree()
+	}
+}
 
 function onDocumentMouseMove( event ) {
 	
@@ -371,9 +410,16 @@ function onDocumentMouseMove( event ) {
 
 	event.preventDefault();
 	
-	if ( selectedObject ) {		
-		selectedObject.material.color.set( '#fff' );
-		selectedObject = null;
+	// if ( selectedObject ) {		
+	// 	// selectedObject.material.color.set( '#fff' );
+	// 	selectedObject.unhover()
+	// 	selectedObject = null;
+	// }
+
+	if( selectedBall ){
+		// console.log('selectedBall:', selectedBall);
+		selectedBall.unhover()
+		selectedBall = null;	
 	}
 
 
@@ -394,7 +440,8 @@ function onDocumentMouseMove( event ) {
 					}
 				}
 				previousSelectedObjectId = data.i
-				selectedObject.material.color.set( '#f00' );
+				selectedBall = ball
+				ball.hover()
 			}
 		}
 	}else{
@@ -408,9 +455,6 @@ function onDocumentMouseMove( event ) {
 		}
 	}
 }
-
-const raycaster = new Raycaster();
-const mouseVector = new Vector3();
 
 function getIntersects( x, y ) {
 

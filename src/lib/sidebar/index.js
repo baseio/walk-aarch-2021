@@ -7,11 +7,11 @@ import './styles.sidebar.css'
 const FEATS = [
 	{id:'about', name:'ABOUT'},
 	// {id:'credits', name:'CREDITS'},
-	{id:'live', name:'LIVE'},
+	// {id:'live', name:'LIVE'},
 	// {id:'archive', name:'ARCHIVE'},
-	{id:'videos', name:'VIDEOS'},
+	// {id:'videos', name:'VIDEOS'},
 	// {id:'script', name:'SCRIPT'},
-	{id:'students', name:'STUDENTS'}
+	{id:'students', name:'GRADUATES'}
 ]
 
 const state = {}
@@ -79,7 +79,7 @@ export const initSidebar = (selector) => {
 
 			const LIST = trigger === 'filter:feat' ? 'selectedFeatIds' : 'selectedThemeIds';
 
-			console.log('--- clicked', trigger, key, state[LIST] );
+			// console.log('--- clicked', trigger, key, state[LIST] );
 			///
 
 			if( MODE === 'radio' ){
@@ -98,16 +98,16 @@ export const initSidebar = (selector) => {
 					}
 				})
 
-				console.log('--- clicked2 toggleOff?', prevSelected, key );
+				// console.log('--- clicked2 toggleOff?', prevSelected, key );
 
 				if( prevSelected != key ){
-					console.log('--- clicked3 toggle ON', key );
+					// console.log('--- clicked3 toggle ON', key );
 
 					el.classList.add('selected')
 					action(trigger, 'show', key)
 
 				}else{
-					console.log('--- clicked3 toggle OFF', key );
+					// console.log('--- clicked3 toggle OFF', key );
 
 				}
 

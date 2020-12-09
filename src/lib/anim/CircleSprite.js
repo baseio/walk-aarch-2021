@@ -1,144 +1,120 @@
-
 import {
-	
 	Sprite,
-	SpriteMaterial,
-	
+	SpriteMaterial,	
 } from 'three';
-
-import TWEEN, { Tween, Easing, Interpolation, autoPlay } from 'es6-tween';
 
 import * as DATA from '../data.js'
 
 export class CircleSprite {
-	constructor(parent, i, texture){
+	constructor(parent, i, normalTexture, hoverTexture){
 		this.i = i
 		this.enabled = true
+
 		this.enabledSize = 0.1
-		this.disabledSize = 0.01
+		// this.disabledSize = 0 //0.01
 
-		this.x = 0
-		this.y = 0
-		this.z = 0 //-0.25
-		this.r = 0 //this.enabledSize
+		this.normalTexture = normalTexture
+		this.hoverTexture  = hoverTexture
 
+		this.x  = 0
+		this.y  = 0
+		this.z  = 0
+		this.o  = 0
+		this.r  = 0
 
-		
-		this.tx = 0 //-1 + (2*Math.random())
-		this.ty = 0 //-1 + (2*Math.random())
-		this.tz = 0 //Math.random() //* drawingSize
-		this.tr = 0 //this.enabledSize
+		this.tx = 0
+		this.ty = 0
+		this.tz = 0
+		this.to = 0
+		this.tr = 0
 
-		this.material = texture.clone()		
+		this.material = new SpriteMaterial({
+		    map: normalTexture,
+		    transparent: true,
+		    depthTest: false,
+		    depthWrite: false,
+		    color: 0xffffff
+		});
 
 		this.el = new Sprite( this.material );
-		this.el.position.set( this.x, this.y, this.z );
 		this.el.userData.i = this.i
 		this.el.userData.data = DATA.DATA_STUDENTS[this.i]
-
 		
-		this.el.scale.set(this.r,this.r,1);
 		parent.add( this.el );
-
-		this.setTarget(this.tx, this.ty)
+		
 		setTimeout( () => {
-			this.r  = this.enabledSize
-			this.tr = this.enabledSize
 			this.tx = -1 + (2*Math.random())
 			this.ty = -1 + (2*Math.random())
 			this.tz = -1 + (2*Math.random())
-			this.setTarget(this.tx, this.ty, this.tz)
-		}, 1000)
+			this.to = 1
+			this.tr = this.enabledSize
+			this.setTarget({x:this.tx, y:this.ty, z:this.tz, o:this.to, r:this.tr})
+		}, 10)
 	}
-	setTarget(x, y, z){
-		// console.log(x, y);
-		this.tx = x || this.x
-		this.ty = y || this.y
-		this.tz = z || 0 //-1 + Math.random() * 2
-		// this.r = 0
 
+	setTarget( obj ){
 		
-		
-		this.tween = new Tween({x:this.x, y:this.y, z:this.z}).to({x:x, y:y, z:z}, 300)
-			// .easing(Easing.Back.InOut)
-			// .easing(Easing.Bounce.InOut)
-			// .easing( Easing.Elastic.InOut )
-			.easing( Easing.Sinusoidal.InOut )
-			.on('update', (o) => {
-	   			this.x = o.x
-	   			this.y = o.y
-	   			this.z = o.z
-	 		})
-	 		.start()
- 		
+		const {x=this.x, y=this.y, z=this.z, o, r} = obj
+
+		this.tx = x
+		this.ty = y
+		this.tz = z
+		this.to = o || this.enabled ? 1 : 0
+		this.tr = r || this.enabled ? this.enabledSize : 0
 		
 	}
 
 	normal(){
+		this.enabled = true
 		this.material.color.set( '#fff' );
-		this.tween = new Tween({r:this.r, o:this.material.opacity}).to({r:this.enabledSize, o:1}, 300)
-			.easing(Easing.Sinusoidal.InOut)
-			.on('update', (o) => {
-	   			this.material.opacity = o.o
-	   			this.r = o.r
-	 		})
-	 		.start()
+		this.setTarget({x:this.x, y:this.y, z:this.z, o:1, r:this.enabledSize})
+		this.material.map = this.normalTexture
 	}
 
 	hide(){
+		this.enabled = false
 		this.material.color.set( '#fff' );
-
-		this.tween = new Tween({r:this.r, o:this.material.opacity}).to({r:0, o:0}, 300)
-			.easing(Easing.Sinusoidal.InOut)
-			.on('update', (o) => {
-	   			this.material.opacity = o.o
-	   			this.r = o.r
-	 		})
-	 		.start()
+		this.setTarget({x:this.x, y:this.y, z:this.z, o:0, r:0})
+		this.material.map = this.normalTexture
 	}
 
 	focus(){
-
-		this.material.color.set( '#fff' );
-
-		this.tween = new Tween({x:this.x, y:this.y, r:this.r}).to({x:0, y:0, r:1}, 300)
-			// .easing(Easing.Back.InOut)
-			.easing(Easing.Sinusoidal.InOut)
-			// .easing( Easing.Elastic.InOut )
-			.on('update', (o) => {
-	   			this.x = o.x
-	   			this.y = o.y
-	   			this.r = o.r
-	 		})
-	 		.start()
+		console.warn('TODO CircleSprite.focus: calc focused-size (using 8)');
+		this.enabled = true
+		this.setTarget({x:0, y:0, z:0, o:1, r:8})
+		this.material.map = this.normalTexture
 	}
 
+	hover(){
+		this.material.map = this.hoverTexture
+		// this.material.color.set( '#09f' )
+	}
+
+	unhover(){
+		this.material.map = this.normalTexture
+		// this.material.color.set( '#fff' )
+	}
 
 	setEnabled(bool){
 		this.enabled = bool
-
-		// this.material.opacity = bool ? 1 : 0
-		// this.r = bool ? 0.1 : 0.01
-
-		new Tween({r:this.r}).to({r:bool?this.enabledSize:this.disabledSize}, 1000)
-			.easing( Easing.Sinusoidal.InOut )
-			.on('update', (o) => {
-	   			this.r = o.r
-	 		})
-	 		.start()
-
-	 	// new Tween({x:this.material.opacity}).to({x:bool?1:0}, 1000)
-			// // .easing(Easing.Exponential.InOut)
-			// .easing( Easing.Sinusoidal.InOut )
-			// .on('update', (o) => {
-	  //  			this.material.opacity = o.x
-	 	// 	})
-	 	// 	.start()
+		if( this.enabled ){
+			this.normal()
+		}else{
+			this.hide()
+		}
 	}
 
-
 	update(){
-		this.el.scale.set(this.r,this.r,1);
+		this.x = this.tx - ((this.tx - this.x) * 0.9)
+		this.y = this.ty - ((this.ty - this.y) * 0.9)
+		this.z = this.tz - ((this.tz - this.z) * 0.9)
+		this.o = this.to - ((this.to - this.o) * 0.9)
+		this.r = this.tr - ((this.tr - this.r) * 0.9)
+
+		// this.o = Math.min(0.5, this.o)
+
+		this.el.scale.set(this.r, this.r, 1);
 	    this.el.position.set(this.x, this.y, this.z)
+		this.material.opacity = this.o
 	}
 }

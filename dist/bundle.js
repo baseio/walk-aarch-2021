@@ -42113,7 +42113,7 @@
   MapControls.prototype.constructor = MapControls;
 
   // lib/anim/index.js
-  var es6_tween3 = __toModule(require_Tween_min());
+  var es6_tween2 = __toModule(require_Tween_min());
 
   // lib/anim/UserDraw.js
   var fabric = __toModule(require_fabric());
@@ -42196,106 +42196,120 @@
   };
 
   // lib/anim/CircleSprite.js
-  var es6_tween = __toModule(require_Tween_min());
   var CircleSprite = class {
-    constructor(parent, i, texture) {
+    constructor(parent, i, normalTexture, hoverTexture) {
       this.i = i;
       this.enabled = true;
       this.enabledSize = 0.1;
-      this.disabledSize = 0.01;
+      this.normalTexture = normalTexture;
+      this.hoverTexture = hoverTexture;
       this.x = 0;
       this.y = 0;
       this.z = 0;
+      this.o = 0;
       this.r = 0;
       this.tx = 0;
       this.ty = 0;
       this.tz = 0;
+      this.to = 0;
       this.tr = 0;
-      this.material = texture.clone();
+      this.material = new SpriteMaterial({
+        map: normalTexture,
+        transparent: true,
+        depthTest: false,
+        depthWrite: false,
+        color: 16777215
+      });
       this.el = new Sprite(this.material);
-      this.el.position.set(this.x, this.y, this.z);
       this.el.userData.i = this.i;
       this.el.userData.data = DATA_STUDENTS[this.i];
-      this.el.scale.set(this.r, this.r, 1);
       parent.add(this.el);
-      this.setTarget(this.tx, this.ty);
       setTimeout(() => {
-        this.r = this.enabledSize;
-        this.tr = this.enabledSize;
         this.tx = -1 + 2 * Math.random();
         this.ty = -1 + 2 * Math.random();
         this.tz = -1 + 2 * Math.random();
-        this.setTarget(this.tx, this.ty, this.tz);
-      }, 1e3);
+        this.to = 1;
+        this.tr = this.enabledSize;
+        this.setTarget({x: this.tx, y: this.ty, z: this.tz, o: this.to, r: this.tr});
+      }, 10);
     }
-    setTarget(x, y, z) {
-      this.tx = x || this.x;
-      this.ty = y || this.y;
-      this.tz = z || 0;
-      this.tween = new es6_tween.Tween({x: this.x, y: this.y, z: this.z}).to({x, y, z}, 300).easing(es6_tween.Easing.Sinusoidal.InOut).on("update", (o) => {
-        this.x = o.x;
-        this.y = o.y;
-        this.z = o.z;
-      }).start();
+    setTarget(obj) {
+      const {x = this.x, y = this.y, z = this.z, o, r} = obj;
+      this.tx = x;
+      this.ty = y;
+      this.tz = z;
+      this.to = o || this.enabled ? 1 : 0;
+      this.tr = r || this.enabled ? this.enabledSize : 0;
     }
     normal() {
+      this.enabled = true;
       this.material.color.set("#fff");
-      this.tween = new es6_tween.Tween({r: this.r, o: this.material.opacity}).to({r: this.enabledSize, o: 1}, 300).easing(es6_tween.Easing.Sinusoidal.InOut).on("update", (o) => {
-        this.material.opacity = o.o;
-        this.r = o.r;
-      }).start();
+      this.setTarget({x: this.x, y: this.y, z: this.z, o: 1, r: this.enabledSize});
+      this.material.map = this.normalTexture;
     }
     hide() {
+      this.enabled = false;
       this.material.color.set("#fff");
-      this.tween = new es6_tween.Tween({r: this.r, o: this.material.opacity}).to({r: 0, o: 0}, 300).easing(es6_tween.Easing.Sinusoidal.InOut).on("update", (o) => {
-        this.material.opacity = o.o;
-        this.r = o.r;
-      }).start();
+      this.setTarget({x: this.x, y: this.y, z: this.z, o: 0, r: 0});
+      this.material.map = this.normalTexture;
     }
     focus() {
-      this.material.color.set("#fff");
-      this.tween = new es6_tween.Tween({x: this.x, y: this.y, r: this.r}).to({x: 0, y: 0, r: 1}, 300).easing(es6_tween.Easing.Sinusoidal.InOut).on("update", (o) => {
-        this.x = o.x;
-        this.y = o.y;
-        this.r = o.r;
-      }).start();
+      console.warn("TODO CircleSprite.focus: calc focused-size (using 8)");
+      this.enabled = true;
+      this.setTarget({x: 0, y: 0, z: 0, o: 1, r: 8});
+      this.material.map = this.normalTexture;
+    }
+    hover() {
+      this.material.map = this.hoverTexture;
+    }
+    unhover() {
+      this.material.map = this.normalTexture;
     }
     setEnabled(bool) {
       this.enabled = bool;
-      new es6_tween.Tween({r: this.r}).to({r: bool ? this.enabledSize : this.disabledSize}, 1e3).easing(es6_tween.Easing.Sinusoidal.InOut).on("update", (o) => {
-        this.r = o.r;
-      }).start();
+      if (this.enabled) {
+        this.normal();
+      } else {
+        this.hide();
+      }
     }
     update() {
+      this.x = this.tx - (this.tx - this.x) * 0.9;
+      this.y = this.ty - (this.ty - this.y) * 0.9;
+      this.z = this.tz - (this.tz - this.z) * 0.9;
+      this.o = this.to - (this.to - this.o) * 0.9;
+      this.r = this.tr - (this.tr - this.r) * 0.9;
       this.el.scale.set(this.r, this.r, 1);
       this.el.position.set(this.x, this.y, this.z);
+      this.material.opacity = this.o;
     }
   };
 
   // lib/anim/Eraser.js
-  var es6_tween2 = __toModule(require_Tween_min());
+  var es6_tween = __toModule(require_Tween_min());
   var ERASER_OPACITY_HIGH = 0.1;
   var ERASER_OPACITY_LOW = 1e-3;
   var Eraser = class {
     constructor() {
-      const s = Math.max(window.innerWidth, window.innerHeight);
+      this.o = 0;
       this.to = 0;
       this.material = new SpriteMaterial({color: 0, transparent: true, opacity: 0});
       this.el = new Sprite(this.material);
       this.el.position.set(0, 0, -100);
+      const s = Math.max(window.innerWidth, window.innerHeight);
       this.el.scale.set(s, s, 1);
     }
     setTargetOpacity(opacity, time = 300) {
-      console.log("# Eraser setTargetOpacity", opacity);
-      this.tween = new es6_tween2.Tween({v: this.material.opacity}).to({v: opacity}, time).easing(es6_tween2.Easing.Sinusoidal.InOut).on("update", (o) => {
-        this.material.opacity = o.v;
-      }).start();
+      this.to = opacity;
+      console.log("# Eraser setTargetOpacity", this.to);
     }
-    blendUp(target) {
-      this.setTargetOpacity(target || ERASER_OPACITY_HIGH);
+    blendUp(target = ERASER_OPACITY_HIGH) {
+      this.to = target;
+      console.log("# Eraser blendUp", this.to);
     }
-    blendDown(target) {
-      this.setTargetOpacity(target || ERASER_OPACITY_LOW);
+    blendDown(target = ERASER_OPACITY_LOW) {
+      this.to = target || ERASER_OPACITY_LOW;
+      console.log("# Eraser blendDown", this.to);
     }
     upDown(delay = 1e3) {
       this.blendUp();
@@ -42304,44 +42318,45 @@
       }, delay);
     }
     clearScreen() {
-      console.log("clearScreen");
+      console.log("# Eraser clearScreen");
+      this.o = 1;
+      this.to = 1;
+      this.material.opacity = 1;
       this.material.transparent = false;
       setTimeout(() => {
         this.material.transparent = true;
       }, 100);
     }
+    update() {
+      this.o = this.to - (this.to - this.o) * 0.9;
+      this.material.opacity = this.o;
+    }
   };
 
   // lib/anim/GenerateTexture.js
-  var GenerateTexture = () => {
+  var GenerateTexture = (stroke = "#eee", fill = "#fff", lineWidth = 10) => {
     const canvas = document.createElement("canvas");
     const size = 512;
     canvas.width = size;
     canvas.height = size;
     const c = canvas.getContext("2d");
-    c.lineWidth = 10;
-    c.strokeStyle = "#000";
-    c.strokeStyle = "#eee";
-    c.fillStyle = "#fff";
+    c.lineWidth = lineWidth;
+    c.strokeStyle = stroke;
+    c.fillStyle = fill;
     const s = size / 2;
     c.beginPath();
     c.arc(s, s, s - c.lineWidth, 0, Math.PI * 2, false);
-    c.stroke();
     c.fill();
+    c.stroke();
     c.closePath();
     const map = new Texture(canvas);
     map.needsUpdate = true;
-    return new SpriteMaterial({
-      map,
-      transparent: true,
-      depthTest: false,
-      depthWrite: false,
-      color: 16777215
-    });
+    return map;
   };
 
   // lib/anim/index.js
   var DRAWING_SIZE = 200;
+  var MODE = "free";
   var K_AUTO_ROTATION = true;
   var balls = [];
   var numballs = DATA_STUDENTS.length || 20;
@@ -42353,56 +42368,20 @@
   var clock;
   var group;
   var eraser;
-  var generated_texture;
   var targetQuat;
   var originQuat;
   var cameraTarget;
   var currentFilter;
   var currentThemeFilterValue = "";
-  var MODE = "free";
   var initAnimation = (selector) => {
-    es6_tween3.autoPlay(true);
+    es6_tween2.autoPlay(true);
     init_userdraw("#userdraw", DRAWING_SIZE, onPathCreated);
     init_scene(selector);
     init_balls();
     update();
     return void 0;
   };
-  var setFilter = (key) => {
-    currentFilter = key;
-  };
-  var applyFilter = (key, val) => {
-    eraser.clearScreen();
-    if (key) {
-      currentFilter = key;
-    }
-    if (currentFilter === "all") {
-      return;
-    }
-    if (currentFilter === "theme") {
-      currentThemeFilterValue = val;
-      const t = THEMES_EN.filter((t2) => t2.id === val)[0];
-      const includedBalls = [];
-      balls.forEach((ball) => {
-        if (val === false || ball.el.userData.data.theme === currentThemeFilterValue) {
-          includedBalls.push(ball.i);
-        }
-      });
-      balls.forEach((ball) => {
-        if (includedBalls.includes(ball.i)) {
-          ball.enabled = true;
-          ball.normal();
-        } else {
-          ball.enabled = false;
-          ball.hide();
-        }
-      });
-    }
-    if (currentFilter === "student") {
-    }
-  };
   var init_scene = (selector) => {
-    generated_texture = GenerateTexture();
     window.addEventListener("resize", OnWindowResize, false);
     window.addEventListener("mousemove", onDocumentMouseMove, false);
     document.querySelector(selector).addEventListener("click", onDocumentMouseDown);
@@ -42420,9 +42399,8 @@
     group.rotation.set(0, Math.PI, Math.PI);
     scene.add(group);
     camera = new PerspectiveCamera(190, window.innerWidth / window.innerHeight, 1e-3, 1e3);
-    let dist = 1 / 2 / Math.tan(Math.PI * FOV / 360);
-    dist += 0.4;
-    const cameraTween = new es6_tween3.Tween({z: 10, fov: camera.fov}).to({z: dist, fov: FOV}, 5e3).easing(es6_tween3.Easing.Sinusoidal.InOut).on("update", (o) => {
+    window.app.camera = camera;
+    const cameraTween = new es6_tween2.Tween({z: 10, fov: camera.fov}).to({z: 2, fov: FOV}, 5e3).easing(es6_tween2.Easing.Sinusoidal.InOut).on("update", (o) => {
       if (MODE != "grid") {
         camera.position.set(0, 0, o.z);
         camera.fov = o.fov;
@@ -42438,7 +42416,6 @@
     window.app.controls = controls;
     controls.update();
     camera.lookAt(group.position);
-    renderer.render(scene, camera);
     controls.saveState();
     targetQuat = new Quaternion().setFromEuler(group.rotation);
     originQuat = new Quaternion().setFromEuler(group.rotation);
@@ -42446,13 +42423,40 @@
     scene.add(eraser.el);
     eraser.blendDown();
   };
+  var init_balls = () => {
+    const normalTexture = GenerateTexture("#eee", "#fff", 10);
+    const hoverTexture = GenerateTexture("#fff", "#000", 20);
+    for (let i = 0; i < numballs; i++) {
+      balls.push(new CircleSprite(group, i, normalTexture, hoverTexture));
+    }
+    window.app.balls = balls;
+  };
+  var update = () => {
+    requestAnimationFrame(update);
+    balls.forEach((b) => b.update());
+    eraser.update();
+    controls.update();
+    const speed = 0.5;
+    const elapsedTime = clock.getElapsedTime();
+    if (K_AUTO_ROTATION && MODE === "free") {
+      group.rotation.y = elapsedTime * speed;
+      group.rotation.x = elapsedTime * speed;
+      group.rotation.z = elapsedTime * speed;
+    }
+    targetQuat = targetQuat.setFromEuler(group.rotation);
+    group.quaternion.slerp(targetQuat, 0.01);
+    if (MODE === "grid") {
+      eraser.material.transparent = false;
+    }
+    renderer.render(scene, camera);
+  };
   var OnWindowResize = () => {
     camera.aspect = window.innerWidth / window.innerHeight;
     camera.updateProjectionMatrix();
     renderer.setSize(window.innerWidth, window.innerHeight);
   };
   var onPathCreated = (path) => {
-    MODE = "free";
+    eraser.clearScreen();
     const length = path.getTotalLength();
     const inc = length / numballs;
     const positions = [];
@@ -42464,38 +42468,46 @@
       positions.push({x, y, z});
     }
     applyPositions(positions);
+    window.toFree();
   };
-  var onDocumentMouseDown = () => {
-    console.log("onDocumentMouseDown", MODE, previousSelectedObjectId);
-    if (previousSelectedObjectId) {
-      console.log("select node", DATA_STUDENTS[previousSelectedObjectId].name);
-      window.location.href = "#" + DATA_STUDENTS[previousSelectedObjectId].stub;
-      toNode(previousSelectedObjectId);
-    } else {
-      if (MODE != "free")
-        toFree();
-    }
-  };
-  var reset_rotations = () => {
-    controls.enableRotate = false;
-    controls.enableDamping = false;
-    controls.reset();
-    group.rotation.set(0, Math.PI, Math.PI);
-  };
-  var applyPositions = (positions, blendMax = null, blendMin = null, hideTrailsFor = 1e3) => {
-    console.log("# applyPositions", blendMax, blendMin);
-    eraser.blendUp(blendMax);
+  var applyPositions = (positions, blendMax = null, blendMin = null, hideTrailsFor = 100) => {
+    eraser.clearScreen();
     let delay = 0;
     for (let i = 0; i < numballs; i++) {
       delay = i * 10;
       setTimeout(() => {
-        balls[i].setTarget(positions[i].x, positions[i].y, positions[i].z);
+        balls[i].setTarget(positions[i]);
       }, delay);
     }
     setTimeout(() => {
       console.log("applyPositions reveal trails");
       eraser.blendDown(blendMin);
     }, delay + hideTrailsFor);
+  };
+  var setFilter = (key) => {
+    currentFilter = key;
+  };
+  var applyFilter = (key, val) => {
+    eraser.clearScreen();
+    if (key) {
+      currentFilter = key;
+    }
+    if (currentFilter === "all") {
+      return;
+    }
+    if (currentFilter === "theme") {
+      currentThemeFilterValue = val;
+      console.log("applyFilter", key, val);
+      balls.forEach((ball) => {
+        if (val === false || ball.el.userData.data.theme === currentThemeFilterValue) {
+          ball.setEnabled(true);
+        } else {
+          ball.setEnabled(false);
+        }
+      });
+    }
+    if (currentFilter === "student") {
+    }
   };
   window.toFree = () => {
     console.log("toFree");
@@ -42515,19 +42527,17 @@
         ball.hide();
       }
     });
+    sball.material.color.set("#09f");
+    sball.tr = 10;
     sball.focus();
-    let dist = 1 / 2 / Math.tan(Math.PI * camera.fov / 360);
-    dist += 0.1;
-    dist = 0.5;
-    camera.position.set(0, 0, dist);
-    console.log("dist", dist);
   };
   window.toGrid = () => {
     MODE = "grid";
-    reset_rotations();
+    controls.enableRotate = false;
+    controls.enableDamping = false;
+    controls.reset();
+    group.rotation.set(0, Math.PI, Math.PI);
     camera.position.set(0, 0, 2);
-    camera.fov = FOV;
-    camera.updateProjectionMatrix();
     const scale = 0.1;
     const cols = Math.ceil(Math.sqrt(numballs));
     let y = -(cols / 2) * scale;
@@ -42541,37 +42551,31 @@
     }
     applyPositions(positions, 1, null, 4e3);
   };
-  var init_balls = () => {
-    for (let i = 0; i < numballs; i++) {
-      balls.push(new CircleSprite(group, i, generated_texture));
-    }
-    window.app.balls = balls;
-  };
-  var update = () => {
-    requestAnimationFrame(update);
-    balls.forEach((b) => b.update());
-    const speed = 0.5;
-    const elapsedTime = clock.getElapsedTime();
-    if (K_AUTO_ROTATION && MODE === "free") {
-      group.rotation.y = elapsedTime * speed;
-      group.rotation.x = elapsedTime * speed;
-      group.rotation.z = elapsedTime * speed;
-    }
-    targetQuat = targetQuat.setFromEuler(group.rotation);
-    group.quaternion.slerp(targetQuat, 0.01);
-    renderer.render(scene, camera);
-  };
   var selectedObject = null;
+  var selectedBall = null;
   var previousSelectedObjectId = null;
+  var raycaster = new Raycaster();
+  var mouseVector = new Vector3();
+  var onDocumentMouseDown = () => {
+    console.log("onDocumentMouseDown", MODE, previousSelectedObjectId);
+    if (previousSelectedObjectId) {
+      console.log("select node", DATA_STUDENTS[previousSelectedObjectId].name);
+      window.location.href = "#" + DATA_STUDENTS[previousSelectedObjectId].stub;
+      toNode(previousSelectedObjectId);
+    } else {
+      if (MODE != "free")
+        toFree();
+    }
+  };
   function onDocumentMouseMove(event) {
     if (MODE != "grid")
       return;
     if (event.target.id != renderer.domElement.id)
       return;
     event.preventDefault();
-    if (selectedObject) {
-      selectedObject.material.color.set("#fff");
-      selectedObject = null;
+    if (selectedBall) {
+      selectedBall.unhover();
+      selectedBall = null;
     }
     const intersects2 = getIntersects(event.layerX, event.layerY);
     if (intersects2.length > 0) {
@@ -42589,7 +42593,8 @@
             }
           }
           previousSelectedObjectId = data.i;
-          selectedObject.material.color.set("#f00");
+          selectedBall = ball;
+          ball.hover();
         }
       }
     } else {
@@ -42603,8 +42608,6 @@
       }
     }
   }
-  var raycaster = new Raycaster();
-  var mouseVector = new Vector3();
   function getIntersects(x, y) {
     x = x / window.innerWidth * 2 - 1;
     y = -(y / window.innerHeight) * 2 + 1;
@@ -42709,9 +42712,7 @@
   // lib/sidebar/index.js
   var FEATS = [
     {id: "about", name: "ABOUT"},
-    {id: "live", name: "LIVE"},
-    {id: "videos", name: "VIDEOS"},
-    {id: "students", name: "STUDENTS"}
+    {id: "students", name: "GRADUATES"}
   ];
   var state = {};
   var themes2 = THEMES_EN;
@@ -42758,7 +42759,6 @@
         const key = el3.getAttribute("data-key");
         const MODE2 = "radio";
         const LIST = trigger === "filter:feat" ? "selectedFeatIds" : "selectedThemeIds";
-        console.log("--- clicked", trigger, key, state[LIST]);
         if (MODE2 === "radio") {
           state[LIST] = [];
           const elms = document.querySelectorAll(`#sidebar [data-trigger="${trigger}"]`);
@@ -42770,13 +42770,10 @@
               action(trigger, "hide", elm.getAttribute("data-key"));
             }
           });
-          console.log("--- clicked2 toggleOff?", prevSelected, key);
           if (prevSelected != key) {
-            console.log("--- clicked3 toggle ON", key);
             el3.classList.add("selected");
             action(trigger, "show", key);
           } else {
-            console.log("--- clicked3 toggle OFF", key);
           }
           setTimeout(() => {
             const any = document.querySelectorAll('#sidebar [data-trigger="filter:theme"].selected');
