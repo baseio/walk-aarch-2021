@@ -5,7 +5,8 @@
   "scripts": {
     "bundle-main": "esbuild index.main.js --bundle --minify --outfile=../dist/bundle.js --banner='/* Hi! Drop js@dearstudio.dk an email if you want access to the un-minified source (CC BY-NC-SA 4.0) */'",
     "bundle-mobile": "esbuild index.mobile.js --bundle --minify --outfile=../dist/bundle.mobile.js --banner='/* Hi! Drop js@dearstudio.dk an email if you want access to the un-minified source (CC BY-NC-SA 4.0) */'",
-    "bundle": "npm run bundle-main && npm run bundle-mobile",
+    "terser-main": "terser ../dist/bundle.js -o ../dist/bundle.min.js",
+    "bundle": "npm run bundle-main && npm run bundle-mobile && npm run terser-main",
     "bundle-main-dev": "esbuild index.main.js --bundle --outfile=../dist/bundle.js",
     "bundle-mobile-dev": "esbuild index.mobile.js --bundle --outfile=../dist/bundle.mobile.js",
     "bundle-dev": "npm run bundle-main-dev && npm run bundle-mobile-dev",
@@ -18,6 +19,7 @@
     "es6-tween": "^5.5.11",
     "esbuild": "^0.8.15",
     "fabric": "^4.2.0",
+    "terser": "^5.5.1",
     "three": "^0.123.0"
   }
 }

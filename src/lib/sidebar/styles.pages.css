@@ -1,0 +1,18 @@
+div.studentinfo {
+	position: relative;
+    top: 0;
+    color: #000;
+    width: 200px;
+}
+
+div.projectimage {
+	position: absolute;
+	top: 100px;
+	border: 1px solid #F00;
+	left: 220px;
+}
+
+div.projectimage > img {
+	width: 100%;
+	display: block;
+}
