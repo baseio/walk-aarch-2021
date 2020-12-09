@@ -59,9 +59,8 @@ export class CircleSprite {
 		this.tx = x
 		this.ty = y
 		this.tz = z
-		this.to = o || this.enabled ? 1 : 0
-		this.tr = r || this.enabled ? this.enabledSize : 0
-		
+		this.to = o ? o : this.enabled ? 1 : 0
+		this.tr = r ? r : this.enabled ? this.enabledSize : 0
 	}
 
 	normal(){
@@ -79,7 +78,7 @@ export class CircleSprite {
 	}
 
 	focus(){
-		console.warn('TODO CircleSprite.focus: calc focused-size (using 8)');
+		console.warn('TODO CircleSprite.focus: calc focused-size');
 		this.enabled = true
 		this.setTarget({x:0, y:0, z:0, o:1, r:8})
 		this.material.map = this.normalTexture

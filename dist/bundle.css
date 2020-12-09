@@ -17,8 +17,8 @@ a {
 }
 #logo {
   position: absolute;
-  top: 20px;
-  left: 20px;
+  top: 35px;
+  left: 30px;
   z-index: 100;
   mix-blend-mode: difference;
   font-size: 48px;
@@ -61,6 +61,13 @@ a {
   display: none;
   overflow: hidden;
   box-shadow: inset 0 0 1px 0px black;
+}
+#content {
+  top: 130px;
+  position: relative;
+  width: 100%;
+  height: 100%;
+  z-index: 10;
 }
 
 /* lib/anim/styles.anim.css */
@@ -127,6 +134,24 @@ a {
 .highlight {
   background: #000;
   color: #fff;
+}
+
+/* lib/sidebar/styles.pages.css */
+div.studentinfo {
+  position: relative;
+  top: 0;
+  color: #000;
+  width: 200px;
+}
+div.projectimage {
+  position: absolute;
+  top: 100px;
+  border: 1px solid #F00;
+  left: 220px;
+}
+div.projectimage > img {
+  width: 100%;
+  display: block;
 }
 
 /* lib/sidebar/styles.sidebar.css */

@@ -42238,8 +42238,8 @@
       this.tx = x;
       this.ty = y;
       this.tz = z;
-      this.to = o || this.enabled ? 1 : 0;
-      this.tr = r || this.enabled ? this.enabledSize : 0;
+      this.to = o ? o : this.enabled ? 1 : 0;
+      this.tr = r ? r : this.enabled ? this.enabledSize : 0;
     }
     normal() {
       this.enabled = true;
@@ -42254,7 +42254,7 @@
       this.material.map = this.normalTexture;
     }
     focus() {
-      console.warn("TODO CircleSprite.focus: calc focused-size (using 8)");
+      console.warn("TODO CircleSprite.focus: calc focused-size");
       this.enabled = true;
       this.setTarget({x: 0, y: 0, z: 0, o: 1, r: 8});
       this.material.map = this.normalTexture;
@@ -42293,7 +42293,7 @@
     constructor() {
       this.o = 0;
       this.to = 0;
-      this.material = new SpriteMaterial({color: 0, transparent: true, opacity: 0});
+      this.material = new SpriteMaterial({color: 0, transparent: true, opacity: 1});
       this.el = new Sprite(this.material);
       this.el.position.set(0, 0, -100);
       const s = Math.max(window.innerWidth, window.innerHeight);
@@ -42511,6 +42511,7 @@
   };
   window.toFree = () => {
     console.log("toFree");
+    window.app.actions.hide_render_student();
     controls.enableRotate = true;
     controls.enableDamping = true;
     MODE = "free";
@@ -42518,21 +42519,22 @@
       ball.normal();
     });
   };
+  var focusedNode = null;
   window.toNode = (id) => {
     MODE = "node";
-    const sball = balls[id];
-    console.log("toNode", toNode, sball);
+    focusedNode = balls[id];
+    console.log("toNode", toNode, focusedNode);
     balls.forEach((ball) => {
-      if (ball.i != sball.i) {
+      if (ball.i != focusedNode.i) {
         ball.hide();
       }
     });
-    sball.material.color.set("#09f");
-    sball.tr = 10;
-    sball.focus();
+    focusedNode.focus();
+    window.app.actions.render_student(focusedNode.el.userData.data.stub);
   };
   window.toGrid = () => {
     MODE = "grid";
+    window.app.actions.hide_render_student();
     controls.enableRotate = false;
     controls.enableDamping = false;
     controls.reset();
@@ -42559,9 +42561,20 @@
   var onDocumentMouseDown = () => {
     console.log("onDocumentMouseDown", MODE, previousSelectedObjectId);
     if (previousSelectedObjectId) {
-      console.log("select node", DATA_STUDENTS[previousSelectedObjectId].name);
-      window.location.href = "#" + DATA_STUDENTS[previousSelectedObjectId].stub;
-      toNode(previousSelectedObjectId);
+      if (MODE === "node") {
+        const b = balls[previousSelectedObjectId];
+        console.log("un-focus node", focusedNode);
+        if (focusedNode) {
+          focusedNode.normal();
+          focusedNode = null;
+        }
+        applyFilter(currentFilter, currentThemeFilterValue);
+        window.toGrid();
+      } else {
+        console.log("focus node", DATA_STUDENTS[previousSelectedObjectId].name);
+        window.location.href = "#" + DATA_STUDENTS[previousSelectedObjectId].stub;
+        window.toNode(previousSelectedObjectId);
+      }
     } else {
       if (MODE != "free")
         toFree();
@@ -42586,7 +42599,6 @@
         const ball = balls[data.i];
         if (ball.enabled) {
           if (previousSelectedObjectId != data.i) {
-            console.log(data.name);
             window.app.actions.setStudentSelected(data.data);
             if (document.querySelectorAll('#sidebar [data-key="students"].selected').length) {
               window.app.actions.render_students("");
@@ -42620,6 +42632,8 @@
   var actions_exports = {};
   __export(actions_exports, {
     action: () => action,
+    hide_render_student: () => hide_render_student,
+    render_student: () => render_student,
     render_students: () => render_students,
     setStudentSelected: () => setStudentSelected
   });
@@ -42655,6 +42669,7 @@
     }
   };
   var setStudentSelected = (s) => {
+    console.log("setStudentSelected", s);
     studentSelected = s ? s : null;
   };
   var render_theme = (val) => {
@@ -42682,6 +42697,48 @@
   var render_videos = (id) => {
     container.classList = id;
     container.innerHTML = "render_videos";
+  };
+  var render_student = (stub) => {
+    const s = DATA_STUDENTS.filter((student) => student.stub === stub)[0];
+    console.log("render_student", stub, s);
+    content.innerHTML = `
+
+		<div class="studentinfo">
+
+			<div>
+				<span class="name">${s.name}</span>
+				
+				<br />
+				<span class="theme">GRADUATION PROJECT:<br />
+				${s.title}
+				</span>
+
+				<br />
+				<span class="studio">PROGRAMME:<br />
+				${s.studio} [todo: map studio-id to studio-data]
+				</span>
+
+				<br />
+				<span class="studio">CONTACT:<br />
+				${s.studio}
+				</span>
+			</div>
+
+			<div>
+				<span class="project-link">SE PROJECT<br />
+				http://wp/${s.stb}
+				</span>
+			</div>
+		</div>
+
+		<div class="projectimage">
+			<img src="images/${s.id}-${s.stub}.png" />
+		</div>
+
+	`;
+  };
+  var hide_render_student = () => {
+    content.innerHTML = "";
   };
   var render_students = (id) => {
     console.log("render_students", id, studentSelected);

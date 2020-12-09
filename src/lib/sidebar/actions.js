@@ -40,10 +40,14 @@ export const action = (trigger, action, id, args=[]) => {
 }
 
 export const setStudentSelected = (s) => {
+	console.log('setStudentSelected', s);
 	studentSelected = s ? s : null
 }
 
 ///
+
+
+
 
 const render_theme = (val) => {
 	themeFilter = val
@@ -76,6 +80,53 @@ const render_videos = (id) => {
 	container.classList = id
 	container.innerHTML = 'render_videos'
 }
+
+// called from clicking a ball
+export const render_student = (stub) => {
+
+	const s = DATA.DATA_STUDENTS.filter( student => student.stub === stub)[0]
+	console.log('render_student', stub, s);
+
+	content.innerHTML = `
+
+		<div class="studentinfo">
+
+			<div>
+				<span class="name">${s.name}</span>
+				
+				<br />
+				<span class="theme">GRADUATION PROJECT:<br />
+				${s.title}
+				</span>
+
+				<br />
+				<span class="studio">PROGRAMME:<br />
+				${s.studio} [todo: map studio-id to studio-data]
+				</span>
+
+				<br />
+				<span class="studio">CONTACT:<br />
+				${s.studio}
+				</span>
+			</div>
+
+			<div>
+				<span class="project-link">SE PROJECT<br />
+				http://wp/${s.stb}
+				</span>
+			</div>
+		</div>
+
+		<div class="projectimage">
+			<img src="images/${s.id}-${s.stub}.png" />
+		</div>
+
+	`
+}
+export const hide_render_student = () => {
+	content.innerHTML = ''
+}
+
 
 export const render_students = (id) => {
 	console.log('render_students', id, studentSelected);

@@ -292,6 +292,9 @@ export const applyFilter = (key, val) => {
 window.toFree = () => {
 	console.log('toFree');
 	// todo: reset sidebar theme chooser
+
+	window.app.actions.hide_render_student()
+
 	controls.enableRotate  = true;
 	controls.enableDamping = true;
 	MODE = 'free'
@@ -301,27 +304,34 @@ window.toFree = () => {
 	})
 }
 
+
+let focusedNode = null
+
 // brings one node to front
 window.toNode = (id) => {
 	MODE = 'node'
-	const sball = balls[id]
+	focusedNode = balls[id]
 
-	console.log('toNode', toNode, sball);
+	console.log('toNode', toNode, focusedNode);
 
 	//reset_rotations()
 
 	balls.forEach( ball => {
-		if( ball.i != sball.i ){
+		if( ball.i != focusedNode.i ){
 			// ball.r = ball.disabledSize
 			ball.hide()
 		}
 	})
 	
-	sball.material.color.set( '#09f' );
-	sball.tr = 10 // big enough to cover screen
-	// sball.setTarget(0, 0, 0)
-	// sball.setTarget(0, 0, -0.25)
-	sball.focus()
+	// focusedNode.material.color.set( '#09f' );
+	// focusedNode.tr = 10 // big enough to cover screen
+	// focusedNode.setTarget(0, 0, 0)
+	// focusedNode.setTarget(0, 0, -0.25)
+	focusedNode.focus()
+	
+	window.app.actions.render_student(focusedNode.el.userData.data.stub)
+
+
 
 	/*
 	let dist = 1 / 2 / Math.tan(Math.PI * camera.fov / 360);
@@ -339,6 +349,8 @@ window.toNode = (id) => {
 window.toGrid = () => {
 	
 	MODE = 'grid'
+
+	window.app.actions.hide_render_student()
 	
 	// eraser.upDown(1500)
 	// eraser.blendUp()
@@ -393,10 +405,25 @@ const mouseVector = new Vector3();
 const onDocumentMouseDown = () => {
 	console.log('onDocumentMouseDown', MODE, previousSelectedObjectId);
 	if( previousSelectedObjectId ){
-		console.log('select node', DATA.DATA_STUDENTS[previousSelectedObjectId].name );
-		window.location.href = '#'+ DATA.DATA_STUDENTS[previousSelectedObjectId].stub
 
-		toNode( previousSelectedObjectId )
+		if( MODE === 'node' ){
+			// collapse
+			const b = balls[ previousSelectedObjectId ]
+			console.log('un-focus node',  focusedNode );
+			if( focusedNode ){
+				focusedNode.normal()
+				focusedNode = null
+			}
+			applyFilter(currentFilter, currentThemeFilterValue)
+			window.toGrid()			
+
+		}else{
+			// focus
+			console.log('focus node', DATA.DATA_STUDENTS[previousSelectedObjectId].name );
+			window.location.href = '#'+ DATA.DATA_STUDENTS[previousSelectedObjectId].stub
+
+			window.toNode( previousSelectedObjectId )
+		}
 
 	}else{
 	 	if( MODE != 'free') toFree()
@@ -433,7 +460,6 @@ function onDocumentMouseMove( event ) {
 			const ball = balls[ data.i ]
 			if( ball.enabled ){
 				if( previousSelectedObjectId != data.i ){
-					console.log(data.name);
 					window.app.actions.setStudentSelected( data.data )
 					if( document.querySelectorAll('#sidebar [data-key="students"].selected').length ){
 						window.app.actions.render_students('')

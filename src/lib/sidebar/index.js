@@ -3,6 +3,7 @@ import * as DATA from '../data.js'
 import {action} from './actions.js'
 
 import './styles.sidebar.css'
+import './styles.pages.css'
 
 const FEATS = [
 	{id:'about', name:'ABOUT'},
