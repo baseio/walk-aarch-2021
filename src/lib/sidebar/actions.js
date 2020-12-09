@@ -112,13 +112,13 @@ export const render_student = (stub) => {
 
 			<div>
 				<span class="project-link">SE PROJECT<br />
-				http://wp/${s.stb}
+				http://wp/${s.stub}
 				</span>
 			</div>
 		</div>
 
 		<div class="projectimage">
-			<img src="images/${s.id}-${s.stub}.png" />
+			<img alt="${s.title}" src="images/${s.id}-${s.stub}.png" />
 		</div>
 
 	`
