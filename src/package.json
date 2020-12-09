@@ -5,11 +5,15 @@
   "scripts": {
     "bundle-main": "esbuild index.main.js --bundle --minify --outfile=../dist/bundle.js --banner='/* Hi! Drop js@dearstudio.dk an email if you want access to the un-minified source (CC BY-NC-SA 4.0) */'",
     "bundle-mobile": "esbuild index.mobile.js --bundle --minify --outfile=../dist/bundle.mobile.js --banner='/* Hi! Drop js@dearstudio.dk an email if you want access to the un-minified source (CC BY-NC-SA 4.0) */'",
-    "terser-main": "terser ../dist/bundle.js -o ../dist/bundle.min.js",
-    "bundle": "npm run bundle-main && npm run bundle-mobile && npm run terser-main",
-    "bundle-main-dev": "esbuild index.main.js --bundle --outfile=../dist/bundle.js",
+    
+    "terser-main": "terser ../dist/bundle.js -c -m --source-map -o ../dist/bundle.min.js",
+    
+    "bundle-main-dev": "esbuild index.main.js --bundle --outfile=../dist/bundle.min.js",
     "bundle-mobile-dev": "esbuild index.mobile.js --bundle --outfile=../dist/bundle.mobile.js",
+    
+    "bundle": "npm run bundle-main && npm run bundle-mobile && npm run terser-main",
     "bundle-dev": "npm run bundle-main-dev && npm run bundle-mobile-dev",
+    
     "watch": "watchexec --exts js,css,html -i /*.bundle.js/ npm run bundle-dev"
   },
   "keywords": [],

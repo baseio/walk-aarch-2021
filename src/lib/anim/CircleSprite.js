@@ -80,7 +80,7 @@ export class CircleSprite {
 	focus(){
 		console.warn('TODO CircleSprite.focus: calc focused-size');
 		this.enabled = true
-		this.setTarget({x:0, y:0, z:0, o:1, r:8})
+		this.setTarget({x:0, y:0, z:0, o:1, r:3})
 		this.material.map = this.normalTexture
 	}
 

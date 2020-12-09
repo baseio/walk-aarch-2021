@@ -55,18 +55,18 @@
   border-radius: 100%;
   /*background: #000;*/
   pointer-events: none;
-  border: 2px solid #000;
+  border: 1.5px solid #111;
   position: absolute;
 }
 
 #sidebar .toggle .label {
   display: inline-block;
-  font-size: 18px;
+  font-size: 16px;
   pointer-events: none;
   
-  color: #000;
+  color: #111;
 
-  padding-left: 45px;
+  padding-left: 40px;
   width: 170px;
 
   position: relative;

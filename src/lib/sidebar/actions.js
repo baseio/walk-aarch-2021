@@ -87,7 +87,7 @@ export const render_student = (stub) => {
 	const s = DATA.DATA_STUDENTS.filter( student => student.stub === stub)[0]
 	console.log('render_student', stub, s);
 
-	content.innerHTML = `
+	const html = `
 
 		<div class="studentinfo">
 
@@ -122,8 +122,16 @@ export const render_student = (stub) => {
 		</div>
 
 	`
+
+	content.classList = 'hide'
+	document.querySelector('#curtain').classList = 'show'
+	setTimeout( () => {
+		content.innerHTML = html
+		content.classList = 'show'
+	}, 750);
 }
 export const hide_render_student = () => {
+	document.querySelector('#curtain').classList = 'hide'
 	content.innerHTML = ''
 }
 

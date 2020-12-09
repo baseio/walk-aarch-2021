@@ -23,7 +23,7 @@ a {
 	position: absolute;
 	top: 35px;
 	left: 30px;
-	z-index: 100;
+	z-index: 500;
 	mix-blend-mode: difference;
 	font-size: 48px;
 	font-weight: 600;
@@ -70,10 +70,65 @@ a {
 	box-shadow: inset 0 0 1px 0px black;
 }
 
+
+/**/
+
+#curtain {
+	position: absolute;
+	
+	top: 50vh;
+    left: 50vw;
+    margin-left: -5vw;
+    margin-top: -5vh;
+    width: 5vw;
+    height: 5vw;
+
+	z-index: 100;
+	display: block;
+	transition: all 0.75s;
+	/*transition-delay: 0.5s;*/
+	background-color: #fff;
+	opacity: 0;
+	pointer-events: none;
+	border-radius: 100%;
+
+	width: calc( max(100vw, 100vh) * 2);
+    height: calc( max(100vw, 100vh) * 2);
+
+    margin-left: calc( max(100vw, 100vh) * -1);
+    margin-top: calc( max(100vw, 100vh) * -1);
+}
+#curtain.hide {
+	/*width: 10vw;
+    height: 10vw;
+    margin-left: -5vw;
+    margin-top: -5vh;
+    background-color: #fff;*/
+    opacity: 0;
+}
+#curtain.show {
+	/*width: calc( max(100vw, 100vh) * 2);
+    height: calc( max(100vw, 100vh) * 2);
+
+    margin-left: calc( max(100vw, 100vh) * -1);
+    margin-top: calc( max(100vw, 100vh) * -1);
+
+    background-color: #fff;*/
+    opacity: 1;
+}
+
 #content {
 	top: 130px;
     position: relative;
     width: 100%;
     height: 100%;
     z-index: 10;
+    transition: opacity 0.75s;
 }
+#content.hide {
+	opacity: 0;
+}
+#content.show {
+	opacity: 1;
+}
+
