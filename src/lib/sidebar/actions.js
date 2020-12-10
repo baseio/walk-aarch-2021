@@ -1,6 +1,7 @@
 
 import * as DATA from '../data.js'
 
+
 let container
 let _filterThemeTimeout = null
 let themeFilter = null
@@ -10,9 +11,23 @@ export const action = (trigger, action, id, args=[]) => {
 	console.log('action():', trigger, action, id)
 	container = document.querySelector('#content')
 
+	document.querySelector('#overlay').style.pointerEvents = 'none'
+
+	if( trigger === 'clearThemeSelection' ){
+		clearThemeSelection()
+	}
+
+	if( trigger === 'clearFeatSelection' ){
+		clearFeatSelection()
+	}
+
 	if( trigger === 'filter:feat' ){
+
+		window.location.href = '#'+ id
+
 		if( action === 'hide'){
 			container.innerHTML = ''
+			window.app.pauseRendering = false
 			return
 		}
 		if( action === 'show'){
@@ -25,6 +40,10 @@ export const action = (trigger, action, id, args=[]) => {
 
 
 	if( trigger === 'filter:theme' ){
+
+		const theme = DATA.THEMES_EN.filter(t => t.id === id)[0]
+		window.location.href = '#theme:'+ theme.name.toLowerCase().replace(/ /g, '-')
+
 		if( action === 'hide' ){
 			// _filterThemeTimeout = setTimeout( () => {
 				render_theme(false)
@@ -37,6 +56,7 @@ export const action = (trigger, action, id, args=[]) => {
 		}
 	}
 
+
 }
 
 export const setStudentSelected = (s) => {
@@ -46,8 +66,22 @@ export const setStudentSelected = (s) => {
 
 ///
 
+const clearFeatSelection = () => {
+	console.log('@sidebar clearFeatSelection');
+	Array.from( document.querySelectorAll(`#sidebar [data-trigger="filter:feat"]`)).forEach( el => {
+		el.classList.remove('selected')
+	})
+}
+
+const clearThemeSelection = () => {
+	console.log('@sidebar clearThemeSelection');
+	Array.from( document.querySelectorAll(`#sidebar [data-trigger="filter:theme"]`)).forEach( el => {
+		el.classList.remove('selected')
+	})
+}
 
 
+///
 
 const render_theme = (val) => {
 	themeFilter = val
@@ -62,7 +96,18 @@ const render_theme = (val) => {
 
 
 const render_text = (id) => {
-	container.innerHTML = 'render_text:'+ id
+	console.log('render_text', id);
+	if( id === 'about' ){
+		window.toFree()
+		setTimeout( () => {
+			container.innerHTML = DATA.DATA_ABOUT.en
+			content.classList = 'show'
+			content.style.overflowY = 'auto'
+			document.querySelector('#curtain').classList = 'black'
+			document.querySelector('#overlay').style.pointerEvents = 'all'
+			window.app.pauseRendering = true
+		}, 500)
+	}
 }
 
 const render_live = (id) => {
@@ -91,35 +136,45 @@ export const render_student = (stub) => {
 
 		<div class="studentinfo">
 
-			<div>
+			<div class="div1">
+
 				<span class="name">${s.name}</span>
 				
+				<br />
 				<br />
 				<span class="theme">GRADUATION PROJECT:<br />
 				${s.title}
 				</span>
 
 				<br />
+				<br />
 				<span class="studio">PROGRAMME:<br />
 				${s.studio} [todo: map studio-id to studio-data]
 				</span>
 
 				<br />
+				<br />
 				<span class="studio">CONTACT:<br />
-				${s.studio}
+				${s.id}@stud.aarch.dk
 				</span>
 			</div>
 
-			<div>
-				<span class="project-link">SE PROJECT<br />
-				http://wp/${s.stub}
-				</span>
+			<div class="div2">
+				<a class="projectlink" href="http://wp/${s.stub}">SE PROJECT</a>
 			</div>
+			
+			<div class="div3">
+				<div class="projectimage">
+					<img alt="${s.title}" src="images/${s.id}-${s.stub}.png" />
+				</div>
+			</div>
+
+			<div class="div4">
+				(pdf-link?)
+			</div>
+
 		</div>
 
-		<div class="projectimage">
-			<img alt="${s.title}" src="images/${s.id}-${s.stub}.png" />
-		</div>
 
 	`
 

@@ -15,8 +15,8 @@ export class Eraser {
 
 	constructor(){
 
-		this.o  = 0
-		this.to = 0
+		this.o  = 1
+		this.to = 1
 		
 		this.material = new SpriteMaterial( { color: 0x000000, transparent: true, opacity:1 } )
 		this.el = new Sprite( this.material );

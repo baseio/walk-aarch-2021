@@ -36,9 +36,7 @@ let camera, renderer, scene
 let controls, clock, group
 let eraser
 
-let generated_texture
 let targetQuat, originQuat
-let cameraTarget
 
 let currentFilter;
 let currentThemeFilterValue = ''
@@ -59,13 +57,14 @@ export const initAnimation = (selector) => {
 
 const init_scene = (selector) => {
 
-	// generated_texture = GenerateTexture()
+	window.app.pauseRendering = false
 
 	window.addEventListener( 'resize', OnWindowResize, false );
 	window.addEventListener( 'mousemove', onDocumentMouseMove, false );
 	document.querySelector(selector).addEventListener('click', onDocumentMouseDown );
-
 	
+	clock = new Clock();
+
 	renderer = new WebGLRenderer( { preserveDrawingBuffer: true, antialias: true } );
 	renderer.setPixelRatio( window.devicePixelRatio );
 	renderer.setSize( window.innerWidth, window.innerHeight );
@@ -73,38 +72,19 @@ const init_scene = (selector) => {
 	renderer.domElement.id = 'three'
 	document.querySelector(selector).appendChild( renderer.domElement );
 
-	clock = new Clock();
-
 	scene = new Scene();
-	scene.background = '#ff0000'
-	cameraTarget = scene.position
+	window.app.scene = scene
 
 	group = new Group();
 	group.rotation.set( 0, Math.PI, Math.PI);
 	scene.add( group );
+	window.app.group = group
 
-	camera = new PerspectiveCamera( 190, window.innerWidth / window.innerHeight, 0.001, 1000 );
-	window.app.camera = camera
-
-	// let dist = 1 / 2 / Math.tan(Math.PI * FOV / 360);
-	// dist += 0.4
-	// dist = 2
-
-	const cameraTween = new Tween({z:10, fov:camera.fov}).to({z:2, fov:FOV}, 5000)
-		.easing( Easing.Sinusoidal.InOut )
-		.on('update', (o) => {
-			if( MODE != 'grid') {
-	   			camera.position.set(0,0,o.z)
-	   			camera.fov = o.fov
-	   			camera.updateProjectionMatrix();
-	   		}
- 		})
- 		.start()
- 		
-
-
-	camera.lookAt( cameraTarget );
+	camera = new PerspectiveCamera( 50, window.innerWidth / window.innerHeight, 0.001, 1000 );
 	scene.add( camera );
+	camera.position.set(0,0,2)
+	camera.lookAt( group.position );
+	window.app.camera = camera
 
 	controls = new OrbitControls( camera, renderer.domElement );
 	controls.enableRotate = true;
@@ -114,21 +94,37 @@ const init_scene = (selector) => {
 	// controls.maxDistance = 100;
 	// controls.maxPolarAngle = Math.PI * 0.5;
 	// controls.saveState()
-	window.app.controls = controls
-	
-
 	controls.update()
-	camera.lookAt( group.position );
-	// renderer.render( scene, camera );
 	controls.saveState()
+	window.app.controls = controls
+
+	eraser = new Eraser()
+	scene.add( eraser.el );
+	window.app.eraser = eraser
 
 	targetQuat = new Quaternion().setFromEuler(group.rotation)
 	originQuat = new Quaternion().setFromEuler(group.rotation)
 
+	/*
+	const cameraTween = new Tween({z:-10, fov:camera.fov}).to({z:2, fov:FOV}, 2000)
+		.easing( Easing.Sinusoidal.InOut )
+		.on('update', (o) => {
+			if( MODE != 'grid') {
+	   			camera.position.set(0,0,o.z)
+	   			// camera.fov = o.fov
+	   			camera.updateProjectionMatrix();
+	   		}
+ 		})
+ 		.start()
+	*/ 		
+
 	
-	eraser = new Eraser()
-	scene.add( eraser.el );
-	eraser.blendDown()
+	// eraser.blendDown()
+	// eraser.blendUp()
+	// eraser.material.opacity = 1
+
+	// window.app.eraser.material.opacity = 1
+	// window.app.eraser.to = 0.001
 }
 
 
@@ -145,8 +141,16 @@ const init_balls = () => {
 
 // loop
 
+let speeds = [
+	0.1 + (Math.random() * 0.4),
+	0.1 + (Math.random() * 0.4),
+	0.1 + (Math.random() * 0.4)
+]
+
 const update = () => {
 	requestAnimationFrame(update)
+
+	if( window.app.pauseRendering ) return
 
 	balls.forEach( b => b.update() )
 
@@ -154,13 +158,13 @@ const update = () => {
 	controls.update()
 	// console.log(eraser.material.opacity);
 
-	const speed = 0.5 //2.7
+	const speed = 0.33 //0.5
 
 	const elapsedTime = clock.getElapsedTime();
 	if( K_AUTO_ROTATION && MODE === 'free'){
-		group.rotation.y = elapsedTime * speed;
-		group.rotation.x = elapsedTime * speed;
-		group.rotation.z = elapsedTime * speed;
+		group.rotation.y = elapsedTime * speeds[0];
+		group.rotation.x = elapsedTime * speeds[1];
+		group.rotation.z = elapsedTime * speeds[2];
 	
 	}
 
@@ -186,8 +190,6 @@ const OnWindowResize = () => {
 // called by user-draw
 // distribute balls evenly along the path
 const onPathCreated = (path /* svg */) => {	
-	// MODE = 'free'
-
 	eraser.clearScreen()
 
 	const length = path.getTotalLength()
@@ -276,6 +278,12 @@ export const applyFilter = (key, val) => {
 				ball.setEnabled(false)
 			}
 		})
+
+		if( val ){
+			window.toGrid()
+		}else{
+			window.toFree()
+		}
 	}
 
 	if( currentFilter === 'student' ){
@@ -291,9 +299,16 @@ export const applyFilter = (key, val) => {
 // release focus/grid to normal drawing mode
 window.toFree = () => {
 	console.log('toFree');
-	// todo: reset sidebar theme chooser
+	
+	if( MODE === 'free' ){
+		console.log('toFree: Allready in free - aborting');
+		return false
+	}
 
+	window.app.pauseRendering = false
 	window.app.actions.hide_render_student()
+	window.app.actions.action('clearThemeSelection')
+	window.app.actions.action('clearFeatSelection')
 
 	controls.enableRotate  = true;
 	controls.enableDamping = true;
@@ -309,10 +324,14 @@ let focusedNode = null
 
 // brings one node to front
 window.toNode = (id) => {
+	if( MODE === 'node' ){
+		console.log('toNode: Allready at node - aborting');
+		return false
+	}
 	MODE = 'node'
 	focusedNode = balls[id]
 
-	console.log('toNode', toNode, focusedNode);
+	console.log('toNode', id, focusedNode);
 
 	//reset_rotations()
 
@@ -331,6 +350,10 @@ window.toNode = (id) => {
 	
 	window.app.actions.render_student(focusedNode.el.userData.data.stub)
 
+	setTimeout( () => {
+		window.app.pauseRendering = true
+	}, 1000 )
+
 
 
 	/*
@@ -342,14 +365,19 @@ window.toNode = (id) => {
 
 	console.log('dist', dist);
 	*/
+
+	return true
 }
 
 
 // arrange balls in a 2d grid
 window.toGrid = () => {
-	
+	if( MODE === 'grid' ){
+		console.log('toNode: Allready in grid - aborting');
+		return false
+	}
 	MODE = 'grid'
-
+	window.app.pauseRendering = false
 	window.app.actions.hide_render_student()
 	
 	// eraser.upDown(1500)

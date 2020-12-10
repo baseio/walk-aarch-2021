@@ -2,17 +2,39 @@ div.studentinfo {
 	position: relative;
     top: 0;
     color: #000;
-    width: 200px;
+    /*height: calc(100% - 130px);*/
+    height: 100%;
+    display: grid;
+	grid-template-columns: 370px 1fr;
+	grid-template-rows: 1fr 50px;
+	grid-column-gap: 0px;
+	grid-row-gap: 0px;
 }
 
-div.projectimage {
-	position: absolute;
-	top: 100px;
-	border: 1px solid #F00;
-	left: 220px;
+div.studentinfo .div1 { grid-area: 1 / 1 / 2 / 2; padding-right: 20px; } /* topleft */
+div.studentinfo .div2 { grid-area: 2 / 1 / 3 / 2; } /* btmleft */
+div.studentinfo .div3 { grid-area: 1 / 2 / 2 / 3; } /* topright */
+div.studentinfo .div4 { grid-area: 2 / 2 / 3 / 3; } /* btmright */
+
+div.studentinfo a.projectlink {
+	color: #000;
+    border: 2px solid #111;
+    border-radius: 50px;
+    text-decoration: none;
+    padding: 7px 15px 1px 15px;
+    width: 310px;
+    display: inline-block;
+}
+div.studentinfo a.projectlink:hover {
+	color: #fff;
+	background-color: #000;
 }
 
-div.projectimage > img {
+div.studentinfo .projectimage {
+	/*border: 1px solid #F00;*/
+}
+
+div.studentinfo .projectimage > img {
 	width: 100%;
 	display: block;
 }

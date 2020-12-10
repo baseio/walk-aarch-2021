@@ -46,10 +46,15 @@ export class CircleSprite {
 			this.tx = -1 + (2*Math.random())
 			this.ty = -1 + (2*Math.random())
 			this.tz = -1 + (2*Math.random())
-			this.to = 1
+			// this.to = 1
 			this.tr = this.enabledSize
 			this.setTarget({x:this.tx, y:this.ty, z:this.tz, o:this.to, r:this.tr})
 		}, 10)
+
+		setTimeout( () => {
+			this.to = 1
+			this.setTarget({x:this.tx, y:this.ty, z:this.tz, o:this.to, r:this.tr})
+		}, 500)
 	}
 
 	setTarget( obj ){
@@ -78,7 +83,7 @@ export class CircleSprite {
 	}
 
 	focus(){
-		console.warn('TODO CircleSprite.focus: calc focused-size');
+		// console.warn('TODO CircleSprite.focus: calc focused-size');
 		this.enabled = true
 		this.setTarget({x:0, y:0, z:0, o:1, r:3})
 		this.material.map = this.normalTexture
@@ -86,11 +91,15 @@ export class CircleSprite {
 
 	hover(){
 		this.material.map = this.hoverTexture
+		this.tr = this.enabledSize * 1.5
+		this.tz = -0.05
 		// this.material.color.set( '#09f' )
 	}
 
 	unhover(){
 		this.material.map = this.normalTexture
+		this.tr = this.enabledSize
+		this.tz = 0
 		// this.material.color.set( '#fff' )
 	}
 

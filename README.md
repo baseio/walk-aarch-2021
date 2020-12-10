@@ -79,19 +79,24 @@ Karen Kjærgaard <kje@aarch.dk>
 
 #### W49: Concept approval
 
-- [ ] test twitch
-- [ ] test twitch schedule
-- [ ] focus-node / student-page
-- [ ] text page
-- [ ] filtering
-- [ ] plan WP integration
-- [ ] plan Vimeo integration
+- [ ] test twitch or vimeo for the live feature
+- [ ] test twitch or vimeo schedule api
+- [x] focus-node / student-page
+- [x] text page
+- [x] filtering
+- [x] plan WP integration (slug/stub)
 
 #### W50: Concept lock
 
+- [x] Solve color theme
+- [x] Static layouts
+- [x] project layout flex
+- [ ] hash-router directly to student view
+- [x] complete navigation
+- [ ] student pill-layout (searchable)
+- [-] student contact info (await Karen)
+- [-] server (await Tony)
 - [ ] Demonstrate all features 
-- [ ] Solve color theme
-- [ ] Static layouts
 
 #### W01: Plan production
 #### W02: Production

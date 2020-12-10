@@ -18,6 +18,7 @@ const FEATS = [
 const state = {}
 const themes = DATA.THEMES_EN;
 
+
 export const initSidebar = (selector) => {
 
 	
@@ -112,16 +113,16 @@ export const initSidebar = (selector) => {
 
 				}
 
-				// enter/exit grid 
-				setTimeout( () => {
-					const any = document.querySelectorAll('#sidebar [data-trigger="filter:theme"].selected')
-					// console.log('ANY', any, any.length);
-					if( any.length === 0 ){
-						window.toFree()
-					}else{
-						window.toGrid()
-					}
-				}, 100)
+				// // enter/exit grid 
+				// setTimeout( () => {
+				// 	const any = document.querySelectorAll('#sidebar [data-trigger="filter:theme"].selected')
+				// 	console.log('ANY', any, any.length);
+				// 	if( any.length === 0 ){
+				// 		window.toFree()
+				// 	}else{
+				// 		window.toGrid()
+				// 	}
+				// }, 100)
 
 			}
 
@@ -144,12 +145,8 @@ export const initSidebar = (selector) => {
 
 		})
 	})
-
 }
 
-// const action = (trigger, action, id) => {
-// 	console.log('action():', trigger, action, id)
-// }
 
 
 const render_feats_menu = () => {

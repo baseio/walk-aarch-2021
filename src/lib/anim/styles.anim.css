@@ -1,6 +1,6 @@
 
 #userdraw-border {
-	border: 2px solid #000;
+	border: 1.5px solid #000;
 	border-radius: 20px;
 	overflow: hidden;
 	position: relative;
@@ -15,10 +15,14 @@
 	position: relative;
 	margin-bottom: 20px;
 	/*border: 2px solid #000;*/
-    border-radius: 20px;
-    overflow: hidden;
+  border-radius: 20px;
+  overflow: hidden;
 }
 
+#userdraw {
+  width: 200px;
+  height: 200px;
+}
 
 #userdraw-wrapper * {
 	/*border: 2px solid transparent;*/

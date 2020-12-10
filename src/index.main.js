@@ -1,44 +1,24 @@
-import {injectCSS, initHashRouter} from './lib/utils.js'
 import {settings} from './settings.js'
-import * as DATA from './lib/data.js'
+import {initHashRouter, route} from './lib/router.js'
 
+import * as Actions from './lib/sidebar/actions.js'
 import * as Animation from './lib/anim/index.js'
 import {initSidebar} from './lib/sidebar/index.js'
 import {initSearch} from './lib/search/index.js'
 
-import * as Actions from './lib/sidebar/actions.js'
-
 import './styles.main.css'
 
+document.title = settings.document_title
+document.querySelector('#logo').innerHTML = settings.title
 
-/// called by utils.hashRouter when the (window)-location changes (and on page load)
-const OnHashChanged = (hash) => {
-	console.log('OnHashChanged', hash, studentFromHash(hash) );
+
+window.app = {
+	sidebar: initSidebar('#sidebar-menu'),
+	animation: Animation,
+	search: initSearch('#search'),
+	actions: Actions,
 }
 
-/// return student (if any) given a (location)-hash
-const studentFromHash = (hash) => {
-	return DATA.DATA_STUDENTS.filter(s => s.stub === hash)[0] || false
-}
+Animation.initAnimation('#animation')
 
-
-const init = () => {
-
-	document.title = settings.document_title
-	document.querySelector('#logo').innerHTML = settings.title
-
-	initHashRouter( OnHashChanged )
-
-	window.app = {
-		sidebar: initSidebar('#sidebar-menu'),
-		animation: Animation,
-		search: initSearch('#search'),
-		actions: Actions,
-	}
-
-	Animation.initAnimation('#animation')
-
-	
-}
-
-init()
+initHashRouter( route )
