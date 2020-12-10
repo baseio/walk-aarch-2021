@@ -1,5 +1,5 @@
 
-import * as DATA from '../data.js'
+import * as DATA from './data.js'
 
 
 let container
@@ -94,23 +94,39 @@ const render_theme = (val) => {
 	}
 }
 
+export const clear_content = () => {
+	window.toFree()
 
-const render_text = (id) => {
+	document.querySelector('#content').innerHTML = ''
+	document.querySelector('#content').classList = 'hide'
+	// document.querySelector('#content').style.overflowY = 'auto'
+	// document.querySelector('#curtain').classList = ''
+	document.querySelector('#overlay').style.pointerEvents = 'none'
+	window.app.pauseRendering = false
+}
+
+
+export const render_text = (id) => {
 	console.log('render_text', id);
+	container = document.querySelector('#content')
 	if( id === 'about' ){
-		window.toFree()
+		container.innerHTML = DATA.DATA_ABOUT
+		container.classList = 'show'
+		container.style.overflowY = 'auto'
+		document.querySelector('#curtain').classList = 'black'
+		document.querySelector('#overlay').style.pointerEvents = 'all'
+		
 		setTimeout( () => {
-			container.innerHTML = DATA.DATA_ABOUT.en
-			content.classList = 'show'
-			content.style.overflowY = 'auto'
-			document.querySelector('#curtain').classList = 'black'
-			document.querySelector('#overlay').style.pointerEvents = 'all'
 			window.app.pauseRendering = true
 		}, 500)
 	}
 }
 
-const render_live = (id) => {
+
+// pending client
+// unfinnished
+export const render_live = (id) => {
+	container = document.querySelector('#content')
 	container.classList = id
 	container.innerHTML = `<iframe
     src="https://player.twitch.tv/?channel=jorgenskogmo&parent=vibrant-nobel-c7d9ea.netlify.app"
@@ -121,10 +137,15 @@ const render_live = (id) => {
     allowfullscreen="true">`
 }
 
-const render_videos = (id) => {
+
+// pending client
+// unfinnished: needs test with multiple vimeo-thumbs and a layout
+export const render_videos = (id) => {
+	container = document.querySelector('#content')
 	container.classList = id
 	container.innerHTML = 'render_videos'
 }
+
 
 // called from clicking a ball
 export const render_student = (stub) => {
@@ -190,9 +211,10 @@ export const hide_render_student = () => {
 	content.innerHTML = ''
 }
 
-
+// unfinnished: style as pills
 export const render_students = (id) => {
 	console.log('render_students', id, studentSelected);
+	container = document.querySelector('#content')
 	container.classList = id
 
 	let html = ''
@@ -214,12 +236,3 @@ export const render_students = (id) => {
 	container.innerHTML = html
 }
 
-
-
-// test
-window.isLive = () => {
-	var xhr = new XMLHttpRequest();
-	xhr.open("GET", "https://api.twitch.tv/helix/streams", true);
-	xhr.setRequestHeader("Client-ID", "My client id");
-	var data = JSON.parse(xhr.responseText);
-}

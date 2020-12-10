@@ -16278,18 +16278,17 @@
 
   // lib/data/themes.js
   var THEMES_EN = [
-    {id: "1", name: "NEW COMMONS"},
-    {id: "2", name: "BUILDING FOR CULTURE"},
-    {id: "3", name: "DEVELOPMENT"},
-    {id: "4", name: "SUSTAINABLE ARCHITECTURE"},
-    {id: "5", name: "LANDSCAPES IN TRANSITION"},
-    {id: "6", name: "HERITAGE"},
-    {id: "7", name: "EXTREME ARCHITECTURE"}
+    {id: "1", slug: "new-commons", name: "NEW COMMONS"},
+    {id: "2", slug: "building-for-culture", name: "BUILDING FOR CULTURE"},
+    {id: "3", slug: "development", name: "DEVELOPMENT"},
+    {id: "4", slug: "sustainable-architecture", name: "SUSTAINABLE ARCHITECTURE"},
+    {id: "5", slug: "landscapes-in-transition", name: "LANDSCAPES IN TRANSITION"},
+    {id: "6", slug: "heritage", name: "HERITAGE"},
+    {id: "7", slug: "extreme-architecture", name: "EXTREME ARCHITECTURE"}
   ];
 
   // lib/data/about.js
-  var DATA_ABOUT = {
-    en: `
+  var DATA_ABOUT = `
 PROCESSING ARCHITECTURE
 
 <br />
@@ -16310,12 +16309,11 @@ WELCOME > THE EXHIBITION IS (ALWAYS) OPEN!
 <br /><br />
 Karen Kjaergaard, WDA2020
 
-	`
-  };
+`;
 
   // lib/router.js
   var route = (hash) => {
-    console.log("Route", hash);
+    console.log("Route:", hash);
     const b = window.app.balls.filter((b2) => b2.el.userData.data.stub === hash)[0];
     if (b) {
       const accepted = window.toNode(b.i);
@@ -16327,11 +16325,35 @@ Karen Kjaergaard, WDA2020
         }
       }
     } else if (hash.indexOf("theme:") === 0) {
-      const themeName = hash.split(":")[1].toUpperCase().replace(/-/g, " ");
-      const theme = THEMES_EN.filter((t) => t.name === themeName)[0];
-      console.log("OnHashChanged theme", hash, themeName, theme);
+      hash = hash.split(":")[1];
+      const slug = hash.toLowerCase().replace(/ /g, "-");
+      const theme = THEMES_EN.filter((t) => t.slug === slug)[0];
+      console.log("OnHashChanged theme:", hash, slug, theme);
+      document.querySelectorAll("#sidebar [data-trigger]").forEach((el2) => {
+        el2.classList.remove("selected");
+      });
+      const btn = document.querySelector(`#sidebar [data-trigger="theme"][data-key="${slug}"]`);
+      if (btn) {
+        btn.classList.add("selected");
+      }
     } else if (hash != "") {
       console.log("OnHashChanged page", hash);
+      document.querySelectorAll("#sidebar [data-trigger]").forEach((el2) => {
+        el2.classList.remove("selected");
+      });
+      const btn = document.querySelector(`#sidebar [data-trigger="feat"][data-key="${hash}"]`);
+      if (btn) {
+        btn.classList.add("selected");
+      }
+      window.app.actions.clear_content();
+      if (hash === "about")
+        window.app.actions.render_text(hash);
+      if (hash === "live")
+        window.app.actions.render_live(hash);
+      if (hash === "videos")
+        window.app.actions.render_videos(hash);
+      if (hash === "graduates")
+        window.app.actions.render_students(hash);
     }
   };
   var initHashRouter = (listener) => {
@@ -16345,13 +16367,17 @@ Karen Kjaergaard, WDA2020
     listener(h);
   };
 
-  // lib/sidebar/actions.js
+  // lib/actions.js
   var actions_exports = {};
   __export(actions_exports, {
     action: () => action,
+    clear_content: () => clear_content,
     hide_render_student: () => hide_render_student,
+    render_live: () => render_live,
     render_student: () => render_student,
     render_students: () => render_students,
+    render_text: () => render_text,
+    render_videos: () => render_videos,
     setStudentSelected: () => setStudentSelected
   });
   var container;
@@ -16421,21 +16447,29 @@ Karen Kjaergaard, WDA2020
       render_students();
     }
   };
+  var clear_content = () => {
+    window.toFree();
+    document.querySelector("#content").innerHTML = "";
+    document.querySelector("#content").classList = "hide";
+    document.querySelector("#overlay").style.pointerEvents = "none";
+    window.app.pauseRendering = false;
+  };
   var render_text = (id) => {
     console.log("render_text", id);
+    container = document.querySelector("#content");
     if (id === "about") {
-      window.toFree();
+      container.innerHTML = DATA_ABOUT;
+      container.classList = "show";
+      container.style.overflowY = "auto";
+      document.querySelector("#curtain").classList = "black";
+      document.querySelector("#overlay").style.pointerEvents = "all";
       setTimeout(() => {
-        container.innerHTML = DATA_ABOUT.en;
-        content.classList = "show";
-        content.style.overflowY = "auto";
-        document.querySelector("#curtain").classList = "black";
-        document.querySelector("#overlay").style.pointerEvents = "all";
         window.app.pauseRendering = true;
       }, 500);
     }
   };
   var render_live = (id) => {
+    container = document.querySelector("#content");
     container.classList = id;
     container.innerHTML = `<iframe
     src="https://player.twitch.tv/?channel=jorgenskogmo&parent=vibrant-nobel-c7d9ea.netlify.app"
@@ -16446,6 +16480,7 @@ Karen Kjaergaard, WDA2020
     allowfullscreen="true">`;
   };
   var render_videos = (id) => {
+    container = document.querySelector("#content");
     container.classList = id;
     container.innerHTML = "render_videos";
   };
@@ -16510,6 +16545,7 @@ Karen Kjaergaard, WDA2020
   };
   var render_students = (id) => {
     console.log("render_students", id, studentSelected);
+    container = document.querySelector("#content");
     container.classList = id;
     let html = "";
     DATA_STUDENTS.forEach((s) => {
@@ -16527,11 +16563,57 @@ Karen Kjaergaard, WDA2020
     });
     container.innerHTML = html;
   };
-  window.isLive = () => {
-    var xhr = new XMLHttpRequest();
-    xhr.open("GET", "https://api.twitch.tv/helix/streams", true);
-    xhr.setRequestHeader("Client-ID", "My client id");
-    var data = JSON.parse(xhr.responseText);
+
+  // lib/sidebar/index.js
+  var FEATS = [
+    {id: "about", name: "ABOUT"},
+    {id: "live", name: "LIVE"},
+    {id: "videos", name: "VIDEOS"},
+    {id: "graduates", name: "GRADUATES"}
+  ];
+  var themes2 = THEMES_EN;
+  var init = () => {
+    let html = "";
+    FEATS.forEach((t) => {
+      html += `
+			<div class="toggle twoline" data-trigger="feat" data-key="${t.id}">
+				<span class="circle"> <span class="label">${t.name}</span> </span>
+			</div>`;
+    });
+    document.querySelector("#feats-menu").innerHTML = html;
+    html = "";
+    THEMES_EN.forEach((t) => {
+      html += `
+			<div class="toggle twoline" data-trigger="theme" data-key="${t.slug}">
+				<span class="circle"> <span class="label">${t.name}</span> </span>
+			</div>`;
+    });
+    document.querySelector("#themes-menu").innerHTML = html;
+    document.querySelectorAll("#sidebar [data-trigger]").forEach((el2) => {
+      el2.addEventListener("click", (evnt) => {
+        const trigger = evnt.target.getAttribute("data-trigger");
+        const key = evnt.target.getAttribute("data-key");
+        const hash = trigger === "theme" ? `#theme:${key}` : `#${key}`;
+        if (window.location.hash === hash) {
+          window.location.hash = "";
+        } else {
+          window.location.hash = hash;
+        }
+      });
+    });
+    document.querySelector("#showhide").addEventListener("click", () => {
+      const sb = document.querySelector("#sidebar");
+      if (sb.classList.contains("closed")) {
+        sb.classList.remove("closed");
+        document.querySelector("#showhide").innerHTML = "-";
+        console.log("show sidebar +");
+      } else {
+        sb.classList.add("closed");
+        document.querySelector("#showhide").innerHTML = "+";
+        console.log("hide sidebar");
+      }
+    });
+    document.querySelector("#sidebar").style.display = "block";
   };
 
   // lib/anim/index.js
@@ -24755,7 +24837,7 @@ Karen Kjaergaard, WDA2020
     vertexShader: ShaderChunk.meshphysical_vert,
     fragmentShader: ShaderChunk.meshphysical_frag
   };
-  function WebGLBackground(renderer2, cubemaps, state2, objects, premultipliedAlpha) {
+  function WebGLBackground(renderer2, cubemaps, state, objects, premultipliedAlpha) {
     const clearColor = new Color(0);
     let clearAlpha = 0;
     let planeMesh;
@@ -24853,7 +24935,7 @@ Karen Kjaergaard, WDA2020
       }
     }
     function setClear(color, alpha) {
-      state2.buffers.color.setClear(color.r, color.g, color.b, alpha, premultipliedAlpha);
+      state.buffers.color.setClear(color.r, color.g, color.b, alpha, premultipliedAlpha);
     }
     return {
       getClearColor: function() {
@@ -24884,9 +24966,9 @@ Karen Kjaergaard, WDA2020
     function setup(object, material, program, geometry, index) {
       let updateBuffers = false;
       if (vaoAvailable) {
-        const state2 = getBindingState(geometry, program, material);
-        if (currentState !== state2) {
-          currentState = state2;
+        const state = getBindingState(geometry, program, material);
+        if (currentState !== state) {
+          currentState = state;
           bindVertexArrayObject(currentState.object);
         }
         updateBuffers = needsUpdate(geometry, index);
@@ -24941,12 +25023,12 @@ Karen Kjaergaard, WDA2020
         stateMap = {};
         programMap[program.id] = stateMap;
       }
-      let state2 = stateMap[wireframe];
-      if (state2 === void 0) {
-        state2 = createBindingState(createVertexArrayObject());
-        stateMap[wireframe] = state2;
+      let state = stateMap[wireframe];
+      if (state === void 0) {
+        state = createBindingState(createVertexArrayObject());
+        stateMap[wireframe] = state;
       }
-      return state2;
+      return state;
     }
     function createBindingState(vao) {
       const newAttributes = [];
@@ -27143,7 +27225,7 @@ Karen Kjaergaard, WDA2020
     const opaque = [];
     const transparent = [];
     const defaultProgram = {id: -1};
-    function init() {
+    function init2() {
       renderItemsIndex = 0;
       opaque.length = 0;
       transparent.length = 0;
@@ -27208,7 +27290,7 @@ Karen Kjaergaard, WDA2020
     return {
       opaque,
       transparent,
-      init,
+      init: init2,
       push,
       unshift,
       finish,
@@ -27344,7 +27426,7 @@ Karen Kjaergaard, WDA2020
   function WebGLLights(extensions, capabilities) {
     const cache = new UniformsCache();
     const shadowCache = ShadowUniformsCache();
-    const state2 = {
+    const state = {
       version: 0,
       hash: {
         directionalLength: -1,
@@ -27376,14 +27458,14 @@ Karen Kjaergaard, WDA2020
       hemi: []
     };
     for (let i = 0; i < 9; i++)
-      state2.probe.push(new Vector3());
+      state.probe.push(new Vector3());
     const vector3 = new Vector3();
     const matrix4 = new Matrix4();
     const matrix42 = new Matrix4();
     function setup(lights, shadows, camera2) {
       let r = 0, g = 0, b = 0;
       for (let i = 0; i < 9; i++)
-        state2.probe[i].set(0, 0, 0);
+        state.probe[i].set(0, 0, 0);
       let directionalLength = 0;
       let pointLength = 0;
       let spotLength = 0;
@@ -27406,7 +27488,7 @@ Karen Kjaergaard, WDA2020
           b += color.b * intensity;
         } else if (light.isLightProbe) {
           for (let j = 0; j < 9; j++) {
-            state2.probe[j].addScaledVector(light.sh.coefficients[j], intensity);
+            state.probe[j].addScaledVector(light.sh.coefficients[j], intensity);
           }
         } else if (light.isDirectionalLight) {
           const uniforms = cache.get(light);
@@ -27422,12 +27504,12 @@ Karen Kjaergaard, WDA2020
             shadowUniforms.shadowNormalBias = shadow.normalBias;
             shadowUniforms.shadowRadius = shadow.radius;
             shadowUniforms.shadowMapSize = shadow.mapSize;
-            state2.directionalShadow[directionalLength] = shadowUniforms;
-            state2.directionalShadowMap[directionalLength] = shadowMap;
-            state2.directionalShadowMatrix[directionalLength] = light.shadow.matrix;
+            state.directionalShadow[directionalLength] = shadowUniforms;
+            state.directionalShadowMap[directionalLength] = shadowMap;
+            state.directionalShadowMatrix[directionalLength] = light.shadow.matrix;
             numDirectionalShadows++;
           }
-          state2.directional[directionalLength] = uniforms;
+          state.directional[directionalLength] = uniforms;
           directionalLength++;
         } else if (light.isSpotLight) {
           const uniforms = cache.get(light);
@@ -27449,12 +27531,12 @@ Karen Kjaergaard, WDA2020
             shadowUniforms.shadowNormalBias = shadow.normalBias;
             shadowUniforms.shadowRadius = shadow.radius;
             shadowUniforms.shadowMapSize = shadow.mapSize;
-            state2.spotShadow[spotLength] = shadowUniforms;
-            state2.spotShadowMap[spotLength] = shadowMap;
-            state2.spotShadowMatrix[spotLength] = light.shadow.matrix;
+            state.spotShadow[spotLength] = shadowUniforms;
+            state.spotShadowMap[spotLength] = shadowMap;
+            state.spotShadowMatrix[spotLength] = light.shadow.matrix;
             numSpotShadows++;
           }
-          state2.spot[spotLength] = uniforms;
+          state.spot[spotLength] = uniforms;
           spotLength++;
         } else if (light.isRectAreaLight) {
           const uniforms = cache.get(light);
@@ -27469,7 +27551,7 @@ Karen Kjaergaard, WDA2020
           uniforms.halfHeight.set(0, light.height * 0.5, 0);
           uniforms.halfWidth.applyMatrix4(matrix42);
           uniforms.halfHeight.applyMatrix4(matrix42);
-          state2.rectArea[rectAreaLength] = uniforms;
+          state.rectArea[rectAreaLength] = uniforms;
           rectAreaLength++;
         } else if (light.isPointLight) {
           const uniforms = cache.get(light);
@@ -27487,12 +27569,12 @@ Karen Kjaergaard, WDA2020
             shadowUniforms.shadowMapSize = shadow.mapSize;
             shadowUniforms.shadowCameraNear = shadow.camera.near;
             shadowUniforms.shadowCameraFar = shadow.camera.far;
-            state2.pointShadow[pointLength] = shadowUniforms;
-            state2.pointShadowMap[pointLength] = shadowMap;
-            state2.pointShadowMatrix[pointLength] = light.shadow.matrix;
+            state.pointShadow[pointLength] = shadowUniforms;
+            state.pointShadowMap[pointLength] = shadowMap;
+            state.pointShadowMatrix[pointLength] = light.shadow.matrix;
             numPointShadows++;
           }
-          state2.point[pointLength] = uniforms;
+          state.point[pointLength] = uniforms;
           pointLength++;
         } else if (light.isHemisphereLight) {
           const uniforms = cache.get(light);
@@ -27501,45 +27583,45 @@ Karen Kjaergaard, WDA2020
           uniforms.direction.normalize();
           uniforms.skyColor.copy(light.color).multiplyScalar(intensity);
           uniforms.groundColor.copy(light.groundColor).multiplyScalar(intensity);
-          state2.hemi[hemiLength] = uniforms;
+          state.hemi[hemiLength] = uniforms;
           hemiLength++;
         }
       }
       if (rectAreaLength > 0) {
         if (capabilities.isWebGL2) {
-          state2.rectAreaLTC1 = UniformsLib.LTC_FLOAT_1;
-          state2.rectAreaLTC2 = UniformsLib.LTC_FLOAT_2;
+          state.rectAreaLTC1 = UniformsLib.LTC_FLOAT_1;
+          state.rectAreaLTC2 = UniformsLib.LTC_FLOAT_2;
         } else {
           if (extensions.has("OES_texture_float_linear") === true) {
-            state2.rectAreaLTC1 = UniformsLib.LTC_FLOAT_1;
-            state2.rectAreaLTC2 = UniformsLib.LTC_FLOAT_2;
+            state.rectAreaLTC1 = UniformsLib.LTC_FLOAT_1;
+            state.rectAreaLTC2 = UniformsLib.LTC_FLOAT_2;
           } else if (extensions.has("OES_texture_half_float_linear") === true) {
-            state2.rectAreaLTC1 = UniformsLib.LTC_HALF_1;
-            state2.rectAreaLTC2 = UniformsLib.LTC_HALF_2;
+            state.rectAreaLTC1 = UniformsLib.LTC_HALF_1;
+            state.rectAreaLTC2 = UniformsLib.LTC_HALF_2;
           } else {
             console.error("THREE.WebGLRenderer: Unable to use RectAreaLight. Missing WebGL extensions.");
           }
         }
       }
-      state2.ambient[0] = r;
-      state2.ambient[1] = g;
-      state2.ambient[2] = b;
-      const hash = state2.hash;
+      state.ambient[0] = r;
+      state.ambient[1] = g;
+      state.ambient[2] = b;
+      const hash = state.hash;
       if (hash.directionalLength !== directionalLength || hash.pointLength !== pointLength || hash.spotLength !== spotLength || hash.rectAreaLength !== rectAreaLength || hash.hemiLength !== hemiLength || hash.numDirectionalShadows !== numDirectionalShadows || hash.numPointShadows !== numPointShadows || hash.numSpotShadows !== numSpotShadows) {
-        state2.directional.length = directionalLength;
-        state2.spot.length = spotLength;
-        state2.rectArea.length = rectAreaLength;
-        state2.point.length = pointLength;
-        state2.hemi.length = hemiLength;
-        state2.directionalShadow.length = numDirectionalShadows;
-        state2.directionalShadowMap.length = numDirectionalShadows;
-        state2.pointShadow.length = numPointShadows;
-        state2.pointShadowMap.length = numPointShadows;
-        state2.spotShadow.length = numSpotShadows;
-        state2.spotShadowMap.length = numSpotShadows;
-        state2.directionalShadowMatrix.length = numDirectionalShadows;
-        state2.pointShadowMatrix.length = numPointShadows;
-        state2.spotShadowMatrix.length = numSpotShadows;
+        state.directional.length = directionalLength;
+        state.spot.length = spotLength;
+        state.rectArea.length = rectAreaLength;
+        state.point.length = pointLength;
+        state.hemi.length = hemiLength;
+        state.directionalShadow.length = numDirectionalShadows;
+        state.directionalShadowMap.length = numDirectionalShadows;
+        state.pointShadow.length = numPointShadows;
+        state.pointShadowMap.length = numPointShadows;
+        state.spotShadow.length = numSpotShadows;
+        state.spotShadowMap.length = numSpotShadows;
+        state.directionalShadowMatrix.length = numDirectionalShadows;
+        state.pointShadowMatrix.length = numPointShadows;
+        state.spotShadowMatrix.length = numSpotShadows;
         hash.directionalLength = directionalLength;
         hash.pointLength = pointLength;
         hash.spotLength = spotLength;
@@ -27548,19 +27630,19 @@ Karen Kjaergaard, WDA2020
         hash.numDirectionalShadows = numDirectionalShadows;
         hash.numPointShadows = numPointShadows;
         hash.numSpotShadows = numSpotShadows;
-        state2.version = nextVersion++;
+        state.version = nextVersion++;
       }
     }
     return {
       setup,
-      state: state2
+      state
     };
   }
   function WebGLRenderState(extensions, capabilities) {
     const lights = new WebGLLights(extensions, capabilities);
     const lightsArray = [];
     const shadowsArray = [];
-    function init() {
+    function init2() {
       lightsArray.length = 0;
       shadowsArray.length = 0;
     }
@@ -27573,14 +27655,14 @@ Karen Kjaergaard, WDA2020
     function setupLights(camera2) {
       lights.setup(lightsArray, shadowsArray, camera2);
     }
-    const state2 = {
+    const state = {
       lightsArray,
       shadowsArray,
       lights
     };
     return {
-      init,
-      state: state2,
+      init: init2,
+      state,
       setupLights,
       pushLight,
       pushShadow
@@ -28457,7 +28539,7 @@ Karen Kjaergaard, WDA2020
       reset
     };
   }
-  function WebGLTextures(_gl, extensions, state2, properties, capabilities, utils, info) {
+  function WebGLTextures(_gl, extensions, state, properties, capabilities, utils, info) {
     const isWebGL2 = capabilities.isWebGL2;
     const maxTextures = capabilities.maxTextures;
     const maxCubemapSize = capabilities.maxCubemapSize;
@@ -28641,8 +28723,8 @@ Karen Kjaergaard, WDA2020
           return;
         }
       }
-      state2.activeTexture(33984 + slot);
-      state2.bindTexture(3553, textureProperties.__webglTexture);
+      state.activeTexture(33984 + slot);
+      state.bindTexture(3553, textureProperties.__webglTexture);
     }
     function setTexture2DArray(texture, slot) {
       const textureProperties = properties.get(texture);
@@ -28650,8 +28732,8 @@ Karen Kjaergaard, WDA2020
         uploadTexture(textureProperties, texture, slot);
         return;
       }
-      state2.activeTexture(33984 + slot);
-      state2.bindTexture(35866, textureProperties.__webglTexture);
+      state.activeTexture(33984 + slot);
+      state.bindTexture(35866, textureProperties.__webglTexture);
     }
     function setTexture3D(texture, slot) {
       const textureProperties = properties.get(texture);
@@ -28659,8 +28741,8 @@ Karen Kjaergaard, WDA2020
         uploadTexture(textureProperties, texture, slot);
         return;
       }
-      state2.activeTexture(33984 + slot);
-      state2.bindTexture(32879, textureProperties.__webglTexture);
+      state.activeTexture(33984 + slot);
+      state.bindTexture(32879, textureProperties.__webglTexture);
     }
     function setTextureCube(texture, slot) {
       const textureProperties = properties.get(texture);
@@ -28668,8 +28750,8 @@ Karen Kjaergaard, WDA2020
         uploadCubeTexture(textureProperties, texture, slot);
         return;
       }
-      state2.activeTexture(33984 + slot);
-      state2.bindTexture(34067, textureProperties.__webglTexture);
+      state.activeTexture(33984 + slot);
+      state.bindTexture(34067, textureProperties.__webglTexture);
     }
     const wrappingToGL = {
       [RepeatWrapping]: 10497,
@@ -28735,8 +28817,8 @@ Karen Kjaergaard, WDA2020
       if (texture.isDataTexture3D)
         textureType = 32879;
       initTexture(textureProperties, texture);
-      state2.activeTexture(33984 + slot);
-      state2.bindTexture(textureType, textureProperties.__webglTexture);
+      state.activeTexture(33984 + slot);
+      state.bindTexture(textureType, textureProperties.__webglTexture);
       _gl.pixelStorei(37440, texture.flipY);
       _gl.pixelStorei(37441, texture.premultiplyAlpha);
       _gl.pixelStorei(3317, texture.unpackAlignment);
@@ -28779,17 +28861,17 @@ Karen Kjaergaard, WDA2020
             glType = utils.convert(texture.type);
           }
         }
-        state2.texImage2D(3553, 0, glInternalFormat, image.width, image.height, 0, glFormat, glType, null);
+        state.texImage2D(3553, 0, glInternalFormat, image.width, image.height, 0, glFormat, glType, null);
       } else if (texture.isDataTexture) {
         if (mipmaps.length > 0 && supportsMips) {
           for (let i = 0, il = mipmaps.length; i < il; i++) {
             mipmap = mipmaps[i];
-            state2.texImage2D(3553, i, glInternalFormat, mipmap.width, mipmap.height, 0, glFormat, glType, mipmap.data);
+            state.texImage2D(3553, i, glInternalFormat, mipmap.width, mipmap.height, 0, glFormat, glType, mipmap.data);
           }
           texture.generateMipmaps = false;
           textureProperties.__maxMipLevel = mipmaps.length - 1;
         } else {
-          state2.texImage2D(3553, 0, glInternalFormat, image.width, image.height, 0, glFormat, glType, image.data);
+          state.texImage2D(3553, 0, glInternalFormat, image.width, image.height, 0, glFormat, glType, image.data);
           textureProperties.__maxMipLevel = 0;
         }
       } else if (texture.isCompressedTexture) {
@@ -28797,31 +28879,31 @@ Karen Kjaergaard, WDA2020
           mipmap = mipmaps[i];
           if (texture.format !== RGBAFormat && texture.format !== RGBFormat) {
             if (glFormat !== null) {
-              state2.compressedTexImage2D(3553, i, glInternalFormat, mipmap.width, mipmap.height, 0, mipmap.data);
+              state.compressedTexImage2D(3553, i, glInternalFormat, mipmap.width, mipmap.height, 0, mipmap.data);
             } else {
               console.warn("THREE.WebGLRenderer: Attempt to load unsupported compressed texture format in .uploadTexture()");
             }
           } else {
-            state2.texImage2D(3553, i, glInternalFormat, mipmap.width, mipmap.height, 0, glFormat, glType, mipmap.data);
+            state.texImage2D(3553, i, glInternalFormat, mipmap.width, mipmap.height, 0, glFormat, glType, mipmap.data);
           }
         }
         textureProperties.__maxMipLevel = mipmaps.length - 1;
       } else if (texture.isDataTexture2DArray) {
-        state2.texImage3D(35866, 0, glInternalFormat, image.width, image.height, image.depth, 0, glFormat, glType, image.data);
+        state.texImage3D(35866, 0, glInternalFormat, image.width, image.height, image.depth, 0, glFormat, glType, image.data);
         textureProperties.__maxMipLevel = 0;
       } else if (texture.isDataTexture3D) {
-        state2.texImage3D(32879, 0, glInternalFormat, image.width, image.height, image.depth, 0, glFormat, glType, image.data);
+        state.texImage3D(32879, 0, glInternalFormat, image.width, image.height, image.depth, 0, glFormat, glType, image.data);
         textureProperties.__maxMipLevel = 0;
       } else {
         if (mipmaps.length > 0 && supportsMips) {
           for (let i = 0, il = mipmaps.length; i < il; i++) {
             mipmap = mipmaps[i];
-            state2.texImage2D(3553, i, glInternalFormat, glFormat, glType, mipmap);
+            state.texImage2D(3553, i, glInternalFormat, glFormat, glType, mipmap);
           }
           texture.generateMipmaps = false;
           textureProperties.__maxMipLevel = mipmaps.length - 1;
         } else {
-          state2.texImage2D(3553, 0, glInternalFormat, glFormat, glType, image);
+          state.texImage2D(3553, 0, glInternalFormat, glFormat, glType, image);
           textureProperties.__maxMipLevel = 0;
         }
       }
@@ -28836,8 +28918,8 @@ Karen Kjaergaard, WDA2020
       if (texture.image.length !== 6)
         return;
       initTexture(textureProperties, texture);
-      state2.activeTexture(33984 + slot);
-      state2.bindTexture(34067, textureProperties.__webglTexture);
+      state.activeTexture(33984 + slot);
+      state.bindTexture(34067, textureProperties.__webglTexture);
       _gl.pixelStorei(37440, texture.flipY);
       const isCompressed = texture && (texture.isCompressedTexture || texture.image[0].isCompressedTexture);
       const isDataTexture = texture.image[0] && texture.image[0].isDataTexture;
@@ -28859,12 +28941,12 @@ Karen Kjaergaard, WDA2020
             const mipmap = mipmaps[j];
             if (texture.format !== RGBAFormat && texture.format !== RGBFormat) {
               if (glFormat !== null) {
-                state2.compressedTexImage2D(34069 + i, j, glInternalFormat, mipmap.width, mipmap.height, 0, mipmap.data);
+                state.compressedTexImage2D(34069 + i, j, glInternalFormat, mipmap.width, mipmap.height, 0, mipmap.data);
               } else {
                 console.warn("THREE.WebGLRenderer: Attempt to load unsupported compressed texture format in .setTextureCube()");
               }
             } else {
-              state2.texImage2D(34069 + i, j, glInternalFormat, mipmap.width, mipmap.height, 0, glFormat, glType, mipmap.data);
+              state.texImage2D(34069 + i, j, glInternalFormat, mipmap.width, mipmap.height, 0, glFormat, glType, mipmap.data);
             }
           }
         }
@@ -28873,17 +28955,17 @@ Karen Kjaergaard, WDA2020
         mipmaps = texture.mipmaps;
         for (let i = 0; i < 6; i++) {
           if (isDataTexture) {
-            state2.texImage2D(34069 + i, 0, glInternalFormat, cubeImage[i].width, cubeImage[i].height, 0, glFormat, glType, cubeImage[i].data);
+            state.texImage2D(34069 + i, 0, glInternalFormat, cubeImage[i].width, cubeImage[i].height, 0, glFormat, glType, cubeImage[i].data);
             for (let j = 0; j < mipmaps.length; j++) {
               const mipmap = mipmaps[j];
               const mipmapImage = mipmap.image[i].image;
-              state2.texImage2D(34069 + i, j + 1, glInternalFormat, mipmapImage.width, mipmapImage.height, 0, glFormat, glType, mipmapImage.data);
+              state.texImage2D(34069 + i, j + 1, glInternalFormat, mipmapImage.width, mipmapImage.height, 0, glFormat, glType, mipmapImage.data);
             }
           } else {
-            state2.texImage2D(34069 + i, 0, glInternalFormat, glFormat, glType, cubeImage[i]);
+            state.texImage2D(34069 + i, 0, glInternalFormat, glFormat, glType, cubeImage[i]);
             for (let j = 0; j < mipmaps.length; j++) {
               const mipmap = mipmaps[j];
-              state2.texImage2D(34069 + i, j + 1, glInternalFormat, glFormat, glType, mipmap.image[i]);
+              state.texImage2D(34069 + i, j + 1, glInternalFormat, glFormat, glType, mipmap.image[i]);
             }
           }
         }
@@ -28900,7 +28982,7 @@ Karen Kjaergaard, WDA2020
       const glFormat = utils.convert(renderTarget.texture.format);
       const glType = utils.convert(renderTarget.texture.type);
       const glInternalFormat = getInternalFormat(renderTarget.texture.internalFormat, glFormat, glType);
-      state2.texImage2D(textureTarget, 0, glInternalFormat, renderTarget.width, renderTarget.height, 0, glFormat, glType, null);
+      state.texImage2D(textureTarget, 0, glInternalFormat, renderTarget.width, renderTarget.height, 0, glFormat, glType, null);
       _gl.bindFramebuffer(36160, framebuffer);
       _gl.framebufferTexture2D(36160, attachment, textureTarget, properties.get(renderTarget.texture).__webglTexture, 0);
       _gl.bindFramebuffer(36160, null);
@@ -29035,7 +29117,7 @@ Karen Kjaergaard, WDA2020
         }
       }
       if (isCube) {
-        state2.bindTexture(34067, textureProperties.__webglTexture);
+        state.bindTexture(34067, textureProperties.__webglTexture);
         setTextureParameters(34067, renderTarget.texture, supportsMips);
         for (let i = 0; i < 6; i++) {
           setupFrameBufferTexture(renderTargetProperties.__webglFramebuffer[i], renderTarget, 36064, 34069 + i);
@@ -29043,15 +29125,15 @@ Karen Kjaergaard, WDA2020
         if (textureNeedsGenerateMipmaps(renderTarget.texture, supportsMips)) {
           generateMipmap(34067, renderTarget.texture, renderTarget.width, renderTarget.height);
         }
-        state2.bindTexture(34067, null);
+        state.bindTexture(34067, null);
       } else {
-        state2.bindTexture(3553, textureProperties.__webglTexture);
+        state.bindTexture(3553, textureProperties.__webglTexture);
         setTextureParameters(3553, renderTarget.texture, supportsMips);
         setupFrameBufferTexture(renderTargetProperties.__webglFramebuffer, renderTarget, 36064, 3553);
         if (textureNeedsGenerateMipmaps(renderTarget.texture, supportsMips)) {
           generateMipmap(3553, renderTarget.texture, renderTarget.width, renderTarget.height);
         }
-        state2.bindTexture(3553, null);
+        state.bindTexture(3553, null);
       }
       if (renderTarget.depthBuffer) {
         setupDepthRenderbuffer(renderTarget);
@@ -29063,9 +29145,9 @@ Karen Kjaergaard, WDA2020
       if (textureNeedsGenerateMipmaps(texture, supportsMips)) {
         const target = renderTarget.isWebGLCubeRenderTarget ? 34067 : 3553;
         const webglTexture = properties.get(texture).__webglTexture;
-        state2.bindTexture(target, webglTexture);
+        state.bindTexture(target, webglTexture);
         generateMipmap(target, texture, renderTarget.width, renderTarget.height);
-        state2.bindTexture(target, null);
+        state.bindTexture(target, null);
       }
     }
     function updateMultisampleRenderTarget(renderTarget) {
@@ -30152,7 +30234,7 @@ Karen Kjaergaard, WDA2020
       console.error("THREE.WebGLRenderer: " + error.message);
       throw error;
     }
-    let extensions, capabilities, state2, info;
+    let extensions, capabilities, state, info;
     let properties, textures, cubemaps, attributes, geometries, objects;
     let programCache, materials, renderLists, renderStates, clipping;
     let background, morphtargets, bufferRenderer, indexedBufferRenderer;
@@ -30172,12 +30254,12 @@ Karen Kjaergaard, WDA2020
       }
       extensions.get("OES_texture_float_linear");
       utils = new WebGLUtils(_gl, extensions, capabilities);
-      state2 = new WebGLState(_gl, extensions, capabilities);
-      state2.scissor(_currentScissor.copy(_scissor).multiplyScalar(_pixelRatio).floor());
-      state2.viewport(_currentViewport.copy(_viewport).multiplyScalar(_pixelRatio).floor());
+      state = new WebGLState(_gl, extensions, capabilities);
+      state.scissor(_currentScissor.copy(_scissor).multiplyScalar(_pixelRatio).floor());
+      state.viewport(_currentViewport.copy(_viewport).multiplyScalar(_pixelRatio).floor());
       info = new WebGLInfo(_gl);
       properties = new WebGLProperties();
-      textures = new WebGLTextures(_gl, extensions, state2, properties, capabilities, utils, info);
+      textures = new WebGLTextures(_gl, extensions, state, properties, capabilities, utils, info);
       cubemaps = new WebGLCubeMaps(_this);
       attributes = new WebGLAttributes(_gl, capabilities);
       bindingStates = new WebGLBindingStates(_gl, extensions, attributes, capabilities);
@@ -30189,7 +30271,7 @@ Karen Kjaergaard, WDA2020
       materials = new WebGLMaterials(properties);
       renderLists = new WebGLRenderLists(properties);
       renderStates = new WebGLRenderStates(extensions, capabilities);
-      background = new WebGLBackground(_this, cubemaps, state2, objects, _premultipliedAlpha);
+      background = new WebGLBackground(_this, cubemaps, state, objects, _premultipliedAlpha);
       bufferRenderer = new WebGLBufferRenderer(_gl, extensions, info, capabilities);
       indexedBufferRenderer = new WebGLIndexedBufferRenderer(_gl, extensions, info, capabilities);
       info.programs = programCache.programs;
@@ -30197,7 +30279,7 @@ Karen Kjaergaard, WDA2020
       _this.extensions = extensions;
       _this.properties = properties;
       _this.renderLists = renderLists;
-      _this.state = state2;
+      _this.state = state;
       _this.info = info;
     }
     initGLContext();
@@ -30283,7 +30365,7 @@ Karen Kjaergaard, WDA2020
       } else {
         _viewport.set(x, y, width, height);
       }
-      state2.viewport(_currentViewport.copy(_viewport).multiplyScalar(_pixelRatio).floor());
+      state.viewport(_currentViewport.copy(_viewport).multiplyScalar(_pixelRatio).floor());
     };
     this.getScissor = function(target) {
       return target.copy(_scissor);
@@ -30294,13 +30376,13 @@ Karen Kjaergaard, WDA2020
       } else {
         _scissor.set(x, y, width, height);
       }
-      state2.scissor(_currentScissor.copy(_scissor).multiplyScalar(_pixelRatio).floor());
+      state.scissor(_currentScissor.copy(_scissor).multiplyScalar(_pixelRatio).floor());
     };
     this.getScissorTest = function() {
       return _scissorTest;
     };
     this.setScissorTest = function(boolean) {
-      state2.setScissorTest(_scissorTest = boolean);
+      state.setScissorTest(_scissorTest = boolean);
     };
     this.setOpaqueSort = function(method) {
       _opaqueSort = method;
@@ -30426,7 +30508,7 @@ Karen Kjaergaard, WDA2020
         scene2 = _emptyScene;
       const frontFaceCW = object.isMesh && object.matrixWorld.determinant() < 0;
       const program = setProgram(camera2, scene2, material, object);
-      state2.setMaterial(material, frontFaceCW);
+      state.setMaterial(material, frontFaceCW);
       let index = geometry.index;
       const position = geometry.attributes.position;
       if (index === null) {
@@ -30463,7 +30545,7 @@ Karen Kjaergaard, WDA2020
         return;
       if (object.isMesh) {
         if (material.wireframe === true) {
-          state2.setLineWidth(material.wireframeLinewidth * getTargetPixelRatio());
+          state.setLineWidth(material.wireframeLinewidth * getTargetPixelRatio());
           renderer2.setMode(1);
         } else {
           renderer2.setMode(4);
@@ -30472,7 +30554,7 @@ Karen Kjaergaard, WDA2020
         let lineWidth = material.linewidth;
         if (lineWidth === void 0)
           lineWidth = 1;
-        state2.setLineWidth(lineWidth * getTargetPixelRatio());
+        state.setLineWidth(lineWidth * getTargetPixelRatio());
         if (object.isLineSegments) {
           renderer2.setMode(1);
         } else if (object.isLineLoop) {
@@ -30607,10 +30689,10 @@ Karen Kjaergaard, WDA2020
         textures.updateRenderTargetMipmap(_currentRenderTarget);
         textures.updateMultisampleRenderTarget(_currentRenderTarget);
       }
-      state2.buffers.depth.setTest(true);
-      state2.buffers.depth.setMask(true);
-      state2.buffers.color.setMask(true);
-      state2.setPolygonOffset(false);
+      state.buffers.depth.setTest(true);
+      state.buffers.depth.setMask(true);
+      state.buffers.color.setMask(true);
+      state.setPolygonOffset(false);
       currentRenderList = null;
       currentRenderState = null;
     };
@@ -30692,7 +30774,7 @@ Karen Kjaergaard, WDA2020
           for (let j = 0, jl = cameras.length; j < jl; j++) {
             const camera22 = cameras[j];
             if (object.layers.test(camera22.layers)) {
-              state2.viewport(_currentViewport.copy(camera22.viewport));
+              state.viewport(_currentViewport.copy(camera22.viewport));
               currentRenderState.setupLights(camera22);
               renderObject(object, scene2, camera22, geometry, material, group2);
             }
@@ -30710,7 +30792,7 @@ Karen Kjaergaard, WDA2020
       object.normalMatrix.getNormalMatrix(object.modelViewMatrix);
       if (object.isImmediateRenderObject) {
         const program = setProgram(camera2, scene2, material, object);
-        state2.setMaterial(material);
+        state.setMaterial(material);
         bindingStates.reset();
         renderObjectImmediate(object, program);
       } else {
@@ -30824,7 +30906,7 @@ Karen Kjaergaard, WDA2020
       let refreshMaterial = false;
       let refreshLights = false;
       const program = materialProperties.program, p_uniforms = program.getUniforms(), m_uniforms = materialProperties.uniforms;
-      if (state2.useProgram(program.program)) {
+      if (state.useProgram(program.program)) {
         refreshProgram = true;
         refreshMaterial = true;
         refreshLights = true;
@@ -30980,9 +31062,9 @@ Karen Kjaergaard, WDA2020
         _gl.bindFramebuffer(36160, framebuffer);
         _currentFramebuffer = framebuffer;
       }
-      state2.viewport(_currentViewport);
-      state2.scissor(_currentScissor);
-      state2.setScissorTest(_currentScissorTest);
+      state.viewport(_currentViewport);
+      state.scissor(_currentScissor);
+      state.setScissorTest(_currentScissorTest);
       if (isCube) {
         const textureProperties = properties.get(renderTarget.texture);
         _gl.framebufferTexture2D(36160, 36064, 34069 + activeCubeFace, textureProperties.__webglTexture, activeMipmapLevel);
@@ -31036,7 +31118,7 @@ Karen Kjaergaard, WDA2020
       const glFormat = utils.convert(texture.format);
       textures.setTexture2D(texture, 0);
       _gl.copyTexImage2D(3553, level, glFormat, position.x, position.y, width, height, 0);
-      state2.unbindTexture();
+      state.unbindTexture();
     };
     this.copyTextureToTexture = function(position, srcTexture, dstTexture, level = 0) {
       const width = srcTexture.image.width;
@@ -31058,11 +31140,11 @@ Karen Kjaergaard, WDA2020
       }
       if (level === 0 && dstTexture.generateMipmaps)
         _gl.generateMipmap(3553);
-      state2.unbindTexture();
+      state.unbindTexture();
     };
     this.initTexture = function(texture) {
       textures.setTexture2D(texture, 0);
-      state2.unbindTexture();
+      state.unbindTexture();
     };
     if (typeof __THREE_DEVTOOLS__ !== "undefined") {
       __THREE_DEVTOOLS__.dispatchEvent(new CustomEvent("observe", {detail: this}));
@@ -36266,7 +36348,7 @@ Karen Kjaergaard, WDA2020
   ArcCurve.prototype.isArcCurve = true;
   function CubicPoly() {
     let c0 = 0, c1 = 0, c2 = 0, c3 = 0;
-    function init(x0, x1, t0, t1) {
+    function init2(x0, x1, t0, t1) {
       c0 = x0;
       c1 = t0;
       c2 = -3 * x0 + 3 * x1 - 2 * t0 - t1;
@@ -36274,14 +36356,14 @@ Karen Kjaergaard, WDA2020
     }
     return {
       initCatmullRom: function(x0, x1, x2, x3, tension) {
-        init(x1, x2, tension * (x2 - x0), tension * (x3 - x1));
+        init2(x1, x2, tension * (x2 - x0), tension * (x3 - x1));
       },
       initNonuniformCatmullRom: function(x0, x1, x2, x3, dt0, dt1, dt2) {
         let t1 = (x1 - x0) / dt0 - (x2 - x0) / (dt0 + dt1) + (x2 - x1) / dt1;
         let t2 = (x2 - x1) / dt1 - (x3 - x1) / (dt1 + dt2) + (x3 - x2) / dt2;
         t1 *= dt1;
         t2 *= dt1;
-        init(x1, x2, t1, t2);
+        init2(x1, x2, t1, t2);
       },
       calc: function(t) {
         const t2 = t * t;
@@ -41751,7 +41833,7 @@ Karen Kjaergaard, WDA2020
       scope.object.updateProjectionMatrix();
       scope.dispatchEvent(changeEvent);
       scope.update();
-      state2 = STATE.NONE;
+      state = STATE.NONE;
     };
     this.update = function() {
       var offset = new Vector3();
@@ -41765,7 +41847,7 @@ Karen Kjaergaard, WDA2020
         offset.copy(position).sub(scope.target);
         offset.applyQuaternion(quat);
         spherical.setFromVector3(offset);
-        if (scope.autoRotate && state2 === STATE.NONE) {
+        if (scope.autoRotate && state === STATE.NONE) {
           rotateLeft(getAutoRotationAngle());
         }
         if (scope.enableDamping) {
@@ -41849,7 +41931,7 @@ Karen Kjaergaard, WDA2020
       TOUCH_DOLLY_PAN: 5,
       TOUCH_DOLLY_ROTATE: 6
     };
-    var state2 = STATE.NONE;
+    var state = STATE.NONE;
     var EPS = 1e-6;
     var spherical = new Spherical();
     var sphericalDelta = new Spherical();
@@ -42148,19 +42230,19 @@ Karen Kjaergaard, WDA2020
           if (scope.enableZoom === false)
             return;
           handleMouseDownDolly(event);
-          state2 = STATE.DOLLY;
+          state = STATE.DOLLY;
           break;
         case MOUSE.ROTATE:
           if (event.ctrlKey || event.metaKey || event.shiftKey) {
             if (scope.enablePan === false)
               return;
             handleMouseDownPan(event);
-            state2 = STATE.PAN;
+            state = STATE.PAN;
           } else {
             if (scope.enableRotate === false)
               return;
             handleMouseDownRotate(event);
-            state2 = STATE.ROTATE;
+            state = STATE.ROTATE;
           }
           break;
         case MOUSE.PAN:
@@ -42168,18 +42250,18 @@ Karen Kjaergaard, WDA2020
             if (scope.enableRotate === false)
               return;
             handleMouseDownRotate(event);
-            state2 = STATE.ROTATE;
+            state = STATE.ROTATE;
           } else {
             if (scope.enablePan === false)
               return;
             handleMouseDownPan(event);
-            state2 = STATE.PAN;
+            state = STATE.PAN;
           }
           break;
         default:
-          state2 = STATE.NONE;
+          state = STATE.NONE;
       }
-      if (state2 !== STATE.NONE) {
+      if (state !== STATE.NONE) {
         scope.domElement.ownerDocument.addEventListener("pointermove", onPointerMove, false);
         scope.domElement.ownerDocument.addEventListener("pointerup", onPointerUp, false);
         scope.dispatchEvent(startEvent);
@@ -42189,7 +42271,7 @@ Karen Kjaergaard, WDA2020
       if (scope.enabled === false)
         return;
       event.preventDefault();
-      switch (state2) {
+      switch (state) {
         case STATE.ROTATE:
           if (scope.enableRotate === false)
             return;
@@ -42214,10 +42296,10 @@ Karen Kjaergaard, WDA2020
         return;
       handleMouseUp(event);
       scope.dispatchEvent(endEvent);
-      state2 = STATE.NONE;
+      state = STATE.NONE;
     }
     function onMouseWheel(event) {
-      if (scope.enabled === false || scope.enableZoom === false || state2 !== STATE.NONE && state2 !== STATE.ROTATE)
+      if (scope.enabled === false || scope.enableZoom === false || state !== STATE.NONE && state !== STATE.ROTATE)
         return;
       event.preventDefault();
       event.stopPropagation();
@@ -42241,16 +42323,16 @@ Karen Kjaergaard, WDA2020
               if (scope.enableRotate === false)
                 return;
               handleTouchStartRotate(event);
-              state2 = STATE.TOUCH_ROTATE;
+              state = STATE.TOUCH_ROTATE;
               break;
             case TOUCH.PAN:
               if (scope.enablePan === false)
                 return;
               handleTouchStartPan(event);
-              state2 = STATE.TOUCH_PAN;
+              state = STATE.TOUCH_PAN;
               break;
             default:
-              state2 = STATE.NONE;
+              state = STATE.NONE;
           }
           break;
         case 2:
@@ -42259,22 +42341,22 @@ Karen Kjaergaard, WDA2020
               if (scope.enableZoom === false && scope.enablePan === false)
                 return;
               handleTouchStartDollyPan(event);
-              state2 = STATE.TOUCH_DOLLY_PAN;
+              state = STATE.TOUCH_DOLLY_PAN;
               break;
             case TOUCH.DOLLY_ROTATE:
               if (scope.enableZoom === false && scope.enableRotate === false)
                 return;
               handleTouchStartDollyRotate(event);
-              state2 = STATE.TOUCH_DOLLY_ROTATE;
+              state = STATE.TOUCH_DOLLY_ROTATE;
               break;
             default:
-              state2 = STATE.NONE;
+              state = STATE.NONE;
           }
           break;
         default:
-          state2 = STATE.NONE;
+          state = STATE.NONE;
       }
-      if (state2 !== STATE.NONE) {
+      if (state !== STATE.NONE) {
         scope.dispatchEvent(startEvent);
       }
     }
@@ -42283,7 +42365,7 @@ Karen Kjaergaard, WDA2020
         return;
       event.preventDefault();
       event.stopPropagation();
-      switch (state2) {
+      switch (state) {
         case STATE.TOUCH_ROTATE:
           if (scope.enableRotate === false)
             return;
@@ -42309,7 +42391,7 @@ Karen Kjaergaard, WDA2020
           scope.update();
           break;
         default:
-          state2 = STATE.NONE;
+          state = STATE.NONE;
       }
     }
     function onTouchEnd(event) {
@@ -42317,7 +42399,7 @@ Karen Kjaergaard, WDA2020
         return;
       handleTouchEnd(event);
       scope.dispatchEvent(endEvent);
-      state2 = STATE.NONE;
+      state = STATE.NONE;
     }
     function onContextMenu(event) {
       if (scope.enabled === false)
@@ -42892,114 +42974,6 @@ Karen Kjaergaard, WDA2020
     return raycaster.intersectObject(group, true);
   }
 
-  // lib/sidebar/index.js
-  var FEATS = [
-    {id: "about", name: "ABOUT"},
-    {id: "students", name: "GRADUATES"}
-  ];
-  var state = {};
-  var themes2 = THEMES_EN;
-  var initSidebar = (selector) => {
-    state.selectedFeatIds = [];
-    state.selectedThemeIds = [];
-    state.selectedStudioIds = [];
-    state.themes = [];
-    state.studios = [];
-    let _seen_themes = [];
-    let _seen_studios = [];
-    DATA_STUDENTS.forEach((s) => {
-      if (s.theme.length > 0) {
-        if (!_seen_themes.includes(s.theme)) {
-          _seen_themes.push(s.theme);
-          const name = getThemeById(s.theme).replace(" (", "<br />(");
-          state.themes.push({key: s.theme, value: name});
-        }
-        if (!_seen_studios.includes(s.studio)) {
-          _seen_studios.push(s.studio);
-          state.studios.push({key: s.studio, value: "X-" + s.studio});
-        }
-      }
-    });
-    document.querySelector("#feats-menu").innerHTML = render_feats_menu();
-    document.querySelector("#themes-menu").innerHTML = render_themes_menu();
-    document.querySelector("#showhide").addEventListener("click", () => {
-      const sb = document.querySelector("#sidebar");
-      if (sb.classList.contains("closed")) {
-        sb.classList.remove("closed");
-        document.querySelector("#showhide").innerHTML = "-";
-        console.log("show sidebar +");
-      } else {
-        sb.classList.add("closed");
-        document.querySelector("#showhide").innerHTML = "+";
-        console.log("hide sidebar");
-      }
-    });
-    document.querySelector("#sidebar").style.display = "block";
-    document.querySelectorAll("#sidebar [data-trigger]").forEach((el2) => {
-      el2.addEventListener("click", (evnt) => {
-        const el3 = evnt.target;
-        const trigger = el3.getAttribute("data-trigger");
-        const key = el3.getAttribute("data-key");
-        const MODE2 = "radio";
-        const LIST = trigger === "filter:feat" ? "selectedFeatIds" : "selectedThemeIds";
-        if (MODE2 === "radio") {
-          state[LIST] = [];
-          const elms = document.querySelectorAll(`#sidebar [data-trigger="${trigger}"]`);
-          let prevSelected;
-          elms.forEach((elm) => {
-            if (elm.classList.contains("selected")) {
-              elm.classList.remove("selected");
-              prevSelected = elm.getAttribute("data-key");
-              action(trigger, "hide", elm.getAttribute("data-key"));
-            }
-          });
-          if (prevSelected != key) {
-            el3.classList.add("selected");
-            action(trigger, "show", key);
-          } else {
-          }
-        }
-        if (MODE2 === "checkbox") {
-          if (state[LIST].includes(key)) {
-            state[LIST] = state[LIST].filter((o) => o != key);
-            el3.classList.remove("selected");
-            action(trigger, "hide", key);
-          } else {
-            state[LIST].push(key);
-            el3.classList.add("selected");
-            action(trigger, "show", key);
-          }
-        }
-      });
-    });
-  };
-  var render_feats_menu = () => {
-    let html = "";
-    FEATS.forEach((s) => {
-      const selected = state.selectedFeatIds.includes(s.id);
-      html += _partial_radiobtn("filter:feat", s.id, s.name, selected);
-    });
-    return html;
-  };
-  var render_themes_menu = () => {
-    let html = "";
-    state.themes.forEach((s) => {
-      const selected = state.selectedThemeIds.includes(s.key);
-      html += _partial_radiobtn("filter:theme", s.key, s.value, selected, ".twoline");
-    });
-    return html;
-  };
-  var _partial_radiobtn = (trigger, key, val, selected = false, style = "") => {
-    return `
-		<div class="toggle ${style} ${selected ? "selected" : ""}" data-trigger="${trigger}" data-key="${key}">
-			<span class="circle"> <span class="label">${val}</span> </span>
-			
-		</div>`;
-  };
-  var getThemeById = (id) => {
-    return themes2.filter((t) => t.id === id)[0]?.name || "";
-  };
-
   // lib/search/index.js
   var el;
   var initSearch = (selector) => {
@@ -43042,11 +43016,11 @@ Karen Kjaergaard, WDA2020
   document.title = settings.document_title;
   document.querySelector("#logo").innerHTML = settings.title;
   window.app = {
-    sidebar: initSidebar("#sidebar-menu"),
     animation: anim_exports,
     search: initSearch("#search"),
     actions: actions_exports
   };
+  init();
   initAnimation("#animation");
   initHashRouter(route);
 })();

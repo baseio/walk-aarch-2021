@@ -15,25 +15,63 @@ Casper Riis Jensen <casper@walk.agency>
 Karen Kjærgaard <kje@aarch.dk>
 
 
+## General idea
+
+Procedural graphics ala Processing.org
+Let students present their project on a live video-stream
+Let visitors book/invite a student to video-conference
+(COVID-19 times...)
+
+
+## Thoughts about 'how to reuse this for the next graduation'
+
+A decent strategy whould be to consider this site a 'landing pages' or 'concept site'
+for a graduation.
+One could swap the "src/lib/animation" (rename to sth like src/fx ?),
+keeping the hash-route-scheme.
+settins.js could point to the active "fx/effect".
+src/data/* can easily be updated (see tools/).
+
+Making a custom effect for each graduation would be great fun!
+
+
+## Code architecture 
+
+Settins: Define static props
+Index: Bootstrap, based on settins
+Router: Decide what to do (triggered by location.hash changes)
+Action: Decide how to do it (including orchestration of other modules)
+
+
+## Notes on setting up a dev env
+
+Development versions: node v14.15.1
+Tested against: chrome/86.0.4240.198 safari/537.36 opera/72.0.3815.400
+
+git clone
+npm i
+npm run watch
+cd dist/ && serve (can we script this to run in bg? bundle serve as node_module?)
+
+Netlify is linked to the above repo
+
+
 ## Tasks
 
 
-- Font License
-- Code License
-- HTML Meta description
+- Get OK for: Code License
+- Get OK for: HTML Meta description
 - Hosting
 - Can we Host live-stream with Vimeo (instead of Twitch)
 - WP content workflow
-- WP slug
-- WP api of sorts? get images for project/student
 - Sort students
 
-- auto-inverting logo
-- de-select-able theme buttons
-- zoom all the way into the white student circle
-- bubble-student list
-- rollover ikon/image
-- pull main project image from wp?
+- finnish re-routing
+- clean-up "animation" api (for re-use)
+- css for pill-student-list
+- test show icon/image/animation when hovering a ball
+- setup server (when it lands)
+
 
 
 
@@ -96,9 +134,16 @@ Karen Kjærgaard <kje@aarch.dk>
 - [ ] student pill-layout (searchable)
 - [-] student contact info (await Karen)
 - [-] server (await Tony)
+- [ ] verify fonts (and minimize selection)
+- [ ] fork mobile to separate html file (to avoid document.write)
 - [ ] Demonstrate all features 
 
 #### W01: Plan production
+
+- [ ] student content info
+- [ ] student hero images
+- [ ] mobile
+
 #### W02: Production
 #### W03: Production
 #### W04: Release

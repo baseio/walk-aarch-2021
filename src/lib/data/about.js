@@ -1,5 +1,4 @@
-export const DATA_ABOUT = {
-	en: `
+export const DATA_ABOUT = `
 PROCESSING ARCHITECTURE
 
 <br />
@@ -20,5 +19,4 @@ WELCOME > THE EXHIBITION IS (ALWAYS) OPEN!
 <br /><br />
 Karen Kjaergaard, WDA2020
 
-	`
-}
+`
