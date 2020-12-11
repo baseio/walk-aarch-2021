@@ -1,11 +1,11 @@
 (() => {
-  // settings.js
+  // app/settings.js
   var settings = {
     document_title: "AAA-21: PROCESSING ARCHITECTURE",
     title: `//&nbsp;PROCESSING ARCHITECTURE`
   };
 
-  // lib/data/students.js
+  // app/data/students.js
   var DATA_STUDENTS = [
     {
       id: "4008524",

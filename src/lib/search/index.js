@@ -1,4 +1,4 @@
-import * as DATA from '../data.js'
+import * as DATA from '../../app/data.js'
 
 import './styles.search.css'
 

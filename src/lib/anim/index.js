@@ -16,7 +16,9 @@ import {init_userdraw, showDrawDemo, hideDrawDemo} from './UserDraw.js'
 import {CircleSprite} from './CircleSprite.js'
 import {Eraser} from './Eraser.js'
 import {GenerateTexture} from './GenerateTexture.js'
-import * as DATA from '../data.js'
+
+import * as DATA from '../../app/data.js'
+
 import './styles.anim.css'
 
 // config
@@ -24,7 +26,7 @@ const DRAWING_SIZE = 200 // size of the userdraw canvas
 
 // flags
 let MODE = 'free'
-let K_AUTO_ROTATION 	= true
+let K_AUTO_ROTATION = true
 
 // props
 let balls = []
@@ -45,8 +47,7 @@ let currentThemeFilterValue = ''
 
 // main
 export const initAnimation = (selector) => {
-	autoPlay(true) // tween
-	
+	autoPlay(true) // tween	
 	init_userdraw('#userdraw', DRAWING_SIZE, onPathCreated)
 	init_scene(selector)
 	init_balls()
@@ -129,12 +130,11 @@ const init_scene = (selector) => {
 
 
 const init_balls = () => {
-
 	const normalTexture = GenerateTexture('#eee', '#fff', 10)
 	const hoverTexture  = GenerateTexture('#fff', '#000', 20)
 
 	for(let i=0; i<numballs; i++){
-		balls.push( new CircleSprite(group, i, normalTexture, hoverTexture))
+		balls.push( new CircleSprite(group, i, DATA.DATA_STUDENTS[i], normalTexture, hoverTexture))
 	}
 	window.app.balls = balls
 }
@@ -229,7 +229,6 @@ const applyPositions = (positions, blendMax=null, blendMin=null, hideTrailsFor=1
 		eraser.blendDown(blendMin)
 	}, delay + hideTrailsFor)
 }
-
 
 
 const reset_rotations = () => {
@@ -430,7 +429,15 @@ let previousSelectedObjectId = null
 const raycaster = new Raycaster();
 const mouseVector = new Vector3();
 
+let intersectedBall = null // new
+
 const onDocumentMouseDown = () => {
+
+	// todo
+	// look at current hash
+	// if its a student -> go to her theme (grid)
+	// if its a theme   -> go to selectedNode (sat by mouseMove)
+
 	console.log('onDocumentMouseDown', MODE, previousSelectedObjectId);
 	if( previousSelectedObjectId ){
 
@@ -442,15 +449,20 @@ const onDocumentMouseDown = () => {
 				focusedNode.normal()
 				focusedNode = null
 			}
-			applyFilter(currentFilter, currentThemeFilterValue)
-			window.toGrid()			
+			console.log('@anim onDocumentMouseDown collapse', currentFilter, currentThemeFilterValue, b);
+			// applyFilter(currentFilter, currentThemeFilterValue)
+			// window.toGrid()
+
+			const theme = DATA.THEMES.filter(t => t.id === b.el.userData.data.theme)[0]
+
+			window.location.hash = `#theme:${theme.slug}`
 
 		}else{
 			// focus
-			console.log('focus node', DATA.DATA_STUDENTS[previousSelectedObjectId].name );
-			window.location.href = '#'+ DATA.DATA_STUDENTS[previousSelectedObjectId].stub
+			console.log('@anim onDocumentMouseDown focus', DATA.DATA_STUDENTS[previousSelectedObjectId].name );
+			window.location.hash = '#'+ DATA.DATA_STUDENTS[previousSelectedObjectId].stub
 
-			window.toNode( previousSelectedObjectId )
+			// window.toNode( previousSelectedObjectId )
 		}
 
 	}else{

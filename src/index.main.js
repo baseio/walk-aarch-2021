@@ -1,7 +1,10 @@
-import {settings} from './settings.js'
-import {initHashRouter, route} from './lib/router.js'
+import {settings} from './app/settings.js'
 
-import * as actions from './lib/actions.js'
+import * as actions from './app/actions.js'
+import {handleHash} from './app/routes.js' 
+
+import {Router} from './lib/Router.js'
+
 import * as sidebar from './lib/sidebar/index.js'
 
 // todo:
@@ -10,21 +13,28 @@ import * as sidebar from './lib/sidebar/index.js'
 import * as Animation from './lib/anim/index.js'
 import {initSearch} from './lib/search/index.js'
 
-import {action} from './lib/actions.js'
+// import {action} from './lib/actions.js'
 
 import './styles.main.css'
 
 document.title = settings.document_title
 document.querySelector('#logo').innerHTML = settings.title
 
+
+
+
 window.app = {
 	animation: Animation,
-	search: initSearch('#search'),
-	actions: actions,
+	// search: initSearch('#search'),
+	// actions: actions,
 }
 
-sidebar.init()
+window.app.actions = actions
+window.app.sidebar = sidebar.init()
+window.app.search  = initSearch('#search')
 
 Animation.initAnimation('#animation')
 
-initHashRouter( route )
+window.app.router = new Router(handleHash)
+
+console.log(window.app);

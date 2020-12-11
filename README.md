@@ -37,9 +37,9 @@ Making a custom effect for each graduation would be great fun!
 
 ## Code architecture 
 
-Settins: Define static props
-Index: Bootstrap, based on settins
-Router: Decide what to do (triggered by location.hash changes)
+Settings: Define static props
+Index:  Bootstrap, based on settings
+Routes: Decide what to do (triggered by location.hash changes)
 Action: Decide how to do it (including orchestration of other modules)
 
 

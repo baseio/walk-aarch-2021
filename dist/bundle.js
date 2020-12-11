@@ -15810,13 +15810,27 @@
     })();
   });
 
-  // settings.js
+  // app/settings.js
   var settings = {
     document_title: "AAA-21: PROCESSING ARCHITECTURE",
     title: `//&nbsp;PROCESSING ARCHITECTURE`
   };
 
-  // lib/data/students.js
+  // app/actions.js
+  var actions_exports = {};
+  __export(actions_exports, {
+    action: () => action,
+    clear_content: () => clear_content,
+    hide_render_student: () => hide_render_student,
+    render_live: () => render_live,
+    render_student: () => render_student,
+    render_students: () => render_students,
+    render_text: () => render_text,
+    render_videos: () => render_videos,
+    setStudentSelected: () => setStudentSelected
+  });
+
+  // app/data/students.js
   var DATA_STUDENTS = [
     {
       id: "4008524",
@@ -16276,7 +16290,7 @@
     }
   ];
 
-  // lib/data/themes.js
+  // app/data/themes.js
   var THEMES_EN = [
     {id: "1", slug: "new-commons", name: "NEW COMMONS"},
     {id: "2", slug: "building-for-culture", name: "BUILDING FOR CULTURE"},
@@ -16287,7 +16301,7 @@
     {id: "7", slug: "extreme-architecture", name: "EXTREME ARCHITECTURE"}
   ];
 
-  // lib/data/about.js
+  // app/data/about.js
   var DATA_ABOUT = `
 PROCESSING ARCHITECTURE
 
@@ -16311,75 +16325,7 @@ Karen Kjaergaard, WDA2020
 
 `;
 
-  // lib/router.js
-  var route = (hash) => {
-    console.log("Route:", hash);
-    const b = window.app.balls.filter((b2) => b2.el.userData.data.stub === hash)[0];
-    if (b) {
-      const accepted = window.toNode(b.i);
-      console.log("OnHashChanged #4 accepted", accepted);
-      if (accepted) {
-        const btn = document.querySelector(`#sidebar [data-trigger="filter:theme"][data-key="${b.el.userData.data.theme}"]`);
-        if (btn) {
-          btn.classList.add("selected");
-        }
-      }
-    } else if (hash.indexOf("theme:") === 0) {
-      hash = hash.split(":")[1];
-      const slug = hash.toLowerCase().replace(/ /g, "-");
-      const theme = THEMES_EN.filter((t) => t.slug === slug)[0];
-      console.log("OnHashChanged theme:", hash, slug, theme);
-      document.querySelectorAll("#sidebar [data-trigger]").forEach((el2) => {
-        el2.classList.remove("selected");
-      });
-      const btn = document.querySelector(`#sidebar [data-trigger="theme"][data-key="${slug}"]`);
-      if (btn) {
-        btn.classList.add("selected");
-      }
-    } else if (hash != "") {
-      console.log("OnHashChanged page", hash);
-      document.querySelectorAll("#sidebar [data-trigger]").forEach((el2) => {
-        el2.classList.remove("selected");
-      });
-      const btn = document.querySelector(`#sidebar [data-trigger="feat"][data-key="${hash}"]`);
-      if (btn) {
-        btn.classList.add("selected");
-      }
-      window.app.actions.clear_content();
-      if (hash === "about")
-        window.app.actions.render_text(hash);
-      if (hash === "live")
-        window.app.actions.render_live(hash);
-      if (hash === "videos")
-        window.app.actions.render_videos(hash);
-      if (hash === "graduates")
-        window.app.actions.render_students(hash);
-    }
-  };
-  var initHashRouter = (listener) => {
-    let h = window.location.hash || "#index";
-    h = h.replace("#", "");
-    window.addEventListener("hashchange", () => {
-      let h2 = window.location.hash || "#index";
-      h2 = h2.replace("#", "");
-      listener(h2);
-    });
-    listener(h);
-  };
-
-  // lib/actions.js
-  var actions_exports = {};
-  __export(actions_exports, {
-    action: () => action,
-    clear_content: () => clear_content,
-    hide_render_student: () => hide_render_student,
-    render_live: () => render_live,
-    render_student: () => render_student,
-    render_students: () => render_students,
-    render_text: () => render_text,
-    render_videos: () => render_videos,
-    setStudentSelected: () => setStudentSelected
-  });
+  // app/actions.js
   var container;
   var themeFilter = null;
   var studentSelected = null;
@@ -16562,6 +16508,77 @@ Karen Kjaergaard, WDA2020
       }
     });
     container.innerHTML = html;
+  };
+
+  // app/routes.js
+  var handleHash = (rawHash) => {
+    let hash = rawHash.replace("#", "");
+    console.log("handleHash:", hash);
+    const b = window.app.balls.filter((b2) => b2.el.userData.data.stub === hash)[0];
+    if (b) {
+      const accepted = window.toNode(b.i);
+      console.log("OnHashChanged #4 accepted", accepted);
+      if (accepted) {
+        const btn = document.querySelector(`#sidebar [data-trigger="filter:theme"][data-key="${b.el.userData.data.theme}"]`);
+        if (btn) {
+          btn.classList.add("selected");
+        }
+      }
+    } else if (hash.indexOf("theme:") === 0) {
+      hash = hash.split(":")[1];
+      const slug = hash.toLowerCase().replace(/ /g, "-");
+      const theme = THEMES_EN.filter((t) => t.slug === slug)[0];
+      console.log("OnHashChanged theme:", hash, slug, theme);
+      document.querySelectorAll("#sidebar [data-trigger]").forEach((el2) => {
+        el2.classList.remove("selected");
+      });
+      const btn = document.querySelector(`#sidebar [data-trigger="theme"][data-key="${slug}"]`);
+      if (btn) {
+        btn.classList.add("selected");
+      }
+      window.app.animation.applyFilter("theme", theme.id);
+    } else if (hash != "") {
+      console.log("OnHashChanged page", hash);
+      document.querySelectorAll("#sidebar [data-trigger]").forEach((el2) => {
+        el2.classList.remove("selected");
+      });
+      const btn = document.querySelector(`#sidebar [data-trigger="feat"][data-key="${hash}"]`);
+      if (btn) {
+        btn.classList.add("selected");
+      }
+      window.app.actions.clear_content();
+      if (hash === "about")
+        window.app.actions.render_text(hash);
+      if (hash === "live")
+        window.app.actions.render_live(hash);
+      if (hash === "videos")
+        window.app.actions.render_videos(hash);
+      if (hash === "graduates")
+        window.app.actions.render_students(hash);
+    }
+  };
+
+  // lib/Router.js
+  var Router = class {
+    constructor(routeFunction) {
+      this.history = [];
+      if (!routeFunction)
+        console.error("Router Error: You must provide a routing funtion");
+      this.routeFunction = routeFunction;
+      window.addEventListener("hashchange", this.OnHashChanged.bind(this));
+      this.OnHashChanged();
+    }
+    OnHashChanged() {
+      const h = window.location.hash;
+      this.history.push(h);
+      this.routeFunction(h);
+    }
+    routeFunction(hash) {
+      console.warn("Router default routeFunction called. Should be overridden! hash:", hash);
+    }
+    back() {
+      window.location.hash = this.history.pop();
+    }
   };
 
   // lib/sidebar/index.js
@@ -39885,7 +39902,7 @@ Karen Kjaergaard, WDA2020
       return index !== null && index < this._nActiveActions;
     },
     _addInactiveAction: function(action2, clipUuid, rootUuid) {
-      const actions2 = this._actions, actionsByClip = this._actionsByClip;
+      const actions = this._actions, actionsByClip = this._actionsByClip;
       let actionsForClip = actionsByClip[clipUuid];
       if (actionsForClip === void 0) {
         actionsForClip = {
@@ -39899,15 +39916,15 @@ Karen Kjaergaard, WDA2020
         action2._byClipCacheIndex = knownActions.length;
         knownActions.push(action2);
       }
-      action2._cacheIndex = actions2.length;
-      actions2.push(action2);
+      action2._cacheIndex = actions.length;
+      actions.push(action2);
       actionsForClip.actionByRoot[rootUuid] = action2;
     },
     _removeInactiveAction: function(action2) {
-      const actions2 = this._actions, lastInactiveAction = actions2[actions2.length - 1], cacheIndex = action2._cacheIndex;
+      const actions = this._actions, lastInactiveAction = actions[actions.length - 1], cacheIndex = action2._cacheIndex;
       lastInactiveAction._cacheIndex = cacheIndex;
-      actions2[cacheIndex] = lastInactiveAction;
-      actions2.pop();
+      actions[cacheIndex] = lastInactiveAction;
+      actions.pop();
       action2._cacheIndex = null;
       const clipUuid = action2._clip.uuid, actionsByClip = this._actionsByClip, actionsForClip = actionsByClip[clipUuid], knownActionsForClip = actionsForClip.knownActions, lastKnownAction = knownActionsForClip[knownActionsForClip.length - 1], byClipCacheIndex = action2._byClipCacheIndex;
       lastKnownAction._byClipCacheIndex = byClipCacheIndex;
@@ -39931,18 +39948,18 @@ Karen Kjaergaard, WDA2020
       }
     },
     _lendAction: function(action2) {
-      const actions2 = this._actions, prevIndex = action2._cacheIndex, lastActiveIndex = this._nActiveActions++, firstInactiveAction = actions2[lastActiveIndex];
+      const actions = this._actions, prevIndex = action2._cacheIndex, lastActiveIndex = this._nActiveActions++, firstInactiveAction = actions[lastActiveIndex];
       action2._cacheIndex = lastActiveIndex;
-      actions2[lastActiveIndex] = action2;
+      actions[lastActiveIndex] = action2;
       firstInactiveAction._cacheIndex = prevIndex;
-      actions2[prevIndex] = firstInactiveAction;
+      actions[prevIndex] = firstInactiveAction;
     },
     _takeBackAction: function(action2) {
-      const actions2 = this._actions, prevIndex = action2._cacheIndex, firstInactiveIndex = --this._nActiveActions, lastActiveAction = actions2[firstInactiveIndex];
+      const actions = this._actions, prevIndex = action2._cacheIndex, firstInactiveIndex = --this._nActiveActions, lastActiveAction = actions[firstInactiveIndex];
       action2._cacheIndex = firstInactiveIndex;
-      actions2[firstInactiveIndex] = action2;
+      actions[firstInactiveIndex] = action2;
       lastActiveAction._cacheIndex = prevIndex;
-      actions2[prevIndex] = lastActiveAction;
+      actions[prevIndex] = lastActiveAction;
     },
     _addInactiveBinding: function(binding, rootUuid, trackName) {
       const bindingsByRoot = this._bindingsByRootAndName, bindings = this._bindings;
@@ -40034,17 +40051,17 @@ Karen Kjaergaard, WDA2020
       return null;
     },
     stopAllAction: function() {
-      const actions2 = this._actions, nActions = this._nActiveActions;
+      const actions = this._actions, nActions = this._nActiveActions;
       for (let i = nActions - 1; i >= 0; --i) {
-        actions2[i].stop();
+        actions[i].stop();
       }
       return this;
     },
     update: function(deltaTime) {
       deltaTime *= this.timeScale;
-      const actions2 = this._actions, nActions = this._nActiveActions, time = this.time += deltaTime, timeDirection = Math.sign(deltaTime), accuIndex = this._accuIndex ^= 1;
+      const actions = this._actions, nActions = this._nActiveActions, time = this.time += deltaTime, timeDirection = Math.sign(deltaTime), accuIndex = this._accuIndex ^= 1;
       for (let i = 0; i !== nActions; ++i) {
-        const action2 = actions2[i];
+        const action2 = actions[i];
         action2._update(time, deltaTime, timeDirection, accuIndex);
       }
       const bindings = this._bindings, nBindings = this._nActiveBindings;
@@ -40064,18 +40081,18 @@ Karen Kjaergaard, WDA2020
       return this._root;
     },
     uncacheClip: function(clip) {
-      const actions2 = this._actions, clipUuid = clip.uuid, actionsByClip = this._actionsByClip, actionsForClip = actionsByClip[clipUuid];
+      const actions = this._actions, clipUuid = clip.uuid, actionsByClip = this._actionsByClip, actionsForClip = actionsByClip[clipUuid];
       if (actionsForClip !== void 0) {
         const actionsToRemove = actionsForClip.knownActions;
         for (let i = 0, n = actionsToRemove.length; i !== n; ++i) {
           const action2 = actionsToRemove[i];
           this._deactivateAction(action2);
-          const cacheIndex = action2._cacheIndex, lastInactiveAction = actions2[actions2.length - 1];
+          const cacheIndex = action2._cacheIndex, lastInactiveAction = actions[actions.length - 1];
           action2._cacheIndex = null;
           action2._byClipCacheIndex = null;
           lastInactiveAction._cacheIndex = cacheIndex;
-          actions2[cacheIndex] = lastInactiveAction;
-          actions2.pop();
+          actions[cacheIndex] = lastInactiveAction;
+          actions.pop();
           this._removeInactiveBindingsForAction(action2);
         }
         delete actionsByClip[clipUuid];
@@ -42513,7 +42530,7 @@ Karen Kjaergaard, WDA2020
 
   // lib/anim/CircleSprite.js
   var CircleSprite = class {
-    constructor(parent, i, normalTexture, hoverTexture) {
+    constructor(parent, i, userdata, normalTexture, hoverTexture) {
       this.i = i;
       this.enabled = true;
       this.enabledSize = 0.1;
@@ -42538,7 +42555,7 @@ Karen Kjaergaard, WDA2020
       });
       this.el = new Sprite(this.material);
       this.el.userData.i = this.i;
-      this.el.userData.data = DATA_STUDENTS[this.i];
+      this.el.userData.data = userdata;
       parent.add(this.el);
       setTimeout(() => {
         this.tx = -1 + 2 * Math.random();
@@ -42741,7 +42758,7 @@ Karen Kjaergaard, WDA2020
     const normalTexture = GenerateTexture("#eee", "#fff", 10);
     const hoverTexture = GenerateTexture("#fff", "#000", 20);
     for (let i = 0; i < numballs; i++) {
-      balls.push(new CircleSprite(group, i, normalTexture, hoverTexture));
+      balls.push(new CircleSprite(group, i, DATA_STUDENTS[i], normalTexture, hoverTexture));
     }
     window.app.balls = balls;
   };
@@ -42914,12 +42931,12 @@ Karen Kjaergaard, WDA2020
           focusedNode.normal();
           focusedNode = null;
         }
-        applyFilter(currentFilter, currentThemeFilterValue);
-        window.toGrid();
+        console.log("@anim onDocumentMouseDown collapse", currentFilter, currentThemeFilterValue, b);
+        const theme = THEMES_EN.filter((t) => t.id === b.el.userData.data.theme)[0];
+        window.location.hash = `#theme:${theme.slug}`;
       } else {
-        console.log("focus node", DATA_STUDENTS[previousSelectedObjectId].name);
-        window.location.href = "#" + DATA_STUDENTS[previousSelectedObjectId].stub;
-        window.toNode(previousSelectedObjectId);
+        console.log("@anim onDocumentMouseDown focus", DATA_STUDENTS[previousSelectedObjectId].name);
+        window.location.hash = "#" + DATA_STUDENTS[previousSelectedObjectId].stub;
       }
     } else {
       if (MODE != "free")
@@ -43016,11 +43033,12 @@ Karen Kjaergaard, WDA2020
   document.title = settings.document_title;
   document.querySelector("#logo").innerHTML = settings.title;
   window.app = {
-    animation: anim_exports,
-    search: initSearch("#search"),
-    actions: actions_exports
+    animation: anim_exports
   };
-  init();
+  window.app.actions = actions_exports;
+  window.app.sidebar = init();
+  window.app.search = initSearch("#search");
   initAnimation("#animation");
-  initHashRouter(route);
+  window.app.router = new Router(handleHash);
+  console.log(window.app);
 })();

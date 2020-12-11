@@ -1,5 +1,5 @@
 
-import * as DATA from '../data.js'
+import * as DATA from '../../app/data.js'
 
 import './styles.sidebar.css'
 import './styles.pages.css'

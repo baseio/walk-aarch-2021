@@ -1,7 +1,7 @@
 console.log('index.mobile.js');
 
-import {settings} from './settings.js'
-import * as DATA from './lib/data.js'
+import {settings} from './app/settings.js'
+import * as DATA from './app/data.js'
 
 import './styles.mobile.css'
 

@@ -3,10 +3,9 @@ import {
 	SpriteMaterial,	
 } from 'three';
 
-import * as DATA from '../data.js'
 
 export class CircleSprite {
-	constructor(parent, i, normalTexture, hoverTexture){
+	constructor(parent, i, userdata, normalTexture, hoverTexture){
 		this.i = i
 		this.enabled = true
 
@@ -38,7 +37,7 @@ export class CircleSprite {
 
 		this.el = new Sprite( this.material );
 		this.el.userData.i = this.i
-		this.el.userData.data = DATA.DATA_STUDENTS[this.i]
+		this.el.userData.data = userdata
 		
 		parent.add( this.el );
 		
