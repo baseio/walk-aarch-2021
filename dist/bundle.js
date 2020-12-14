@@ -16291,7 +16291,7 @@
   ];
 
   // app/data/themes.js
-  var THEMES_EN = [
+  var THEMES = [
     {id: "1", slug: "new-commons", name: "NEW COMMONS"},
     {id: "2", slug: "building-for-culture", name: "BUILDING FOR CULTURE"},
     {id: "3", slug: "development", name: "DEVELOPMENT"},
@@ -16358,7 +16358,7 @@ Karen Kjaergaard, WDA2020
       }
     }
     if (trigger === "filter:theme") {
-      const theme = THEMES_EN.filter((t) => t.id === id)[0];
+      const theme = THEMES.filter((t) => t.id === id)[0];
       window.location.href = "#theme:" + theme.name.toLowerCase().replace(/ /g, "-");
       if (action2 === "hide") {
         render_theme(false);
@@ -16493,20 +16493,24 @@ Karen Kjaergaard, WDA2020
     console.log("render_students", id, studentSelected);
     container = document.querySelector("#content");
     container.classList = id;
+    document.querySelector("#overlay").style.pointerEvents = "all";
+    container.style.overflowY = "auto";
     let html = "";
+    html += '<div style="display:flex;height:100%;"><div style="align-self: flex-end;">';
     DATA_STUDENTS.forEach((s) => {
       if (themeFilter) {
         if (s.theme === themeFilter) {
           if (studentSelected && s.stub === studentSelected.stub) {
-            html += `<a class="student selectedHilite" href="/#${s.stub}">${s.name}</a><br />`;
+            html += `<a class="student selectedHilite" href="/#${s.stub}">${s.name}</a>`;
           } else {
-            html += `<a class="student" href="/#${s.stub}">${s.name}</a><br />`;
+            html += `<a class="student" href="/#${s.stub}">${s.name}</a>`;
           }
         }
       } else {
-        html += `<a class="student" href="/#${s.stub}">${s.name}</a><br />`;
+        html += `<a class="student" href="/#${s.stub}">${s.name}</a>`;
       }
     });
+    html += "</div></div>";
     container.innerHTML = html;
   };
 
@@ -16527,7 +16531,7 @@ Karen Kjaergaard, WDA2020
     } else if (hash.indexOf("theme:") === 0) {
       hash = hash.split(":")[1];
       const slug = hash.toLowerCase().replace(/ /g, "-");
-      const theme = THEMES_EN.filter((t) => t.slug === slug)[0];
+      const theme = THEMES.filter((t) => t.slug === slug)[0];
       console.log("OnHashChanged theme:", hash, slug, theme);
       document.querySelectorAll("#sidebar [data-trigger]").forEach((el2) => {
         el2.classList.remove("selected");
@@ -16584,11 +16588,9 @@ Karen Kjaergaard, WDA2020
   // lib/sidebar/index.js
   var FEATS = [
     {id: "about", name: "ABOUT"},
-    {id: "live", name: "LIVE"},
-    {id: "videos", name: "VIDEOS"},
     {id: "graduates", name: "GRADUATES"}
   ];
-  var themes2 = THEMES_EN;
+  var themes2 = THEMES;
   var init = () => {
     let html = "";
     FEATS.forEach((t) => {
@@ -16599,7 +16601,7 @@ Karen Kjaergaard, WDA2020
     });
     document.querySelector("#feats-menu").innerHTML = html;
     html = "";
-    THEMES_EN.forEach((t) => {
+    THEMES.forEach((t) => {
       html += `
 			<div class="toggle twoline" data-trigger="theme" data-key="${t.slug}">
 				<span class="circle"> <span class="label">${t.name}</span> </span>
@@ -42932,7 +42934,7 @@ Karen Kjaergaard, WDA2020
           focusedNode = null;
         }
         console.log("@anim onDocumentMouseDown collapse", currentFilter, currentThemeFilterValue, b);
-        const theme = THEMES_EN.filter((t) => t.id === b.el.userData.data.theme)[0];
+        const theme = THEMES.filter((t) => t.id === b.el.userData.data.theme)[0];
         window.location.hash = `#theme:${theme.slug}`;
       } else {
         console.log("@anim onDocumentMouseDown focus", DATA_STUDENTS[previousSelectedObjectId].name);
@@ -43015,18 +43017,23 @@ Karen Kjaergaard, WDA2020
     const term = el.value;
     console.log("searching for", term);
     let html = "";
+    html += '<div style="display:flex;height:100%;"><div style="align-self: flex-end;">';
     DATA_STUDENTS.forEach((s) => {
       if (s.name.indexOf(term) > -1) {
         const st = "/" + term + "/gi";
-        console.log(st);
         const re = new RegExp(st);
         let text = s.name.replace(term, (match) => {
           return '<span class="highlight">' + match + "</span>";
         });
-        html += `<a class="student" href="/#${s.stub}">${text}</a><br />`;
+        html += `<a class="student" href="/#${s.stub}">${text}</a>`;
+      } else {
+        html += `<a class="student hide" href="/#${s.stub}">${s.name}</a>`;
       }
     });
+    html += "</div></div>";
     document.querySelector("#content").innerHTML = html;
+    document.querySelector("#overlay").style.pointerEvents = "all";
+    document.querySelector("#content").style.overflowY = "auto";
   };
 
   // index.main.js

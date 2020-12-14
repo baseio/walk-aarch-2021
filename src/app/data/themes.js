@@ -1,16 +1,6 @@
 // manually maintained from Karens emails
 
-export const THEMES_DK = [
-  {id:'1', name:'NYE FÆLLESSKABER'},
-  {id:'2', name:'KULTURENS HUSE'},
-  {id:'3', name:'BYUDVIKLING'},
-  {id:'4', name:'BÆREDYGTIG ARKITEKTUR'},
-  {id:'5', name:'ÆNDREDE LANDSKABER'},
-  {id:'6', name:'KULTURARV'},
-  {id:'7', name:'EKSTREM ARKITEKTUR'},
-]
-
-export const THEMES_EN = [
+export const THEMES = [
   {id:'1', slug:'new-commons', name:'NEW COMMONS'},
   {id:'2', slug:'building-for-culture', name:'BUILDING FOR CULTURE'},
   {id:'3', slug:'development', name:'DEVELOPMENT'},

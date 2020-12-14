@@ -41,7 +41,7 @@ export const action = (trigger, action, id, args=[]) => {
 
 	if( trigger === 'filter:theme' ){
 
-		const theme = DATA.THEMES_EN.filter(t => t.id === id)[0]
+		const theme = DATA.THEMES.filter(t => t.id === id)[0]
 		window.location.href = '#theme:'+ theme.name.toLowerCase().replace(/ /g, '-')
 
 		if( action === 'hide' ){
@@ -217,22 +217,31 @@ export const render_students = (id) => {
 	container = document.querySelector('#content')
 	container.classList = id
 
+	document.querySelector('#overlay').style.pointerEvents = 'all'
+	container.style.overflowY = 'auto'
+
 	let html = ''
+
+	html += '<div style="display:flex;height:100%;"><div style="align-self: flex-end;">'
+
 	DATA.DATA_STUDENTS.forEach( s => {
 
 		if( themeFilter ){
 			if( s.theme === themeFilter ){
 				if( studentSelected && s.stub === studentSelected.stub) {
-					html += `<a class="student selectedHilite" href="/#${s.stub}">${s.name}</a><br />`
+					html += `<a class="student selectedHilite" href="/#${s.stub}">${s.name}</a>`
 				}else{
-					html += `<a class="student" href="/#${s.stub}">${s.name}</a><br />`
+					html += `<a class="student" href="/#${s.stub}">${s.name}</a>`
 				}
 			}
 		
 		}else{
-			html += `<a class="student" href="/#${s.stub}">${s.name}</a><br />`
+			html += `<a class="student" href="/#${s.stub}">${s.name}</a>`
 		}
 	})
+
+	html += '</div></div>'
+
 	container.innerHTML = html
 }
 

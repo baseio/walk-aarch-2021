@@ -6,8 +6,13 @@ html, body {
 	background: #000;
 	color: #fff;
 
-	font-family: helvetica;
-	font-size: 24px;
+	font: 13px/1.65em "Univers LT W02 55 Roman", "HelveticaNeue", "Helvetica Neue", Helvetica, Arial, sans-serif;
+	font-weight: 400;
+}
+
+h1,h2,h3,h4,h5,h6 {
+	font-family: "Univers LT W02 67 Bold Cn";
+	font-weight: 700;
 }
 
 
@@ -15,9 +20,7 @@ a {
 	pointer-events: all;
 }
 
-.selectedHilite {
-	background: #f00;
-}
+
 
 #logo {
 	position: absolute;
@@ -26,7 +29,6 @@ a {
 	z-index: 500;
 	mix-blend-mode: difference;
 	font-size: 48px;
-	font-weight: 600;
 	line-height: 100%;
 	padding-top: 35px;
 	width: 10px;
@@ -141,6 +143,7 @@ a {
     height: calc(100% - 130px);
     z-index: 10;
     transition: opacity 0.75s;
+    font-size: 18px;
 }
 #content.hide {
 	opacity: 0;
@@ -148,4 +151,59 @@ a {
 #content.show {
 	opacity: 1;
 }
+
+
+#content a.student {
+	color: #000;
+    border: 1px solid #111;
+    border-radius: 50px;
+    text-decoration: none;
+    padding: 7px 15px 4px 15px;
+    display: inline-block;
+    background-color: #fff;
+    text-transform: uppercase;
+    margin: 2px;
+}
+
+#content a.student:hover {
+	color: #fff;
+	background-color: #000;
+	border: 1px solid #fff;
+}
+
+#content a.student .selectedHilite {
+	background: #f00;
+}
+
+#content a.student .highlight {
+	background: #FF0;
+	color: #000;
+}
+
+#content a.student.hide {
+	/*opacity: 0.2;*/
+	/*animation: hidestudent 2s;*/
+	animation-fill-mode: forwards;
+}
+
+@keyframes hidestudent {
+	0%  {
+		opacity: 1;
+	}
+	99% {
+		opacity: 0;
+	}
+	100% {
+		display: none;
+		/*opacity: 0;
+		padding: 0;
+	    margin: 0;
+	    width: 0;
+		height: 0;
+		border: none;*/
+		position: absolute;
+		left: -1000px;
+	}
+}
+
 

@@ -34,6 +34,9 @@ const search = () => {
 	console.log('searching for', term);
 	
 	let html = ''
+
+	html += '<div style="display:flex;height:100%;"><div style="align-self: flex-end;">'
+
 	DATA.DATA_STUDENTS.forEach( s => {
 
 		if( s.name.indexOf( term ) > -1 ){
@@ -44,7 +47,7 @@ const search = () => {
 
 			// const re = new RegExp(`\\${term}\\gi`)
 			const st = '/'+ term +'/gi'
-			console.log(st);
+			// console.log(st);
 
 
 			const re = new RegExp(st)
@@ -56,14 +59,20 @@ const search = () => {
 				return '<span class="highlight">' + match + '</span>'
 			})
 
-			// console.log('text', text, s.name);
+			html += `<a class="student" href="/#${s.stub}">${text}</a>`
+		}else{
 
-			html += `<a class="student" href="/#${s.stub}">${text}</a><br />`
-
-			
+			html += `<a class="student hide" href="/#${s.stub}">${s.name}</a>`
 
 		}
 	})
+
+	html += '</div></div>'
+
 	document.querySelector('#content').innerHTML = html
+
+
+	document.querySelector('#overlay').style.pointerEvents = 'all'
+	document.querySelector('#content').style.overflowY = 'auto'
 	
 }

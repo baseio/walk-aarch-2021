@@ -7,15 +7,15 @@ import './styles.pages.css'
 const FEATS = [
 	{id:'about', name:'ABOUT'},
 	// {id:'credits', name:'CREDITS'},
-	{id:'live', name:'LIVE'},
+	// {id:'live', name:'LIVE'},
 	// {id:'archive', name:'ARCHIVE'},
-	{id:'videos', name:'VIDEOS'},
+	// {id:'videos', name:'VIDEOS'},
 	// {id:'script', name:'SCRIPT'},
 	{id:'graduates', name:'GRADUATES'}
 ]
 
 const state = {}
-const themes = DATA.THEMES_EN;
+const themes = DATA.THEMES;
 
 
 export const init = () => {
