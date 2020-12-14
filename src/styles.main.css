@@ -93,40 +93,12 @@ a {
 	
 	z-index: 100;
 	transition: all 0.75s;
-	/*transition-delay: 0.5s;*/
-
-	/* as circle:
-	top: 50vh;
-    left: 50vw;
-    
-	width: calc( max(100vw, 100vh) * 2);
-    height: calc( max(100vw, 100vh) * 2);
-
-    margin-left: calc( max(100vw, 100vh) * -1);
-    margin-top: calc( max(100vw, 100vh) * -1);
-    
-
-	display: block;
-	border-radius: 100%;
-	*/
 }
 #curtain.hide {
-	/*width: 10vw;
-    height: 10vw;
-    margin-left: -5vw;
-    margin-top: -5vh;
-    background-color: #fff;*/
     opacity: 0;
     background-color: #fff;
 }
 #curtain.show {
-	/*width: calc( max(100vw, 100vh) * 2);
-    height: calc( max(100vw, 100vh) * 2);
-
-    margin-left: calc( max(100vw, 100vh) * -1);
-    margin-top: calc( max(100vw, 100vh) * -1);
-
-    background-color: #fff;*/
     opacity: 1;
     background-color: #fff;
 }
@@ -181,8 +153,6 @@ a {
 }
 
 #content a.student.hide {
-	/*opacity: 0.2;*/
-	/*animation: hidestudent 2s;*/
 	animation-fill-mode: forwards;
 }
 

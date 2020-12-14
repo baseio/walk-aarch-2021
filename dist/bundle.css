@@ -254,11 +254,15 @@ div.studentinfo .projectimage > img {
   border-radius: 20px;
   padding: 7px;
   padding-left: 13px;
-  margin-bottom: 20px;
   font-size: 18px;
+  -webkit-appearance: none;
 }
 #searchfield:focus {
   outline: none;
+}
+#search {
+  margin-top: 20px;
+  margin-bottom: 20px;
 }
 
 /* lib/sidebar/styles.sidebar.css */
@@ -272,45 +276,34 @@ div.studentinfo .projectimage > img {
   height: 35px;
   color: #000;
 }
-#sidebar .section {
-  font-size: 13px;
-  min-height: 35px;
-  font-weight: 600;
-  padding-left: 45px;
+#themes-menu,
+#feats-menu {
+  display: grid;
+  grid-row-gap: 20px;
 }
-#sidebar .toggle {
-  min-height: 35px;
-  margin-bottom: 10px;
+#sidebar div.toggle {
+  display: grid;
+  grid-template-columns: 45px 1fr;
 }
-#sidebar .toggle.twoline .label {
-  top: -3px;
+#sidebar div.toggle .circle,
+#sidebar div.toggle .label {
+  align-self: center;
+  pointer-events: none;
 }
-#sidebar .toggle:hover .label {
-  text-decoration: underline;
-}
-#sidebar .toggle:hover .circle {
-}
-#sidebar .toggle.selected .label {
-}
-#sidebar .toggle.selected .circle {
-  background: #000;
-}
-#sidebar .toggle .circle {
-  display: inline-block;
+#sidebar div.toggle .circle {
   width: 24px;
   height: 24px;
   border-radius: 100%;
   pointer-events: none;
   border: 1.5px solid #111;
-  position: absolute;
 }
-#sidebar .toggle .label {
-  display: inline-block;
+#sidebar div.toggle.selected .circle {
+  background: #000;
+}
+#sidebar div.toggle .label {
   font-size: 16px;
-  pointer-events: none;
   color: #111;
-  padding-left: 40px;
-  width: 170px;
-  position: relative;
-  top: -2px;
+}
+#sidebar div.toggle:hover .label {
+  text-decoration: underline;
 }

@@ -16602,16 +16602,18 @@ Karen Kjaergaard, WDA2020
     let html = "";
     FEATS.forEach((t) => {
       html += `
-			<div class="toggle twoline" data-trigger="feat" data-key="${t.id}">
-				<span class="circle"> <span class="label">${t.name}</span> </span>
+			<div class="toggle" data-trigger="feat" data-key="${t.id}">
+				<div class="circle"></div>
+				<div class="label">${t.name}</div>
 			</div>`;
     });
     document.querySelector("#feats-menu").innerHTML = html;
     html = "";
     THEMES.forEach((t) => {
       html += `
-			<div class="toggle twoline" data-trigger="theme" data-key="${t.slug}">
-				<span class="circle"> <span class="label">${t.name}</span> </span>
+			<div class="toggle" data-trigger="theme" data-key="${t.slug}">
+				<div class="circle"></div>
+				<div class="label">${t.name}</div>
 			</div>`;
     });
     document.querySelector("#themes-menu").innerHTML = html;

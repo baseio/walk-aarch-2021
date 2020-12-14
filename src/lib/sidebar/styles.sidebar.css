@@ -12,67 +12,38 @@
   color: #000;
 }
 
-
-
-#sidebar .section {
-  font-size: 13px;
-  min-height: 35px;
-  font-weight: 600;
-  padding-left: 45px;
+#themes-menu, #feats-menu {
+  display: grid;
+  grid-row-gap: 20px;
 }
 
-
-#sidebar .toggle {
-  min-height: 35px;
-  margin-bottom: 10px;
-}
-#sidebar .toggle.twoline .label {
-  top: -3px;
+#sidebar div.toggle {
+  display: grid;
+  grid-template-columns: 45px 1fr;
 }
 
-#sidebar .toggle:hover .label {
-  /*color: cyan;*/
-  /*font-weight: 700;*/
-  text-decoration: underline;
-}
-#sidebar .toggle:hover .circle{
-  /*background: #000;*/
+#sidebar div.toggle .circle, #sidebar div.toggle .label {
+  align-self: center;
+  pointer-events: none;  
 }
 
-
-#sidebar .toggle.selected .label {
-  /*color: #000;*/
-}
-#sidebar .toggle.selected .circle{
-  background: #000;
-}
-
-
-#sidebar .toggle .circle {
-  display: inline-block;
+#sidebar div.toggle .circle {
   width: 24px;
   height: 24px;
   border-radius: 100%;
-  /*background: #000;*/
   pointer-events: none;
   border: 1.5px solid #111;
-  position: absolute;
 }
 
-#sidebar .toggle .label {
-  display: inline-block;
+#sidebar div.toggle.selected .circle {
+  background: #000;
+}
+
+#sidebar div.toggle .label {
   font-size: 16px;
-  pointer-events: none;
-  
   color: #111;
-
-  padding-left: 40px;
-  width: 170px;
-
-  position: relative;
-  top: -2px;
-
 }
 
-
-
+#sidebar div.toggle:hover .label {
+  text-decoration: underline;
+}

@@ -4,11 +4,17 @@
     border-radius: 20px;
     padding: 7px;
     padding-left: 13px;
-    margin-bottom: 20px;
     font-size: 18px;
+    -webkit-appearance: none;
 }
 
 
 #searchfield:focus {
   outline: none;
+}
+
+
+#search {
+	margin-top:20px;
+	margin-bottom: 20px;
 }
