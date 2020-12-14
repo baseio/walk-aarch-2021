@@ -12,7 +12,7 @@ import {
 
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
 import TWEEN, { Tween, Easing, Interpolation, autoPlay } from 'es6-tween';
-import {init_userdraw, showDrawDemo, hideDrawDemo} from './UserDraw.js'
+import {init_userdraw, clearDrawing, showDrawDemo, hideDrawDemo} from './UserDraw.js'
 import {CircleSprite} from './CircleSprite.js'
 import {AnimCircleSprite} from './AnimCircleSprite.js'
 import {Eraser} from './Eraser.js'
@@ -157,13 +157,6 @@ const randomize = () => {
 		const r = -maxSpeed + s * 2
 		speeds[i] = r
 	}
-	// console.log(speeds);
-
-	// speeds = [
-	// 	0.1 + (Math.random() * 0.4),
-	// 	0.1 + (Math.random() * 0.4),
-	// 	0.1 + (Math.random() * 0.4)
-	// ]
 
 	balls.forEach( ball => {
 		const tx = -1 + (2*Math.random())
@@ -173,6 +166,8 @@ const randomize = () => {
 		const tr = ball.enabledSize
 		ball.setTarget({x:tx, y:ty, z:tz, o:to, r:tr})
 	})
+
+	clearDrawing()
 }
 
 // loop

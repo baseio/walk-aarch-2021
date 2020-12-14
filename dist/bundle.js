@@ -1451,11 +1451,11 @@
         createCanvasElement: function() {
           return fabric3.document.createElement("canvas");
         },
-        copyCanvasElement: function(canvas) {
+        copyCanvasElement: function(canvas2) {
           var newCanvas = fabric3.util.createCanvasElement();
-          newCanvas.width = canvas.width;
-          newCanvas.height = canvas.height;
-          newCanvas.getContext("2d").drawImage(canvas, 0, 0);
+          newCanvas.width = canvas2.width;
+          newCanvas.height = canvas2.height;
+          newCanvas.getContext("2d").drawImage(canvas2, 0, 0);
           return newCanvas;
         },
         toDataURL: function(canvasEl, format, quality) {
@@ -4304,14 +4304,14 @@
         return Math.round(cornerAngle % 360 / 45);
       }
       function fireEvent(eventName, options) {
-        var target = options.transform.target, canvas = target.canvas, canvasOptions = fabric4.util.object.clone(options);
+        var target = options.transform.target, canvas2 = target.canvas, canvasOptions = fabric4.util.object.clone(options);
         canvasOptions.target = target;
-        canvas && canvas.fire("object:" + eventName, canvasOptions);
+        canvas2 && canvas2.fire("object:" + eventName, canvasOptions);
         target.fire(eventName, options);
       }
       function scaleIsProportional(eventData, fabricObject) {
-        var canvas = fabricObject.canvas, uniScaleKey = canvas.uniScaleKey, uniformIsToggled = eventData[uniScaleKey];
-        return canvas.uniformScaling && !uniformIsToggled || !canvas.uniformScaling && uniformIsToggled;
+        var canvas2 = fabricObject.canvas, uniScaleKey = canvas2.uniScaleKey, uniformIsToggled = eventData[uniScaleKey];
+        return canvas2.uniformScaling && !uniformIsToggled || !canvas2.uniformScaling && uniformIsToggled;
       }
       function isTransformCentered(transform) {
         return transform.originX === CENTER && transform.originY === CENTER;
@@ -5269,9 +5269,9 @@
             this.__initRetinaScaling(scaleRatio, this.upperCanvasEl, this.contextTop);
           }
         },
-        __initRetinaScaling: function(scaleRatio, canvas, context) {
-          canvas.setAttribute("width", this.width * scaleRatio);
-          canvas.setAttribute("height", this.height * scaleRatio);
+        __initRetinaScaling: function(scaleRatio, canvas2, context) {
+          canvas2.setAttribute("width", this.width * scaleRatio);
+          canvas2.setAttribute("height", this.height * scaleRatio);
           context.scale(scaleRatio, scaleRatio);
         },
         calcOffset: function() {
@@ -6058,8 +6058,8 @@
         if (!this.shadow) {
           return;
         }
-        var canvas = this.canvas, shadow = this.shadow, ctx = canvas.contextTop, zoom = canvas.getZoom();
-        if (canvas && canvas._isRetinaScaling()) {
+        var canvas2 = this.canvas, shadow = this.shadow, ctx = canvas2.contextTop, zoom = canvas2.getZoom();
+        if (canvas2 && canvas2._isRetinaScaling()) {
           zoom *= fabric3.devicePixelRatio;
         }
         ctx.shadowColor = shadow.color;
@@ -6080,8 +6080,8 @@
     (function() {
       fabric3.PencilBrush = fabric3.util.createClass(fabric3.BaseBrush, {
         decimate: 0.4,
-        initialize: function(canvas) {
-          this.canvas = canvas;
+        initialize: function(canvas2) {
+          this.canvas = canvas2;
           this._points = [];
         },
         _drawSegment: function(ctx, p1, p2) {
@@ -6250,8 +6250,8 @@
     })();
     fabric3.CircleBrush = fabric3.util.createClass(fabric3.BaseBrush, {
       width: 10,
-      initialize: function(canvas) {
-        this.canvas = canvas;
+      initialize: function(canvas2) {
+        this.canvas = canvas2;
         this.points = [];
       },
       drawDot: function(pointer) {
@@ -6331,8 +6331,8 @@
       dotWidthVariance: 1,
       randomOpacity: false,
       optimizeOverlapping: true,
-      initialize: function(canvas) {
-        this.canvas = canvas;
+      initialize: function(canvas2) {
+        this.canvas = canvas2;
         this.sprayChunks = [];
       },
       onMouseDown: function(pointer) {
@@ -8024,7 +8024,7 @@
               return false;
             }
           }
-          var canvas = this._cacheCanvas, dims = this._limitCacheSize(this._getCacheCanvasDimensions()), minCacheSize = fabric4.minCacheSideLimit, width = dims.width, height = dims.height, drawingWidth, drawingHeight, zoomX = dims.zoomX, zoomY = dims.zoomY, dimensionsChanged = width !== this.cacheWidth || height !== this.cacheHeight, zoomChanged = this.zoomX !== zoomX || this.zoomY !== zoomY, shouldRedraw = dimensionsChanged || zoomChanged, additionalWidth = 0, additionalHeight = 0, shouldResizeCanvas = false;
+          var canvas2 = this._cacheCanvas, dims = this._limitCacheSize(this._getCacheCanvasDimensions()), minCacheSize = fabric4.minCacheSideLimit, width = dims.width, height = dims.height, drawingWidth, drawingHeight, zoomX = dims.zoomX, zoomY = dims.zoomY, dimensionsChanged = width !== this.cacheWidth || height !== this.cacheHeight, zoomChanged = this.zoomX !== zoomX || this.zoomY !== zoomY, shouldRedraw = dimensionsChanged || zoomChanged, additionalWidth = 0, additionalHeight = 0, shouldResizeCanvas = false;
           if (dimensionsChanged) {
             var canvasWidth = this._cacheCanvas.width, canvasHeight = this._cacheCanvas.height, sizeGrowing = width > canvasWidth || height > canvasHeight, sizeShrinking = (width < canvasWidth * 0.9 || height < canvasHeight * 0.9) && canvasWidth > minCacheSize && canvasHeight > minCacheSize;
             shouldResizeCanvas = sizeGrowing || sizeShrinking;
@@ -8035,16 +8035,16 @@
           }
           if (shouldRedraw) {
             if (shouldResizeCanvas) {
-              canvas.width = Math.ceil(width + additionalWidth);
-              canvas.height = Math.ceil(height + additionalHeight);
+              canvas2.width = Math.ceil(width + additionalWidth);
+              canvas2.height = Math.ceil(height + additionalHeight);
             } else {
               this._cacheContext.setTransform(1, 0, 0, 1, 0, 0);
-              this._cacheContext.clearRect(0, 0, canvas.width, canvas.height);
+              this._cacheContext.clearRect(0, 0, canvas2.width, canvas2.height);
             }
             drawingWidth = dims.x / 2;
             drawingHeight = dims.y / 2;
-            this.cacheTranslationX = Math.round(canvas.width / 2 - drawingWidth) + drawingWidth;
-            this.cacheTranslationY = Math.round(canvas.height / 2 - drawingHeight) + drawingHeight;
+            this.cacheTranslationX = Math.round(canvas2.width / 2 - drawingWidth) + drawingWidth;
+            this.cacheTranslationY = Math.round(canvas2.height / 2 - drawingHeight) + drawingHeight;
             this.cacheWidth = width;
             this.cacheHeight = height;
             this._cacheContext.translate(this.cacheTranslationX, this.cacheTranslationY);
@@ -8399,13 +8399,13 @@
           if (!this.shadow) {
             return;
           }
-          var shadow = this.shadow, canvas = this.canvas, scaling, multX = canvas && canvas.viewportTransform[0] || 1, multY = canvas && canvas.viewportTransform[3] || 1;
+          var shadow = this.shadow, canvas2 = this.canvas, scaling, multX = canvas2 && canvas2.viewportTransform[0] || 1, multY = canvas2 && canvas2.viewportTransform[3] || 1;
           if (shadow.nonScaling) {
             scaling = {scaleX: 1, scaleY: 1};
           } else {
             scaling = this.getObjectScaling();
           }
-          if (canvas && canvas._isRetinaScaling()) {
+          if (canvas2 && canvas2._isRetinaScaling()) {
             multX *= fabric4.devicePixelRatio;
             multY *= fabric4.devicePixelRatio;
           }
@@ -8578,27 +8578,27 @@
           height = boundingRect.height + shadowOffset.y;
           el2.width = Math.ceil(width);
           el2.height = Math.ceil(height);
-          var canvas = new fabric4.StaticCanvas(el2, {
+          var canvas2 = new fabric4.StaticCanvas(el2, {
             enableRetinaScaling: false,
             renderOnAddRemove: false,
             skipOffscreen: false
           });
           if (options.format === "jpeg") {
-            canvas.backgroundColor = "#fff";
+            canvas2.backgroundColor = "#fff";
           }
-          this.setPositionByOrigin(new fabric4.Point(canvas.width / 2, canvas.height / 2), "center", "center");
+          this.setPositionByOrigin(new fabric4.Point(canvas2.width / 2, canvas2.height / 2), "center", "center");
           var originalCanvas = this.canvas;
-          canvas.add(this);
-          var canvasEl = canvas.toCanvasElement(multiplier || 1, options);
+          canvas2.add(this);
+          var canvasEl = canvas2.toCanvasElement(multiplier || 1, options);
           this.shadow = originalShadow;
           this.set("canvas", originalCanvas);
           if (originalGroup) {
             this.group = originalGroup;
           }
           this.set(origParams).setCoords();
-          canvas._objects = [];
-          canvas.dispose();
-          canvas = null;
+          canvas2._objects = [];
+          canvas2.dispose();
+          canvas2 = null;
           return canvasEl;
         },
         toDataURL: function(options) {
@@ -10691,22 +10691,22 @@
           if (!this.canvas) {
             return;
           }
-          var objects = this._objects, canvas = this.canvas;
+          var objects = this._objects, canvas2 = this.canvas;
           this._objects = [];
           var options = this.toObject();
           delete options.objects;
           var activeSelection = new fabric4.ActiveSelection([]);
           activeSelection.set(options);
           activeSelection.type = "activeSelection";
-          canvas.remove(this);
+          canvas2.remove(this);
           objects.forEach(function(object) {
             object.group = activeSelection;
             object.dirty = true;
-            canvas.add(object);
+            canvas2.add(object);
           });
-          activeSelection.canvas = canvas;
+          activeSelection.canvas = canvas2;
           activeSelection._objects = objects;
-          canvas._activeObject = activeSelection;
+          canvas2._activeObject = activeSelection;
           activeSelection.setCoords();
           return activeSelection;
         },
@@ -10826,9 +10826,9 @@
           if (!this.canvas) {
             return newGroup;
           }
-          var canvas = this.canvas;
-          canvas.add(newGroup);
-          canvas._activeObject = newGroup;
+          var canvas2 = this.canvas;
+          canvas2.add(newGroup);
+          canvas2._activeObject = newGroup;
           newGroup.setCoords();
           return newGroup;
         },
@@ -11318,8 +11318,8 @@
           return false;
         }
         tileSize = tileSize || fabric3.WebglFilterBackend.prototype.tileSize;
-        var canvas = document.createElement("canvas");
-        var gl = canvas.getContext("webgl") || canvas.getContext("experimental-webgl");
+        var canvas2 = document.createElement("canvas");
+        var gl = canvas2.getContext("webgl") || canvas2.getContext("experimental-webgl");
         var isSupported = false;
         if (gl) {
           fabric3.maxTextureSize = gl.getParameter(gl.MAX_TEXTURE_SIZE);
@@ -11397,24 +11397,24 @@
           }
         },
         createWebGLCanvas: function(width, height) {
-          var canvas = fabric3.util.createCanvasElement();
-          canvas.width = width;
-          canvas.height = height;
+          var canvas2 = fabric3.util.createCanvasElement();
+          canvas2.width = width;
+          canvas2.height = height;
           var glOptions = {
             alpha: true,
             premultipliedAlpha: false,
             depth: false,
             stencil: false,
             antialias: false
-          }, gl = canvas.getContext("webgl", glOptions);
+          }, gl = canvas2.getContext("webgl", glOptions);
           if (!gl) {
-            gl = canvas.getContext("experimental-webgl", glOptions);
+            gl = canvas2.getContext("experimental-webgl", glOptions);
           }
           if (!gl) {
             return;
           }
           gl.clearColor(0, 0, 0, 0);
-          this.canvas = canvas;
+          this.canvas = canvas2;
           this.gl = gl;
         },
         applyFilters: function(filters, source, width, height, targetCanvas, cacheKey) {
@@ -14232,43 +14232,43 @@
         initAddedHandler: function() {
           var _this = this;
           this.on("added", function() {
-            var canvas = _this.canvas;
-            if (canvas) {
-              if (!canvas._hasITextHandlers) {
-                canvas._hasITextHandlers = true;
-                _this._initCanvasHandlers(canvas);
+            var canvas2 = _this.canvas;
+            if (canvas2) {
+              if (!canvas2._hasITextHandlers) {
+                canvas2._hasITextHandlers = true;
+                _this._initCanvasHandlers(canvas2);
               }
-              canvas._iTextInstances = canvas._iTextInstances || [];
-              canvas._iTextInstances.push(_this);
+              canvas2._iTextInstances = canvas2._iTextInstances || [];
+              canvas2._iTextInstances.push(_this);
             }
           });
         },
         initRemovedHandler: function() {
           var _this = this;
           this.on("removed", function() {
-            var canvas = _this.canvas;
-            if (canvas) {
-              canvas._iTextInstances = canvas._iTextInstances || [];
-              fabric3.util.removeFromArray(canvas._iTextInstances, _this);
-              if (canvas._iTextInstances.length === 0) {
-                canvas._hasITextHandlers = false;
-                _this._removeCanvasHandlers(canvas);
+            var canvas2 = _this.canvas;
+            if (canvas2) {
+              canvas2._iTextInstances = canvas2._iTextInstances || [];
+              fabric3.util.removeFromArray(canvas2._iTextInstances, _this);
+              if (canvas2._iTextInstances.length === 0) {
+                canvas2._hasITextHandlers = false;
+                _this._removeCanvasHandlers(canvas2);
               }
             }
           });
         },
-        _initCanvasHandlers: function(canvas) {
-          canvas._mouseUpITextHandler = function() {
-            if (canvas._iTextInstances) {
-              canvas._iTextInstances.forEach(function(obj) {
+        _initCanvasHandlers: function(canvas2) {
+          canvas2._mouseUpITextHandler = function() {
+            if (canvas2._iTextInstances) {
+              canvas2._iTextInstances.forEach(function(obj) {
                 obj.__isMousedown = false;
               });
             }
           };
-          canvas.on("mouse:up", canvas._mouseUpITextHandler);
+          canvas2.on("mouse:up", canvas2._mouseUpITextHandler);
         },
-        _removeCanvasHandlers: function(canvas) {
-          canvas.off("mouse:up", canvas._mouseUpITextHandler);
+        _removeCanvasHandlers: function(canvas2) {
+          canvas2.off("mouse:up", canvas2._mouseUpITextHandler);
         },
         _tick: function() {
           this._currentTickState = this._animateCursor(this, 1, this.cursorDuration, "_onTickComplete");
@@ -14317,14 +14317,14 @@
           }, delay);
         },
         abortCursorAnimation: function() {
-          var shouldClear = this._currentTickState || this._currentTickCompleteState, canvas = this.canvas;
+          var shouldClear = this._currentTickState || this._currentTickCompleteState, canvas2 = this.canvas;
           this._currentTickState && this._currentTickState.abort();
           this._currentTickCompleteState && this._currentTickCompleteState.abort();
           clearTimeout(this._cursorTimeout1);
           clearTimeout(this._cursorTimeout2);
           this._currentCursorOpacity = 0;
-          if (shouldClear && canvas) {
-            canvas.clearContext(canvas.contextTop || canvas.contextContainer);
+          if (shouldClear && canvas2) {
+            canvas2.clearContext(canvas2.contextTop || canvas2.contextContainer);
           }
         },
         selectAll: function() {
@@ -14437,9 +14437,9 @@
           this.canvas.requestRenderAll();
           return this;
         },
-        exitEditingOnOthers: function(canvas) {
-          if (canvas._iTextInstances) {
-            canvas._iTextInstances.forEach(function(obj) {
+        exitEditingOnOthers: function(canvas2) {
+          if (canvas2._iTextInstances) {
+            canvas2._iTextInstances.forEach(function(obj) {
               obj.selected = false;
               if (obj.isEditing) {
                 obj.exitEditing();
@@ -17463,9 +17463,9 @@ Karen Kjaergaard, WDA2020
       if (typeof HTMLCanvasElement == "undefined") {
         return image.src;
       }
-      let canvas;
+      let canvas2;
       if (image instanceof HTMLCanvasElement) {
-        canvas = image;
+        canvas2 = image;
       } else {
         if (_canvas === void 0)
           _canvas = document.createElementNS("http://www.w3.org/1999/xhtml", "canvas");
@@ -17477,12 +17477,12 @@ Karen Kjaergaard, WDA2020
         } else {
           context.drawImage(image, 0, 0, image.width, image.height);
         }
-        canvas = _canvas;
+        canvas2 = _canvas;
       }
-      if (canvas.width > 2048 || canvas.height > 2048) {
-        return canvas.toDataURL("image/jpeg", 0.6);
+      if (canvas2.width > 2048 || canvas2.height > 2048) {
+        return canvas2.toDataURL("image/jpeg", 0.6);
       } else {
-        return canvas.toDataURL("image/png");
+        return canvas2.toDataURL("image/png");
       }
     }
   };
@@ -28593,13 +28593,13 @@ Karen Kjaergaard, WDA2020
           const height = floor(scale * image.height);
           if (_canvas2 === void 0)
             _canvas2 = createCanvas(width, height);
-          const canvas = needsNewCanvas ? createCanvas(width, height) : _canvas2;
-          canvas.width = width;
-          canvas.height = height;
-          const context = canvas.getContext("2d");
+          const canvas2 = needsNewCanvas ? createCanvas(width, height) : _canvas2;
+          canvas2.width = width;
+          canvas2.height = height;
+          const context = canvas2.getContext("2d");
           context.drawImage(image, 0, 0, width, height);
           console.warn("THREE.WebGLRenderer: Texture has been resized from (" + image.width + "x" + image.height + ") to (" + width + "x" + height + ").");
-          return canvas;
+          return canvas2;
         } else {
           if ("data" in image) {
             console.warn("THREE.WebGLRenderer: Image in DataTexture is too big (" + image.width + "x" + image.height + ").");
@@ -30157,9 +30157,9 @@ Karen Kjaergaard, WDA2020
     };
   }
   function createCanvasElement() {
-    const canvas = document.createElementNS("http://www.w3.org/1999/xhtml", "canvas");
-    canvas.style.display = "block";
-    return canvas;
+    const canvas2 = document.createElementNS("http://www.w3.org/1999/xhtml", "canvas");
+    canvas2.style.display = "block";
+    return canvas2;
   }
   function WebGLRenderer(parameters) {
     parameters = parameters || {};
@@ -32364,8 +32364,8 @@ Karen Kjaergaard, WDA2020
   CompressedTexture.prototype = Object.create(Texture.prototype);
   CompressedTexture.prototype.constructor = CompressedTexture;
   CompressedTexture.prototype.isCompressedTexture = true;
-  function CanvasTexture(canvas, mapping, wrapS, wrapT, magFilter, minFilter, format, type, anisotropy) {
-    Texture.call(this, canvas, mapping, wrapS, wrapT, magFilter, minFilter, format, type, anisotropy);
+  function CanvasTexture(canvas2, mapping, wrapS, wrapT, magFilter, minFilter, format, type, anisotropy) {
+    Texture.call(this, canvas2, mapping, wrapS, wrapT, magFilter, minFilter, format, type, anisotropy);
     this.needsUpdate = true;
   }
   CanvasTexture.prototype = Object.create(Texture.prototype);
@@ -42473,12 +42473,13 @@ Karen Kjaergaard, WDA2020
   var demoIndex = 0;
   var playing = false;
   var timeout = null;
+  var canvas;
   var lastPath;
   var init_userdraw = (selector, size, onPathCreated2) => {
     let uc = document.querySelector(selector);
     uc.setAttribute("width", `${size}px`);
     uc.setAttribute("height", `${size}px`);
-    var canvas = new fabric.fabric.Canvas(selector.replace("#", ""));
+    canvas = new fabric.fabric.Canvas(selector.replace("#", ""));
     canvas.backgroundColor = "#fff";
     canvas.isDrawingMode = 1;
     canvas.freeDrawingBrush.color = "#000";
@@ -42535,6 +42536,11 @@ Karen Kjaergaard, WDA2020
     }
     clearTimeout(timeout);
     playing = false;
+  };
+  var clearDrawing = () => {
+    if (lastPath) {
+      canvas.remove(...canvas.getObjects());
+    }
   };
 
   // lib/anim/CircleSprite.js
@@ -42639,20 +42645,20 @@ Karen Kjaergaard, WDA2020
     this.version = 0;
   };
   ComposedTexture.copyCanvas = function() {
-    let canvas, ctx;
+    let canvas2, ctx;
     return {
       canvas: null,
       dispose: function() {
-        this.canvas = canvas = ctx = null;
+        this.canvas = canvas2 = ctx = null;
       },
       dataToImage: async function(data2, width, height) {
-        if (!canvas) {
-          this.canvas = canvas = document.createElementNS("http://www.w3.org/1999/xhtml", "canvas");
-          ctx = canvas.getContext("2d");
+        if (!canvas2) {
+          this.canvas = canvas2 = document.createElementNS("http://www.w3.org/1999/xhtml", "canvas");
+          ctx = canvas2.getContext("2d");
         }
-        if (width !== canvas.width || height !== canvas.height) {
-          canvas.width = width;
-          canvas.height = height;
+        if (width !== canvas2.width || height !== canvas2.height) {
+          canvas2.width = width;
+          canvas2.height = height;
         }
         const imageData = ctx.getImageData(0, 0, width, height);
         const buffer = imageData.data;
@@ -42660,7 +42666,7 @@ Karen Kjaergaard, WDA2020
           buffer[i] = data2[i];
         ctx.putImageData(imageData, 0, 0);
         return new Promise((resolve) => {
-          canvas.toBlob((blob) => {
+          canvas2.toBlob((blob) => {
             const url = URL.createObjectURL(blob);
             const image = new Image();
             image.onload = function() {
@@ -42800,13 +42806,13 @@ Karen Kjaergaard, WDA2020
       const {
         ctx,
         container: container2,
-        canvas,
+        canvas: canvas2,
         disposalType
       } = this;
       const currentFrame = container2.frames[frameIndex];
       const dims = currentFrame.dims;
       ctx.setTransform(1, 0, 0, 1, 0, 0);
-      ctx.scale(canvas.width / container2.width, canvas.height / container2.height);
+      ctx.scale(canvas2.width / container2.width, canvas2.height / container2.height);
       if (frameIndex > 0) {
         if (disposalType === 3) {
           if (this.frameRestoreIndex > -1) {
@@ -42885,11 +42891,11 @@ Karen Kjaergaard, WDA2020
 
   // lib/anim/GenerateTexture.js
   var GenerateTexture = (stroke = "#eee", fill = "#fff", lineWidth = 10) => {
-    const canvas = document.createElement("canvas");
+    const canvas2 = document.createElement("canvas");
     const size = 512;
-    canvas.width = size;
-    canvas.height = size;
-    const c = canvas.getContext("2d");
+    canvas2.width = size;
+    canvas2.height = size;
+    const c = canvas2.getContext("2d");
     c.lineWidth = lineWidth;
     c.strokeStyle = stroke;
     c.fillStyle = fill;
@@ -42899,7 +42905,7 @@ Karen Kjaergaard, WDA2020
     c.fill();
     c.stroke();
     c.closePath();
-    const map = new Texture(canvas);
+    const map = new Texture(canvas2);
     map.needsUpdate = true;
     return map;
   };
@@ -42991,6 +42997,7 @@ Karen Kjaergaard, WDA2020
       const tr = ball.enabledSize;
       ball.setTarget({x: tx, y: ty, z: tz, o: to, r: tr});
     });
+    clearDrawing();
   };
   var speeds = [
     0.1 + Math.random() * 0.4,

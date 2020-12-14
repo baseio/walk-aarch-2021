@@ -21,6 +21,7 @@ let demoIndex = 0
 let playing = false
 let timeout = null
 
+let canvas
 let lastPath
 
 export const init_userdraw = (selector, size, onPathCreated) => {
@@ -29,8 +30,7 @@ export const init_userdraw = (selector, size, onPathCreated) => {
 	uc.setAttribute('width',  `${size}px`)
 	uc.setAttribute('height', `${size}px`)
 	
-	var canvas = new fabric.Canvas(selector.replace('#',''))
-	// canvas.backgroundColor = '#efefef';
+	canvas = new fabric.Canvas(selector.replace('#',''))
 	canvas.backgroundColor = '#fff';
     canvas.isDrawingMode= 1;
     canvas.freeDrawingBrush.color = '#000'
@@ -105,5 +105,11 @@ export const hideDrawDemo = () => {
 	}
 	clearTimeout(timeout)
 	playing = false
+}
+
+export const clearDrawing = () => {
+	if( lastPath ){
+    	canvas.remove(...canvas.getObjects());
+    }
 }
 
