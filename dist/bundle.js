@@ -16570,7 +16570,7 @@ Karen Kjaergaard, WDA2020
     }
   };
 
-  // lib/Router.js
+  // lib/router.js
   var Router = class {
     constructor(routeFunction) {
       this.history = [];

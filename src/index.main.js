@@ -3,7 +3,7 @@ import {settings} from './app/settings.js'
 import * as actions from './app/actions.js'
 import {handleHash} from './app/routes.js' 
 
-import {Router} from './lib/Router.js'
+import {Router} from './lib/router.js'
 
 import * as sidebar from './lib/sidebar/index.js'
 
