@@ -181,6 +181,8 @@ let speeds = [
 const update = () => {
 	requestAnimationFrame(update)
 
+	window.app.mode = MODE
+
 	if( window.app.pauseRendering ) return
 
 	balls.forEach( b => b.update() )

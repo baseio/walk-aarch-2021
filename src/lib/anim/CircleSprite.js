@@ -118,6 +118,15 @@ export class CircleSprite {
 		this.o = this.to - ((this.to - this.o) * 0.9)
 		this.r = this.tr - ((this.tr - this.r) * 0.9)
 
+		if( window.app.mode === 'free' ){
+
+			// this.r = Math.sin(this.x * 0.1)
+
+			const v = 0.1 + Math.abs( Math.min( this.x, this.y ))
+			this.r = Math.sin(v * 0.1)
+
+		}
+
 		// this.o = Math.min(0.5, this.o)
 
 		this.el.scale.set(this.r, this.r, 1);
