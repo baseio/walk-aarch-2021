@@ -47,3 +47,12 @@
 #sidebar div.toggle:hover .label {
   text-decoration: underline;
 }
+
+
+
+#sidebar .section-header {
+  font-size: 16px;
+  color: #111;
+  font-weight: 700;
+  text-transform: uppercase;
+}

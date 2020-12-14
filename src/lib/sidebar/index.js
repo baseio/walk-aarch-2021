@@ -29,6 +29,7 @@ export const init = () => {
 
 	// populate themes menu
 	html = ''
+	html = '<div class="section-header">Categories:</div>'
 	THEMES.forEach( t => {
 		html += `
 			<div class="toggle" data-trigger="theme" data-key="${t.slug}">

@@ -257,7 +257,9 @@ const applyPositions = (positions, blendMax=null, blendMin=null, hideTrailsFor=1
 	}, delay + hideTrailsFor)
 }
 
-
+export const getMode = () => {
+	return MODE
+}
 
 // filters
 
@@ -303,7 +305,20 @@ export const applyFilter = (key, val) => {
 	}
 
 	if( currentFilter === 'student' ){
+		console.log('applyFilter STUD', key, val);
+		if( val === '') return
 
+		const lcval = val.toLowerCase()
+		balls.forEach( ball => {
+			let name = ball.el.userData.data.name.toLowerCase()
+
+			if( name.indexOf( lcval ) > -1 ){
+				console.log('matching ', val, lcval, name);
+				ball.setEnabled(true)
+			}else{
+				ball.setEnabled(false)
+			}
+		})
 	}
 }
 
@@ -448,6 +463,8 @@ const onDocumentMouseDown = () => {
 }
 
 function onDocumentMouseMove( event ) {
+
+	// console.log('@@', MODE, renderer.domElement.id);
 	
 	if( MODE != 'grid' ) return
 	if( event.target.id != renderer.domElement.id ) return

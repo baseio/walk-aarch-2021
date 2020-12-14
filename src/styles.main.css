@@ -154,6 +154,7 @@ a {
 }
 
 #content a.student.hide {
+	animation: hidestudent;
 	animation-fill-mode: forwards;
 }
 

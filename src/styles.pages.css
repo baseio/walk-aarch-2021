@@ -38,3 +38,7 @@ div.studentinfo .projectimage > img {
 	width: 100%;
 	display: block;
 }
+
+#overlay .copytext {
+	max-width: 800px;
+}

@@ -66,11 +66,44 @@ Netlify is linked to the above repo
 - WP content workflow
 - Sort students
 
-- finnish re-routing
-- clean-up "animation" api (for re-use)
-- css for pill-student-list
-- test show icon/image/animation when hovering a ball
+- test show icon/image/animation when hovering a ball (SLOW!!)
 - setup server (when it lands)
+
++ let search affect the balls
++ add Categories and Draw here labels
++ about text max width
+- ball-hover when entering via direct link (Safari?)
+
+
+---
+
+Draft afleverings mail:
+
+Hej Karen og Casper
+
+I kan kigge ind på https://vibrant-nobel-c7d9ea.netlify.app for et preview af
+det smukke lille Processing Architecture website.
+
+Den er bygget sådan at man kan linke direkte til 
+- about, e.g. https://vibrant-nobel-c7d9ea.netlify.app/#about
+- en kategori, e.g. https://vibrant-nobel-c7d9ea.netlify.app/#theme:landscapes-in-transition
+- en student, e.g. https://vibrant-nobel-c7d9ea.netlify.app/#anne-soeby-nielsen
+- student listen: https://vibrant-nobel-c7d9ea.netlify.app/#graduates
+
+
+Ting vi ikke har kunnet lave endnu, som dermed ender i Fase 2 (nyt budget):
+- De studerendes kontakt information (tilføjes som kolonner i excel filen)
+- De studerendes projekt billeder (sends til os som 1920x1080px 72DPI JPG fil), én pr student
+- Afklaring og integration af video-afspiller
+- Afklaring og integration af live-videostream afspiller
+- Integration mod wordpress sitet
+
+
+Og her er en liste over "open ends", altså ting jeg har brug for at I reagerer på:
+- Hosting/Server-setup: Afventer Tony (aftalt leveringsdato var d. 9 Dec)
+- Sitets titel ("AAA-21: PROCESSING ARCHITECTURE") og meta-beskrivelse ("Offical website for the 2021-winter graduation from Aarhus School of Architecture") må i gerne rætte til.
+- Jeg har tegnet et lille "favicon" (som vises ved siden af websitets titel (i browseren). @Casper: Du må gerne lave et bedre, hvis det er brug for det).
+- Jeg plejer at give intresserede adgang til kilde-koden med en "CC BY-NC-SA 4.0" licens (som er beskrevet her: https://creativecommons.org/licenses/by-nc-sa/4.0/ ). OK?
 
 
 

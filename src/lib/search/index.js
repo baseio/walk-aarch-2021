@@ -32,6 +32,8 @@ const search = () => {
 	const term = el.value//.toLowerCase()
 
 	console.log('searching for', term);
+
+	window.app.animation.applyFilter('student', term)
 	
 	let html = ''
 

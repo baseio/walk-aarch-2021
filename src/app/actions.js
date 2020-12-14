@@ -110,7 +110,7 @@ export const render_text = (id) => {
 	console.log('render_text', id);
 	container = document.querySelector('#content')
 	if( id === 'about' ){
-		container.innerHTML = DATA.DATA_ABOUT
+		container.innerHTML = `<div class="copytext">${DATA.DATA_ABOUT}</div>`
 		container.classList = 'show'
 		container.style.overflowY = 'auto'
 		document.querySelector('#curtain').classList = 'black'
