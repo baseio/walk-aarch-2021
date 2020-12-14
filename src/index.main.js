@@ -13,9 +13,8 @@ import * as sidebar from './lib/sidebar/index.js'
 import * as Animation from './lib/anim/index.js'
 import {initSearch} from './lib/search/index.js'
 
-// import {action} from './lib/actions.js'
-
 import './styles.main.css'
+import './styles.pages.css'
 
 document.title = settings.document_title
 document.querySelector('#logo').innerHTML = settings.title
@@ -23,11 +22,9 @@ document.querySelector('#logo').innerHTML = settings.title
 
 
 
-window.app = {
-	animation: Animation,
-	// search: initSearch('#search'),
-	// actions: actions,
-}
+window.app = {}
+
+window.app.animation = Animation
 
 window.app.actions = actions
 window.app.sidebar = sidebar.init()

@@ -41,14 +41,14 @@ export class CircleSprite {
 		
 		parent.add( this.el );
 		
-		setTimeout( () => {
-			this.tx = -1 + (2*Math.random())
-			this.ty = -1 + (2*Math.random())
-			this.tz = -1 + (2*Math.random())
-			// this.to = 1
-			this.tr = this.enabledSize
-			this.setTarget({x:this.tx, y:this.ty, z:this.tz, o:this.to, r:this.tr})
-		}, 10)
+		// setTimeout( () => {
+		// 	this.tx = -1 + (2*Math.random())
+		// 	this.ty = -1 + (2*Math.random())
+		// 	this.tz = -1 + (2*Math.random())
+		// 	// this.to = 1
+		// 	this.tr = this.enabledSize
+		// 	this.setTarget({x:this.tx, y:this.ty, z:this.tz, o:this.to, r:this.tr})
+		// }, 10)
 
 		setTimeout( () => {
 			this.to = 1

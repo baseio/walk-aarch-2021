@@ -1,8 +1,7 @@
-
-import * as DATA from '../../app/data.js'
+import {THEMES} from '../../app/data.js'
 
 import './styles.sidebar.css'
-import './styles.pages.css'
+
 
 const FEATS = [
 	{id:'about', name:'ABOUT'},
@@ -13,10 +12,6 @@ const FEATS = [
 	// {id:'script', name:'SCRIPT'},
 	{id:'graduates', name:'GRADUATES'}
 ]
-
-const state = {}
-const themes = DATA.THEMES;
-
 
 export const init = () => {
 
@@ -33,7 +28,7 @@ export const init = () => {
 
 	// populate themes menu
 	html = ''
-	DATA.THEMES.forEach( t => {
+	THEMES.forEach( t => {
 		html += `
 			<div class="toggle twoline" data-trigger="theme" data-key="${t.slug}">
 				<span class="circle"> <span class="label">${t.name}</span> </span>
@@ -41,7 +36,7 @@ export const init = () => {
 	})
 	document.querySelector('#themes-menu').innerHTML = html
 	
-	// add actions to the menues
+	// add actions
 	document.querySelectorAll('#sidebar [data-trigger]').forEach( el => {
 		el.addEventListener('click', (evnt) => {
 			const trigger = evnt.target.getAttribute('data-trigger')
@@ -64,11 +59,9 @@ export const init = () => {
 		if( sb.classList.contains('closed') ){
 			sb.classList.remove('closed')
 			document.querySelector('#showhide').innerHTML = '-'
-			console.log('show sidebar +');
 		}else{
 			sb.classList.add('closed')
 			document.querySelector('#showhide').innerHTML = '+'
-			console.log('hide sidebar');
 		}
 	})
 

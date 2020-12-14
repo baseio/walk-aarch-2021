@@ -5649,16 +5649,16 @@
           return this._toObjectMethod("toDatalessObject", propertiesToInclude);
         },
         _toObjectMethod: function(methodName, propertiesToInclude) {
-          var clipPath = this.clipPath, data = {
+          var clipPath = this.clipPath, data2 = {
             version: fabric3.version,
             objects: this._toObjects(methodName, propertiesToInclude)
           };
           if (clipPath) {
-            data.clipPath = this._toObject(this.clipPath, methodName, propertiesToInclude);
+            data2.clipPath = this._toObject(this.clipPath, methodName, propertiesToInclude);
           }
-          extend(data, this.__serializeBgOverlay(methodName, propertiesToInclude));
-          fabric3.util.populateWithProperties(this, data, propertiesToInclude);
-          return data;
+          extend(data2, this.__serializeBgOverlay(methodName, propertiesToInclude));
+          fabric3.util.populateWithProperties(this, data2, propertiesToInclude);
+          return data2;
         },
         _toObjects: function(methodName, propertiesToInclude) {
           return this._objects.filter(function(object) {
@@ -5680,20 +5680,20 @@
           return object;
         },
         __serializeBgOverlay: function(methodName, propertiesToInclude) {
-          var data = {}, bgImage = this.backgroundImage, overlay = this.overlayImage;
+          var data2 = {}, bgImage = this.backgroundImage, overlay = this.overlayImage;
           if (this.backgroundColor) {
-            data.background = this.backgroundColor.toObject ? this.backgroundColor.toObject(propertiesToInclude) : this.backgroundColor;
+            data2.background = this.backgroundColor.toObject ? this.backgroundColor.toObject(propertiesToInclude) : this.backgroundColor;
           }
           if (this.overlayColor) {
-            data.overlay = this.overlayColor.toObject ? this.overlayColor.toObject(propertiesToInclude) : this.overlayColor;
+            data2.overlay = this.overlayColor.toObject ? this.overlayColor.toObject(propertiesToInclude) : this.overlayColor;
           }
           if (bgImage && !bgImage.excludeFromExport) {
-            data.backgroundImage = this._toObject(bgImage, methodName, propertiesToInclude);
+            data2.backgroundImage = this._toObject(bgImage, methodName, propertiesToInclude);
           }
           if (overlay && !overlay.excludeFromExport) {
-            data.overlayImage = this._toObject(overlay, methodName, propertiesToInclude);
+            data2.overlayImage = this._toObject(overlay, methodName, propertiesToInclude);
           }
-          return data;
+          return data2;
         },
         svgViewportTransformation: true,
         toSVG: function(options, reviver) {
@@ -7864,9 +7864,9 @@
         });
       },
       clone: function(callback, properties) {
-        var data = JSON.stringify(this.toJSON(properties));
+        var data2 = JSON.stringify(this.toJSON(properties));
         this.cloneWithoutData(function(clone) {
-          clone.loadFromJSON(data, function() {
+          clone.loadFromJSON(data2, function() {
             callback && callback(clone);
           });
         });
@@ -11797,21 +11797,21 @@
           this.matrix = this.matrix.slice(0);
         },
         applyTo2d: function(options) {
-          var imageData = options.imageData, data = imageData.data, iLen = data.length, m = this.matrix, r, g, b, a, i, colorsOnly = this.colorsOnly;
+          var imageData = options.imageData, data2 = imageData.data, iLen = data2.length, m = this.matrix, r, g, b, a, i, colorsOnly = this.colorsOnly;
           for (i = 0; i < iLen; i += 4) {
-            r = data[i];
-            g = data[i + 1];
-            b = data[i + 2];
+            r = data2[i];
+            g = data2[i + 1];
+            b = data2[i + 2];
             if (colorsOnly) {
-              data[i] = r * m[0] + g * m[1] + b * m[2] + m[4] * 255;
-              data[i + 1] = r * m[5] + g * m[6] + b * m[7] + m[9] * 255;
-              data[i + 2] = r * m[10] + g * m[11] + b * m[12] + m[14] * 255;
+              data2[i] = r * m[0] + g * m[1] + b * m[2] + m[4] * 255;
+              data2[i + 1] = r * m[5] + g * m[6] + b * m[7] + m[9] * 255;
+              data2[i + 2] = r * m[10] + g * m[11] + b * m[12] + m[14] * 255;
             } else {
-              a = data[i + 3];
-              data[i] = r * m[0] + g * m[1] + b * m[2] + a * m[3] + m[4] * 255;
-              data[i + 1] = r * m[5] + g * m[6] + b * m[7] + a * m[8] + m[9] * 255;
-              data[i + 2] = r * m[10] + g * m[11] + b * m[12] + a * m[13] + m[14] * 255;
-              data[i + 3] = r * m[15] + g * m[16] + b * m[17] + a * m[18] + m[19] * 255;
+              a = data2[i + 3];
+              data2[i] = r * m[0] + g * m[1] + b * m[2] + a * m[3] + m[4] * 255;
+              data2[i + 1] = r * m[5] + g * m[6] + b * m[7] + a * m[8] + m[9] * 255;
+              data2[i + 2] = r * m[10] + g * m[11] + b * m[12] + a * m[13] + m[14] * 255;
+              data2[i + 3] = r * m[15] + g * m[16] + b * m[17] + a * m[18] + m[19] * 255;
             }
           }
         },
@@ -11858,11 +11858,11 @@
           if (this.brightness === 0) {
             return;
           }
-          var imageData = options.imageData, data = imageData.data, i, len = data.length, brightness = Math.round(this.brightness * 255);
+          var imageData = options.imageData, data2 = imageData.data, i, len = data2.length, brightness = Math.round(this.brightness * 255);
           for (i = 0; i < len; i += 4) {
-            data[i] = data[i] + brightness;
-            data[i + 1] = data[i + 1] + brightness;
-            data[i + 2] = data[i + 2] + brightness;
+            data2[i] = data2[i] + brightness;
+            data2[i + 1] = data2[i + 1] + brightness;
+            data2[i + 2] = data2[i + 2] + brightness;
           }
         },
         getUniformLocations: function(gl, program) {
@@ -11903,7 +11903,7 @@
           return options.programCache[cacheKey];
         },
         applyTo2d: function(options) {
-          var imageData = options.imageData, data = imageData.data, weights = this.matrix, side = Math.round(Math.sqrt(weights.length)), halfSide = Math.floor(side / 2), sw = imageData.width, sh = imageData.height, output = options.ctx.createImageData(sw, sh), dst = output.data, alphaFac = this.opaque ? 1 : 0, r, g, b, a, dstOff, scx, scy, srcOff, wt, x, y, cx, cy;
+          var imageData = options.imageData, data2 = imageData.data, weights = this.matrix, side = Math.round(Math.sqrt(weights.length)), halfSide = Math.floor(side / 2), sw = imageData.width, sh = imageData.height, output = options.ctx.createImageData(sw, sh), dst = output.data, alphaFac = this.opaque ? 1 : 0, r, g, b, a, dstOff, scx, scy, srcOff, wt, x, y, cx, cy;
           for (y = 0; y < sh; y++) {
             for (x = 0; x < sw; x++) {
               dstOff = (y * sw + x) * 4;
@@ -11920,11 +11920,11 @@
                   }
                   srcOff = (scy * sw + scx) * 4;
                   wt = weights[cy * side + cx];
-                  r += data[srcOff] * wt;
-                  g += data[srcOff + 1] * wt;
-                  b += data[srcOff + 2] * wt;
+                  r += data2[srcOff] * wt;
+                  g += data2[srcOff + 1] * wt;
+                  b += data2[srcOff + 2] * wt;
                   if (!alphaFac) {
-                    a += data[srcOff + 3] * wt;
+                    a += data2[srcOff + 3] * wt;
                   }
                 }
               }
@@ -11934,7 +11934,7 @@
               if (!alphaFac) {
                 dst[dstOff + 3] = a;
               } else {
-                dst[dstOff + 3] = data[dstOff + 3];
+                dst[dstOff + 3] = data2[dstOff + 3];
               }
             }
           }
@@ -11973,18 +11973,18 @@
         mode: "average",
         mainParameter: "mode",
         applyTo2d: function(options) {
-          var imageData = options.imageData, data = imageData.data, i, len = data.length, value, mode = this.mode;
+          var imageData = options.imageData, data2 = imageData.data, i, len = data2.length, value, mode = this.mode;
           for (i = 0; i < len; i += 4) {
             if (mode === "average") {
-              value = (data[i] + data[i + 1] + data[i + 2]) / 3;
+              value = (data2[i] + data2[i + 1] + data2[i + 2]) / 3;
             } else if (mode === "lightness") {
-              value = (Math.min(data[i], data[i + 1], data[i + 2]) + Math.max(data[i], data[i + 1], data[i + 2])) / 2;
+              value = (Math.min(data2[i], data2[i + 1], data2[i + 2]) + Math.max(data2[i], data2[i + 1], data2[i + 2])) / 2;
             } else if (mode === "luminosity") {
-              value = 0.21 * data[i] + 0.72 * data[i + 1] + 0.07 * data[i + 2];
+              value = 0.21 * data2[i] + 0.72 * data2[i + 1] + 0.07 * data2[i + 2];
             }
-            data[i] = value;
-            data[i + 1] = value;
-            data[i + 2] = value;
+            data2[i] = value;
+            data2[i + 1] = value;
+            data2[i + 2] = value;
           }
         },
         retrieveShader: function(options) {
@@ -12019,11 +12019,11 @@
         invert: true,
         mainParameter: "invert",
         applyTo2d: function(options) {
-          var imageData = options.imageData, data = imageData.data, i, len = data.length;
+          var imageData = options.imageData, data2 = imageData.data, i, len = data2.length;
           for (i = 0; i < len; i += 4) {
-            data[i] = 255 - data[i];
-            data[i + 1] = 255 - data[i + 1];
-            data[i + 2] = 255 - data[i + 2];
+            data2[i] = 255 - data2[i];
+            data2[i + 1] = 255 - data2[i + 1];
+            data2[i + 2] = 255 - data2[i + 2];
           }
         },
         isNeutralState: function() {
@@ -12052,12 +12052,12 @@
           if (this.noise === 0) {
             return;
           }
-          var imageData = options.imageData, data = imageData.data, i, len = data.length, noise = this.noise, rand;
-          for (i = 0, len = data.length; i < len; i += 4) {
+          var imageData = options.imageData, data2 = imageData.data, i, len = data2.length, noise = this.noise, rand;
+          for (i = 0, len = data2.length; i < len; i += 4) {
             rand = (0.5 - Math.random()) * noise;
-            data[i] += rand;
-            data[i + 1] += rand;
-            data[i + 2] += rand;
+            data2[i] += rand;
+            data2[i + 1] += rand;
+            data2[i + 2] += rand;
           }
         },
         getUniformLocations: function(gl, program) {
@@ -12087,23 +12087,23 @@
         mainParameter: "blocksize",
         fragmentSource: "precision highp float;\nuniform sampler2D uTexture;\nuniform float uBlocksize;\nuniform float uStepW;\nuniform float uStepH;\nvarying vec2 vTexCoord;\nvoid main() {\nfloat blockW = uBlocksize * uStepW;\nfloat blockH = uBlocksize * uStepW;\nint posX = int(vTexCoord.x / blockW);\nint posY = int(vTexCoord.y / blockH);\nfloat fposX = float(posX);\nfloat fposY = float(posY);\nvec2 squareCoords = vec2(fposX * blockW, fposY * blockH);\nvec4 color = texture2D(uTexture, squareCoords);\ngl_FragColor = color;\n}",
         applyTo2d: function(options) {
-          var imageData = options.imageData, data = imageData.data, iLen = imageData.height, jLen = imageData.width, index, i, j, r, g, b, a, _i, _j, _iLen, _jLen;
+          var imageData = options.imageData, data2 = imageData.data, iLen = imageData.height, jLen = imageData.width, index, i, j, r, g, b, a, _i, _j, _iLen, _jLen;
           for (i = 0; i < iLen; i += this.blocksize) {
             for (j = 0; j < jLen; j += this.blocksize) {
               index = i * 4 * jLen + j * 4;
-              r = data[index];
-              g = data[index + 1];
-              b = data[index + 2];
-              a = data[index + 3];
+              r = data2[index];
+              g = data2[index + 1];
+              b = data2[index + 2];
+              a = data2[index + 3];
               _iLen = Math.min(i + this.blocksize, iLen);
               _jLen = Math.min(j + this.blocksize, jLen);
               for (_i = i; _i < _iLen; _i++) {
                 for (_j = j; _j < _jLen; _j++) {
                   index = _i * 4 * jLen + _j * 4;
-                  data[index] = r;
-                  data[index + 1] = g;
-                  data[index + 2] = b;
-                  data[index + 3] = a;
+                  data2[index] = r;
+                  data2[index + 1] = g;
+                  data2[index + 2] = b;
+                  data2[index + 3] = a;
                 }
               }
             }
@@ -12135,7 +12135,7 @@
         distance: 0.02,
         useAlpha: false,
         applyTo2d: function(options) {
-          var imageData = options.imageData, data = imageData.data, i, distance = this.distance * 255, r, g, b, source = new fabric4.Color(this.color).getSource(), lowC = [
+          var imageData = options.imageData, data2 = imageData.data, i, distance = this.distance * 255, r, g, b, source = new fabric4.Color(this.color).getSource(), lowC = [
             source[0] - distance,
             source[1] - distance,
             source[2] - distance
@@ -12144,12 +12144,12 @@
             source[1] + distance,
             source[2] + distance
           ];
-          for (i = 0; i < data.length; i += 4) {
-            r = data[i];
-            g = data[i + 1];
-            b = data[i + 2];
+          for (i = 0; i < data2.length; i += 4) {
+            r = data2[i];
+            g = data2[i + 1];
+            b = data2[i + 2];
             if (r > lowC[0] && g > lowC[1] && b > lowC[2] && r < highC[0] && g < highC[1] && b < highC[2]) {
-              data[i + 3] = 0;
+              data2[i + 3] = 0;
             }
           }
         },
@@ -12384,66 +12384,66 @@
           return options.programCache[cacheKey];
         },
         applyTo2d: function(options) {
-          var imageData = options.imageData, data = imageData.data, iLen = data.length, tr, tg, tb, r, g, b, source, alpha1 = 1 - this.alpha;
+          var imageData = options.imageData, data2 = imageData.data, iLen = data2.length, tr, tg, tb, r, g, b, source, alpha1 = 1 - this.alpha;
           source = new fabric4.Color(this.color).getSource();
           tr = source[0] * this.alpha;
           tg = source[1] * this.alpha;
           tb = source[2] * this.alpha;
           for (var i = 0; i < iLen; i += 4) {
-            r = data[i];
-            g = data[i + 1];
-            b = data[i + 2];
+            r = data2[i];
+            g = data2[i + 1];
+            b = data2[i + 2];
             switch (this.mode) {
               case "multiply":
-                data[i] = r * tr / 255;
-                data[i + 1] = g * tg / 255;
-                data[i + 2] = b * tb / 255;
+                data2[i] = r * tr / 255;
+                data2[i + 1] = g * tg / 255;
+                data2[i + 2] = b * tb / 255;
                 break;
               case "screen":
-                data[i] = 255 - (255 - r) * (255 - tr) / 255;
-                data[i + 1] = 255 - (255 - g) * (255 - tg) / 255;
-                data[i + 2] = 255 - (255 - b) * (255 - tb) / 255;
+                data2[i] = 255 - (255 - r) * (255 - tr) / 255;
+                data2[i + 1] = 255 - (255 - g) * (255 - tg) / 255;
+                data2[i + 2] = 255 - (255 - b) * (255 - tb) / 255;
                 break;
               case "add":
-                data[i] = r + tr;
-                data[i + 1] = g + tg;
-                data[i + 2] = b + tb;
+                data2[i] = r + tr;
+                data2[i + 1] = g + tg;
+                data2[i + 2] = b + tb;
                 break;
               case "diff":
               case "difference":
-                data[i] = Math.abs(r - tr);
-                data[i + 1] = Math.abs(g - tg);
-                data[i + 2] = Math.abs(b - tb);
+                data2[i] = Math.abs(r - tr);
+                data2[i + 1] = Math.abs(g - tg);
+                data2[i + 2] = Math.abs(b - tb);
                 break;
               case "subtract":
-                data[i] = r - tr;
-                data[i + 1] = g - tg;
-                data[i + 2] = b - tb;
+                data2[i] = r - tr;
+                data2[i + 1] = g - tg;
+                data2[i + 2] = b - tb;
                 break;
               case "darken":
-                data[i] = Math.min(r, tr);
-                data[i + 1] = Math.min(g, tg);
-                data[i + 2] = Math.min(b, tb);
+                data2[i] = Math.min(r, tr);
+                data2[i + 1] = Math.min(g, tg);
+                data2[i + 2] = Math.min(b, tb);
                 break;
               case "lighten":
-                data[i] = Math.max(r, tr);
-                data[i + 1] = Math.max(g, tg);
-                data[i + 2] = Math.max(b, tb);
+                data2[i] = Math.max(r, tr);
+                data2[i + 1] = Math.max(g, tg);
+                data2[i + 2] = Math.max(b, tb);
                 break;
               case "overlay":
-                data[i] = tr < 128 ? 2 * r * tr / 255 : 255 - 2 * (255 - r) * (255 - tr) / 255;
-                data[i + 1] = tg < 128 ? 2 * g * tg / 255 : 255 - 2 * (255 - g) * (255 - tg) / 255;
-                data[i + 2] = tb < 128 ? 2 * b * tb / 255 : 255 - 2 * (255 - b) * (255 - tb) / 255;
+                data2[i] = tr < 128 ? 2 * r * tr / 255 : 255 - 2 * (255 - r) * (255 - tr) / 255;
+                data2[i + 1] = tg < 128 ? 2 * g * tg / 255 : 255 - 2 * (255 - g) * (255 - tg) / 255;
+                data2[i + 2] = tb < 128 ? 2 * b * tb / 255 : 255 - 2 * (255 - b) * (255 - tb) / 255;
                 break;
               case "exclusion":
-                data[i] = tr + r - 2 * tr * r / 255;
-                data[i + 1] = tg + g - 2 * tg * g / 255;
-                data[i + 2] = tb + b - 2 * tb * b / 255;
+                data2[i] = tr + r - 2 * tr * r / 255;
+                data2[i + 1] = tg + g - 2 * tg * g / 255;
+                data2[i + 2] = tb + b - 2 * tb * b / 255;
                 break;
               case "tint":
-                data[i] = tr + r * alpha1;
-                data[i + 1] = tg + g * alpha1;
-                data[i + 2] = tb + b * alpha1;
+                data2[i] = tr + r * alpha1;
+                data2[i + 1] = tg + g * alpha1;
+                data2[i + 2] = tb + b * alpha1;
             }
           }
         },
@@ -12516,7 +12516,7 @@
           ];
         },
         applyTo2d: function(options) {
-          var imageData = options.imageData, resources = options.filterBackend.resources, data = imageData.data, iLen = data.length, width = imageData.width, height = imageData.height, tr, tg, tb, ta, r, g, b, a, canvas1, context, image = this.image, blendData;
+          var imageData = options.imageData, resources = options.filterBackend.resources, data2 = imageData.data, iLen = data2.length, width = imageData.width, height = imageData.height, tr, tg, tb, ta, r, g, b, a, canvas1, context, image = this.image, blendData;
           if (!resources.blendImage) {
             resources.blendImage = fabric4.util.createCanvasElement();
           }
@@ -12532,23 +12532,23 @@
           context.drawImage(image._element, 0, 0, width, height);
           blendData = context.getImageData(0, 0, width, height).data;
           for (var i = 0; i < iLen; i += 4) {
-            r = data[i];
-            g = data[i + 1];
-            b = data[i + 2];
-            a = data[i + 3];
+            r = data2[i];
+            g = data2[i + 1];
+            b = data2[i + 2];
+            a = data2[i + 3];
             tr = blendData[i];
             tg = blendData[i + 1];
             tb = blendData[i + 2];
             ta = blendData[i + 3];
             switch (this.mode) {
               case "multiply":
-                data[i] = r * tr / 255;
-                data[i + 1] = g * tg / 255;
-                data[i + 2] = b * tb / 255;
-                data[i + 3] = a * ta / 255;
+                data2[i] = r * tr / 255;
+                data2[i + 1] = g * tg / 255;
+                data2[i + 2] = b * tb / 255;
+                data2[i + 3] = a * ta / 255;
                 break;
               case "mask":
-                data[i + 3] = ta;
+                data2[i + 3] = ta;
                 break;
             }
           }
@@ -12812,7 +12812,7 @@
           return destImage;
         },
         hermiteFastResize: function(options, oW, oH, dW, dH) {
-          var ratioW = this.rcpScaleX, ratioH = this.rcpScaleY, ratioWHalf = ceil(ratioW / 2), ratioHHalf = ceil(ratioH / 2), img = options.imageData, data = img.data, img2 = options.ctx.createImageData(dW, dH), data2 = img2.data;
+          var ratioW = this.rcpScaleX, ratioH = this.rcpScaleY, ratioWHalf = ceil(ratioW / 2), ratioHHalf = ceil(ratioH / 2), img = options.imageData, data2 = img.data, img2 = options.ctx.createImageData(dW, dH), data22 = img2.data;
           for (var j = 0; j < dH; j++) {
             for (var i = 0; i < dW; i++) {
               var x2 = (i + j * dW) * 4, weight = 0, weights = 0, weightsAlpha = 0, gxR = 0, gxG = 0, gxB = 0, gxA = 0, centerY = (j + 0.5) * ratioH;
@@ -12826,22 +12826,22 @@
                   weight = 2 * w * w * w - 3 * w * w + 1;
                   if (weight > 0) {
                     dx = 4 * (xx + yy * oW);
-                    gxA += weight * data[dx + 3];
+                    gxA += weight * data2[dx + 3];
                     weightsAlpha += weight;
-                    if (data[dx + 3] < 255) {
-                      weight = weight * data[dx + 3] / 250;
+                    if (data2[dx + 3] < 255) {
+                      weight = weight * data2[dx + 3] / 250;
                     }
-                    gxR += weight * data[dx];
-                    gxG += weight * data[dx + 1];
-                    gxB += weight * data[dx + 2];
+                    gxR += weight * data2[dx];
+                    gxG += weight * data2[dx + 1];
+                    gxB += weight * data2[dx + 2];
                     weights += weight;
                   }
                 }
               }
-              data2[x2] = gxR / weights;
-              data2[x2 + 1] = gxG / weights;
-              data2[x2 + 2] = gxB / weights;
-              data2[x2 + 3] = gxA / weightsAlpha;
+              data22[x2] = gxR / weights;
+              data22[x2 + 1] = gxG / weights;
+              data22[x2 + 2] = gxB / weights;
+              data22[x2 + 3] = gxA / weightsAlpha;
             }
           }
           return img2;
@@ -12870,11 +12870,11 @@
           if (this.contrast === 0) {
             return;
           }
-          var imageData = options.imageData, i, len, data = imageData.data, len = data.length, contrast = Math.floor(this.contrast * 255), contrastF = 259 * (contrast + 255) / (255 * (259 - contrast));
+          var imageData = options.imageData, i, len, data2 = imageData.data, len = data2.length, contrast = Math.floor(this.contrast * 255), contrastF = 259 * (contrast + 255) / (255 * (259 - contrast));
           for (i = 0; i < len; i += 4) {
-            data[i] = contrastF * (data[i] - 128) + 128;
-            data[i + 1] = contrastF * (data[i + 1] - 128) + 128;
-            data[i + 2] = contrastF * (data[i + 2] - 128) + 128;
+            data2[i] = contrastF * (data2[i] - 128) + 128;
+            data2[i + 1] = contrastF * (data2[i + 1] - 128) + 128;
+            data2[i + 2] = contrastF * (data2[i + 2] - 128) + 128;
           }
         },
         getUniformLocations: function(gl, program) {
@@ -12900,12 +12900,12 @@
           if (this.saturation === 0) {
             return;
           }
-          var imageData = options.imageData, data = imageData.data, len = data.length, adjust = -this.saturation, i, max;
+          var imageData = options.imageData, data2 = imageData.data, len = data2.length, adjust = -this.saturation, i, max;
           for (i = 0; i < len; i += 4) {
-            max = Math.max(data[i], data[i + 1], data[i + 2]);
-            data[i] += max !== data[i] ? (max - data[i]) * adjust : 0;
-            data[i + 1] += max !== data[i + 1] ? (max - data[i + 1]) * adjust : 0;
-            data[i + 2] += max !== data[i + 2] ? (max - data[i + 2]) * adjust : 0;
+            max = Math.max(data2[i], data2[i + 1], data2[i + 2]);
+            data2[i] += max !== data2[i] ? (max - data2[i]) * adjust : 0;
+            data2[i + 1] += max !== data2[i + 1] ? (max - data2[i + 1]) * adjust : 0;
+            data2[i + 2] += max !== data2[i + 2] ? (max - data2[i + 2]) * adjust : 0;
           }
         },
         getUniformLocations: function(gl, program) {
@@ -13031,7 +13031,7 @@
           filters.BaseFilter.prototype.initialize.call(this, options);
         },
         applyTo2d: function(options) {
-          var imageData = options.imageData, data = imageData.data, gamma = this.gamma, len = data.length, rInv = 1 / gamma[0], gInv = 1 / gamma[1], bInv = 1 / gamma[2], i;
+          var imageData = options.imageData, data2 = imageData.data, gamma = this.gamma, len = data2.length, rInv = 1 / gamma[0], gInv = 1 / gamma[1], bInv = 1 / gamma[2], i;
           if (!this.rVals) {
             this.rVals = new Uint8Array(256);
             this.gVals = new Uint8Array(256);
@@ -13042,10 +13042,10 @@
             this.gVals[i] = Math.pow(i / 255, gInv) * 255;
             this.bVals[i] = Math.pow(i / 255, bInv) * 255;
           }
-          for (i = 0, len = data.length; i < len; i += 4) {
-            data[i] = this.rVals[data[i]];
-            data[i + 1] = this.gVals[data[i + 1]];
-            data[i + 2] = this.bVals[data[i + 2]];
+          for (i = 0, len = data2.length; i < len; i += 4) {
+            data2[i] = this.rVals[data2[i]];
+            data2[i + 1] = this.gVals[data2[i + 1]];
+            data2[i + 2] = this.bVals[data2[i + 2]];
           }
         },
         getUniformLocations: function(gl, program) {
@@ -16517,18 +16517,20 @@ Karen Kjaergaard, WDA2020
   // app/routes.js
   var handleHash = (rawHash) => {
     let hash = rawHash.replace("#", "");
-    console.log("handleHash:", hash);
+    console.log("handleHash:", "rawHash:", rawHash, "hash:", hash);
     const b = window.app.balls.filter((b2) => b2.el.userData.data.stub === hash)[0];
     if (b) {
       const accepted = window.toNode(b.i);
-      console.log("OnHashChanged #4 accepted", accepted);
+      console.log("OnHashChanged #4 accepted", accepted, b);
+      const theme_slug = THEMES.filter((t) => t.id === b.el.userData.data.theme)[0]?.slug;
+      console.log("OnHashChanged #4 theme id:", accepted, b.el.userData.data.theme, "theme_slug:", theme_slug);
       if (accepted) {
-        const btn = document.querySelector(`#sidebar [data-trigger="filter:theme"][data-key="${b.el.userData.data.theme}"]`);
+        const btn = document.querySelector(`#sidebar [data-trigger="theme"][data-key="${theme_slug}"]`);
         if (btn) {
           btn.classList.add("selected");
         }
       }
-    } else if (hash.indexOf("theme:") === 0) {
+    } else if (rawHash.indexOf("#theme:") === 0) {
       hash = hash.split(":")[1];
       const slug = hash.toLowerCase().replace(/ /g, "-");
       const theme = THEMES.filter((t) => t.slug === slug)[0];
@@ -16541,7 +16543,7 @@ Karen Kjaergaard, WDA2020
         btn.classList.add("selected");
       }
       window.app.animation.applyFilter("theme", theme.id);
-    } else if (hash != "") {
+    } else if (rawHash != "") {
       console.log("OnHashChanged page", hash);
       document.querySelectorAll("#sidebar [data-trigger]").forEach((el2) => {
         el2.classList.remove("selected");
@@ -16559,6 +16561,12 @@ Karen Kjaergaard, WDA2020
         window.app.actions.render_videos(hash);
       if (hash === "graduates")
         window.app.actions.render_students(hash);
+    } else if (window.location.hash === "") {
+      console.log("OnHashChanged index");
+      document.querySelectorAll("#sidebar [data-trigger]").forEach((el2) => {
+        el2.classList.remove("selected");
+      });
+      window.toFree();
     }
   };
 
@@ -16590,7 +16598,6 @@ Karen Kjaergaard, WDA2020
     {id: "about", name: "ABOUT"},
     {id: "graduates", name: "GRADUATES"}
   ];
-  var themes2 = THEMES;
   var init = () => {
     let html = "";
     FEATS.forEach((t) => {
@@ -16625,11 +16632,9 @@ Karen Kjaergaard, WDA2020
       if (sb.classList.contains("closed")) {
         sb.classList.remove("closed");
         document.querySelector("#showhide").innerHTML = "-";
-        console.log("show sidebar +");
       } else {
         sb.classList.add("closed");
         document.querySelector("#showhide").innerHTML = "+";
-        console.log("hide sidebar");
       }
     });
     document.querySelector("#sidebar").style.display = "block";
@@ -20827,9 +20832,9 @@ Karen Kjaergaard, WDA2020
       function extractFromCache(cache) {
         const values = [];
         for (const key in cache) {
-          const data = cache[key];
-          delete data.metadata;
-          values.push(data);
+          const data2 = cache[key];
+          delete data2.metadata;
+          values.push(data2);
         }
         return values;
       }
@@ -21757,168 +21762,168 @@ Karen Kjaergaard, WDA2020
           images: {}
         };
       }
-      const data = {
+      const data2 = {
         metadata: {
           version: 4.5,
           type: "Material",
           generator: "Material.toJSON"
         }
       };
-      data.uuid = this.uuid;
-      data.type = this.type;
+      data2.uuid = this.uuid;
+      data2.type = this.type;
       if (this.name !== "")
-        data.name = this.name;
+        data2.name = this.name;
       if (this.color && this.color.isColor)
-        data.color = this.color.getHex();
+        data2.color = this.color.getHex();
       if (this.roughness !== void 0)
-        data.roughness = this.roughness;
+        data2.roughness = this.roughness;
       if (this.metalness !== void 0)
-        data.metalness = this.metalness;
+        data2.metalness = this.metalness;
       if (this.sheen && this.sheen.isColor)
-        data.sheen = this.sheen.getHex();
+        data2.sheen = this.sheen.getHex();
       if (this.emissive && this.emissive.isColor)
-        data.emissive = this.emissive.getHex();
+        data2.emissive = this.emissive.getHex();
       if (this.emissiveIntensity && this.emissiveIntensity !== 1)
-        data.emissiveIntensity = this.emissiveIntensity;
+        data2.emissiveIntensity = this.emissiveIntensity;
       if (this.specular && this.specular.isColor)
-        data.specular = this.specular.getHex();
+        data2.specular = this.specular.getHex();
       if (this.shininess !== void 0)
-        data.shininess = this.shininess;
+        data2.shininess = this.shininess;
       if (this.clearcoat !== void 0)
-        data.clearcoat = this.clearcoat;
+        data2.clearcoat = this.clearcoat;
       if (this.clearcoatRoughness !== void 0)
-        data.clearcoatRoughness = this.clearcoatRoughness;
+        data2.clearcoatRoughness = this.clearcoatRoughness;
       if (this.clearcoatMap && this.clearcoatMap.isTexture) {
-        data.clearcoatMap = this.clearcoatMap.toJSON(meta).uuid;
+        data2.clearcoatMap = this.clearcoatMap.toJSON(meta).uuid;
       }
       if (this.clearcoatRoughnessMap && this.clearcoatRoughnessMap.isTexture) {
-        data.clearcoatRoughnessMap = this.clearcoatRoughnessMap.toJSON(meta).uuid;
+        data2.clearcoatRoughnessMap = this.clearcoatRoughnessMap.toJSON(meta).uuid;
       }
       if (this.clearcoatNormalMap && this.clearcoatNormalMap.isTexture) {
-        data.clearcoatNormalMap = this.clearcoatNormalMap.toJSON(meta).uuid;
-        data.clearcoatNormalScale = this.clearcoatNormalScale.toArray();
+        data2.clearcoatNormalMap = this.clearcoatNormalMap.toJSON(meta).uuid;
+        data2.clearcoatNormalScale = this.clearcoatNormalScale.toArray();
       }
       if (this.map && this.map.isTexture)
-        data.map = this.map.toJSON(meta).uuid;
+        data2.map = this.map.toJSON(meta).uuid;
       if (this.matcap && this.matcap.isTexture)
-        data.matcap = this.matcap.toJSON(meta).uuid;
+        data2.matcap = this.matcap.toJSON(meta).uuid;
       if (this.alphaMap && this.alphaMap.isTexture)
-        data.alphaMap = this.alphaMap.toJSON(meta).uuid;
+        data2.alphaMap = this.alphaMap.toJSON(meta).uuid;
       if (this.lightMap && this.lightMap.isTexture)
-        data.lightMap = this.lightMap.toJSON(meta).uuid;
+        data2.lightMap = this.lightMap.toJSON(meta).uuid;
       if (this.aoMap && this.aoMap.isTexture) {
-        data.aoMap = this.aoMap.toJSON(meta).uuid;
-        data.aoMapIntensity = this.aoMapIntensity;
+        data2.aoMap = this.aoMap.toJSON(meta).uuid;
+        data2.aoMapIntensity = this.aoMapIntensity;
       }
       if (this.bumpMap && this.bumpMap.isTexture) {
-        data.bumpMap = this.bumpMap.toJSON(meta).uuid;
-        data.bumpScale = this.bumpScale;
+        data2.bumpMap = this.bumpMap.toJSON(meta).uuid;
+        data2.bumpScale = this.bumpScale;
       }
       if (this.normalMap && this.normalMap.isTexture) {
-        data.normalMap = this.normalMap.toJSON(meta).uuid;
-        data.normalMapType = this.normalMapType;
-        data.normalScale = this.normalScale.toArray();
+        data2.normalMap = this.normalMap.toJSON(meta).uuid;
+        data2.normalMapType = this.normalMapType;
+        data2.normalScale = this.normalScale.toArray();
       }
       if (this.displacementMap && this.displacementMap.isTexture) {
-        data.displacementMap = this.displacementMap.toJSON(meta).uuid;
-        data.displacementScale = this.displacementScale;
-        data.displacementBias = this.displacementBias;
+        data2.displacementMap = this.displacementMap.toJSON(meta).uuid;
+        data2.displacementScale = this.displacementScale;
+        data2.displacementBias = this.displacementBias;
       }
       if (this.roughnessMap && this.roughnessMap.isTexture)
-        data.roughnessMap = this.roughnessMap.toJSON(meta).uuid;
+        data2.roughnessMap = this.roughnessMap.toJSON(meta).uuid;
       if (this.metalnessMap && this.metalnessMap.isTexture)
-        data.metalnessMap = this.metalnessMap.toJSON(meta).uuid;
+        data2.metalnessMap = this.metalnessMap.toJSON(meta).uuid;
       if (this.emissiveMap && this.emissiveMap.isTexture)
-        data.emissiveMap = this.emissiveMap.toJSON(meta).uuid;
+        data2.emissiveMap = this.emissiveMap.toJSON(meta).uuid;
       if (this.specularMap && this.specularMap.isTexture)
-        data.specularMap = this.specularMap.toJSON(meta).uuid;
+        data2.specularMap = this.specularMap.toJSON(meta).uuid;
       if (this.envMap && this.envMap.isTexture) {
-        data.envMap = this.envMap.toJSON(meta).uuid;
-        data.reflectivity = this.reflectivity;
-        data.refractionRatio = this.refractionRatio;
+        data2.envMap = this.envMap.toJSON(meta).uuid;
+        data2.reflectivity = this.reflectivity;
+        data2.refractionRatio = this.refractionRatio;
         if (this.combine !== void 0)
-          data.combine = this.combine;
+          data2.combine = this.combine;
         if (this.envMapIntensity !== void 0)
-          data.envMapIntensity = this.envMapIntensity;
+          data2.envMapIntensity = this.envMapIntensity;
       }
       if (this.gradientMap && this.gradientMap.isTexture) {
-        data.gradientMap = this.gradientMap.toJSON(meta).uuid;
+        data2.gradientMap = this.gradientMap.toJSON(meta).uuid;
       }
       if (this.size !== void 0)
-        data.size = this.size;
+        data2.size = this.size;
       if (this.sizeAttenuation !== void 0)
-        data.sizeAttenuation = this.sizeAttenuation;
+        data2.sizeAttenuation = this.sizeAttenuation;
       if (this.blending !== NormalBlending)
-        data.blending = this.blending;
+        data2.blending = this.blending;
       if (this.flatShading === true)
-        data.flatShading = this.flatShading;
+        data2.flatShading = this.flatShading;
       if (this.side !== FrontSide)
-        data.side = this.side;
+        data2.side = this.side;
       if (this.vertexColors)
-        data.vertexColors = true;
+        data2.vertexColors = true;
       if (this.opacity < 1)
-        data.opacity = this.opacity;
+        data2.opacity = this.opacity;
       if (this.transparent === true)
-        data.transparent = this.transparent;
-      data.depthFunc = this.depthFunc;
-      data.depthTest = this.depthTest;
-      data.depthWrite = this.depthWrite;
-      data.stencilWrite = this.stencilWrite;
-      data.stencilWriteMask = this.stencilWriteMask;
-      data.stencilFunc = this.stencilFunc;
-      data.stencilRef = this.stencilRef;
-      data.stencilFuncMask = this.stencilFuncMask;
-      data.stencilFail = this.stencilFail;
-      data.stencilZFail = this.stencilZFail;
-      data.stencilZPass = this.stencilZPass;
+        data2.transparent = this.transparent;
+      data2.depthFunc = this.depthFunc;
+      data2.depthTest = this.depthTest;
+      data2.depthWrite = this.depthWrite;
+      data2.stencilWrite = this.stencilWrite;
+      data2.stencilWriteMask = this.stencilWriteMask;
+      data2.stencilFunc = this.stencilFunc;
+      data2.stencilRef = this.stencilRef;
+      data2.stencilFuncMask = this.stencilFuncMask;
+      data2.stencilFail = this.stencilFail;
+      data2.stencilZFail = this.stencilZFail;
+      data2.stencilZPass = this.stencilZPass;
       if (this.rotation && this.rotation !== 0)
-        data.rotation = this.rotation;
+        data2.rotation = this.rotation;
       if (this.polygonOffset === true)
-        data.polygonOffset = true;
+        data2.polygonOffset = true;
       if (this.polygonOffsetFactor !== 0)
-        data.polygonOffsetFactor = this.polygonOffsetFactor;
+        data2.polygonOffsetFactor = this.polygonOffsetFactor;
       if (this.polygonOffsetUnits !== 0)
-        data.polygonOffsetUnits = this.polygonOffsetUnits;
+        data2.polygonOffsetUnits = this.polygonOffsetUnits;
       if (this.linewidth && this.linewidth !== 1)
-        data.linewidth = this.linewidth;
+        data2.linewidth = this.linewidth;
       if (this.dashSize !== void 0)
-        data.dashSize = this.dashSize;
+        data2.dashSize = this.dashSize;
       if (this.gapSize !== void 0)
-        data.gapSize = this.gapSize;
+        data2.gapSize = this.gapSize;
       if (this.scale !== void 0)
-        data.scale = this.scale;
+        data2.scale = this.scale;
       if (this.dithering === true)
-        data.dithering = true;
+        data2.dithering = true;
       if (this.alphaTest > 0)
-        data.alphaTest = this.alphaTest;
+        data2.alphaTest = this.alphaTest;
       if (this.premultipliedAlpha === true)
-        data.premultipliedAlpha = this.premultipliedAlpha;
+        data2.premultipliedAlpha = this.premultipliedAlpha;
       if (this.wireframe === true)
-        data.wireframe = this.wireframe;
+        data2.wireframe = this.wireframe;
       if (this.wireframeLinewidth > 1)
-        data.wireframeLinewidth = this.wireframeLinewidth;
+        data2.wireframeLinewidth = this.wireframeLinewidth;
       if (this.wireframeLinecap !== "round")
-        data.wireframeLinecap = this.wireframeLinecap;
+        data2.wireframeLinecap = this.wireframeLinecap;
       if (this.wireframeLinejoin !== "round")
-        data.wireframeLinejoin = this.wireframeLinejoin;
+        data2.wireframeLinejoin = this.wireframeLinejoin;
       if (this.morphTargets === true)
-        data.morphTargets = true;
+        data2.morphTargets = true;
       if (this.morphNormals === true)
-        data.morphNormals = true;
+        data2.morphNormals = true;
       if (this.skinning === true)
-        data.skinning = true;
+        data2.skinning = true;
       if (this.visible === false)
-        data.visible = false;
+        data2.visible = false;
       if (this.toneMapped === false)
-        data.toneMapped = false;
+        data2.toneMapped = false;
       if (JSON.stringify(this.userData) !== "{}")
-        data.userData = this.userData;
+        data2.userData = this.userData;
       function extractFromCache(cache) {
         const values = [];
         for (const key in cache) {
-          const data2 = cache[key];
-          delete data2.metadata;
-          values.push(data2);
+          const data3 = cache[key];
+          delete data3.metadata;
+          values.push(data3);
         }
         return values;
       }
@@ -21926,11 +21931,11 @@ Karen Kjaergaard, WDA2020
         const textures = extractFromCache(meta.textures);
         const images = extractFromCache(meta.images);
         if (textures.length > 0)
-          data.textures = textures;
+          data2.textures = textures;
         if (images.length > 0)
-          data.images = images;
+          data2.images = images;
       }
-      return data;
+      return data2;
     },
     clone: function() {
       return new this.constructor().copy(this);
@@ -22999,31 +23004,31 @@ Karen Kjaergaard, WDA2020
       return geometry2;
     },
     toJSON: function() {
-      const data = {
+      const data2 = {
         metadata: {
           version: 4.5,
           type: "BufferGeometry",
           generator: "BufferGeometry.toJSON"
         }
       };
-      data.uuid = this.uuid;
-      data.type = this.type;
+      data2.uuid = this.uuid;
+      data2.type = this.type;
       if (this.name !== "")
-        data.name = this.name;
+        data2.name = this.name;
       if (Object.keys(this.userData).length > 0)
-        data.userData = this.userData;
+        data2.userData = this.userData;
       if (this.parameters !== void 0) {
         const parameters = this.parameters;
         for (const key in parameters) {
           if (parameters[key] !== void 0)
-            data[key] = parameters[key];
+            data2[key] = parameters[key];
         }
-        return data;
+        return data2;
       }
-      data.data = {attributes: {}};
+      data2.data = {attributes: {}};
       const index = this.index;
       if (index !== null) {
-        data.data.index = {
+        data2.data.index = {
           type: index.array.constructor.name,
           array: Array.prototype.slice.call(index.array)
         };
@@ -23031,10 +23036,10 @@ Karen Kjaergaard, WDA2020
       const attributes = this.attributes;
       for (const key in attributes) {
         const attribute = attributes[key];
-        const attributeData = attribute.toJSON(data.data);
+        const attributeData = attribute.toJSON(data2.data);
         if (attribute.name !== "")
           attributeData.name = attribute.name;
-        data.data.attributes[key] = attributeData;
+        data2.data.attributes[key] = attributeData;
       }
       const morphAttributes = {};
       let hasMorphAttributes = false;
@@ -23043,7 +23048,7 @@ Karen Kjaergaard, WDA2020
         const array = [];
         for (let i = 0, il = attributeArray.length; i < il; i++) {
           const attribute = attributeArray[i];
-          const attributeData = attribute.toJSON(data.data);
+          const attributeData = attribute.toJSON(data2.data);
           if (attribute.name !== "")
             attributeData.name = attribute.name;
           array.push(attributeData);
@@ -23054,21 +23059,21 @@ Karen Kjaergaard, WDA2020
         }
       }
       if (hasMorphAttributes) {
-        data.data.morphAttributes = morphAttributes;
-        data.data.morphTargetsRelative = this.morphTargetsRelative;
+        data2.data.morphAttributes = morphAttributes;
+        data2.data.morphTargetsRelative = this.morphTargetsRelative;
       }
       const groups = this.groups;
       if (groups.length > 0) {
-        data.data.groups = JSON.parse(JSON.stringify(groups));
+        data2.data.groups = JSON.parse(JSON.stringify(groups));
       }
       const boundingSphere = this.boundingSphere;
       if (boundingSphere !== null) {
-        data.data.boundingSphere = {
+        data2.data.boundingSphere = {
           center: boundingSphere.center.toArray(),
           radius: boundingSphere.radius
         };
       }
-      return data;
+      return data2;
     },
     clone: function() {
       return new BufferGeometry().copy(this);
@@ -23080,23 +23085,23 @@ Karen Kjaergaard, WDA2020
       this.groups = [];
       this.boundingBox = null;
       this.boundingSphere = null;
-      const data = {};
+      const data2 = {};
       this.name = source.name;
       const index = source.index;
       if (index !== null) {
-        this.setIndex(index.clone(data));
+        this.setIndex(index.clone(data2));
       }
       const attributes = source.attributes;
       for (const name in attributes) {
         const attribute = attributes[name];
-        this.setAttribute(name, attribute.clone(data));
+        this.setAttribute(name, attribute.clone(data2));
       }
       const morphAttributes = source.morphAttributes;
       for (const name in morphAttributes) {
         const array = [];
         const morphAttribute = morphAttributes[name];
         for (let i = 0, l = morphAttribute.length; i < l; i++) {
-          array.push(morphAttribute[i].clone(data));
+          array.push(morphAttribute[i].clone(data2));
         }
         this.morphAttributes[name] = array;
       }
@@ -23555,65 +23560,65 @@ Karen Kjaergaard, WDA2020
     return this;
   };
   ShaderMaterial.prototype.toJSON = function(meta) {
-    const data = Material.prototype.toJSON.call(this, meta);
-    data.glslVersion = this.glslVersion;
-    data.uniforms = {};
+    const data2 = Material.prototype.toJSON.call(this, meta);
+    data2.glslVersion = this.glslVersion;
+    data2.uniforms = {};
     for (const name in this.uniforms) {
       const uniform = this.uniforms[name];
       const value = uniform.value;
       if (value && value.isTexture) {
-        data.uniforms[name] = {
+        data2.uniforms[name] = {
           type: "t",
           value: value.toJSON(meta).uuid
         };
       } else if (value && value.isColor) {
-        data.uniforms[name] = {
+        data2.uniforms[name] = {
           type: "c",
           value: value.getHex()
         };
       } else if (value && value.isVector2) {
-        data.uniforms[name] = {
+        data2.uniforms[name] = {
           type: "v2",
           value: value.toArray()
         };
       } else if (value && value.isVector3) {
-        data.uniforms[name] = {
+        data2.uniforms[name] = {
           type: "v3",
           value: value.toArray()
         };
       } else if (value && value.isVector4) {
-        data.uniforms[name] = {
+        data2.uniforms[name] = {
           type: "v4",
           value: value.toArray()
         };
       } else if (value && value.isMatrix3) {
-        data.uniforms[name] = {
+        data2.uniforms[name] = {
           type: "m3",
           value: value.toArray()
         };
       } else if (value && value.isMatrix4) {
-        data.uniforms[name] = {
+        data2.uniforms[name] = {
           type: "m4",
           value: value.toArray()
         };
       } else {
-        data.uniforms[name] = {
+        data2.uniforms[name] = {
           value
         };
       }
     }
     if (Object.keys(this.defines).length > 0)
-      data.defines = this.defines;
-    data.vertexShader = this.vertexShader;
-    data.fragmentShader = this.fragmentShader;
+      data2.defines = this.defines;
+    data2.vertexShader = this.vertexShader;
+    data2.fragmentShader = this.fragmentShader;
     const extensions = {};
     for (const key in this.extensions) {
       if (this.extensions[key] === true)
         extensions[key] = true;
     }
     if (Object.keys(extensions).length > 0)
-      data.extensions = extensions;
-    return data;
+      data2.extensions = extensions;
+    return data2;
   };
   function Camera() {
     Object3D.call(this);
@@ -23750,18 +23755,18 @@ Karen Kjaergaard, WDA2020
       this.projectionMatrixInverse.copy(this.projectionMatrix).invert();
     },
     toJSON: function(meta) {
-      const data = Object3D.prototype.toJSON.call(this, meta);
-      data.object.fov = this.fov;
-      data.object.zoom = this.zoom;
-      data.object.near = this.near;
-      data.object.far = this.far;
-      data.object.focus = this.focus;
-      data.object.aspect = this.aspect;
+      const data2 = Object3D.prototype.toJSON.call(this, meta);
+      data2.object.fov = this.fov;
+      data2.object.zoom = this.zoom;
+      data2.object.near = this.near;
+      data2.object.far = this.far;
+      data2.object.focus = this.focus;
+      data2.object.aspect = this.aspect;
       if (this.view !== null)
-        data.object.view = Object.assign({}, this.view);
-      data.object.filmGauge = this.filmGauge;
-      data.object.filmOffset = this.filmOffset;
-      return data;
+        data2.object.view = Object.assign({}, this.view);
+      data2.object.filmGauge = this.filmGauge;
+      data2.object.filmOffset = this.filmOffset;
+      return data2;
     }
   });
   var fov = 90;
@@ -23941,9 +23946,9 @@ Karen Kjaergaard, WDA2020
     }
     renderer2.setRenderTarget(currentRenderTarget);
   };
-  function DataTexture(data, width, height, format, type, mapping, wrapS, wrapT, magFilter, minFilter, anisotropy, encoding) {
+  function DataTexture(data2, width, height, format, type, mapping, wrapS, wrapT, magFilter, minFilter, anisotropy, encoding) {
     Texture.call(this, null, mapping, wrapS, wrapT, magFilter, minFilter, format, type, anisotropy, encoding);
-    this.image = {data: data || null, width: width || 1, height: height || 1};
+    this.image = {data: data2 || null, width: width || 1, height: height || 1};
     this.magFilter = magFilter !== void 0 ? magFilter : NearestFilter;
     this.minFilter = minFilter !== void 0 ? minFilter : NearestFilter;
     this.generateMipmaps = false;
@@ -24146,9 +24151,9 @@ Karen Kjaergaard, WDA2020
     function remove(attribute) {
       if (attribute.isInterleavedBufferAttribute)
         attribute = attribute.data;
-      const data = buffers.get(attribute);
-      if (data) {
-        gl.deleteBuffer(data.buffer);
+      const data2 = buffers.get(attribute);
+      if (data2) {
+        gl.deleteBuffer(data2.buffer);
         buffers.delete(attribute);
       }
     }
@@ -24167,12 +24172,12 @@ Karen Kjaergaard, WDA2020
       }
       if (attribute.isInterleavedBufferAttribute)
         attribute = attribute.data;
-      const data = buffers.get(attribute);
-      if (data === void 0) {
+      const data2 = buffers.get(attribute);
+      if (data2 === void 0) {
         buffers.set(attribute, createBuffer(attribute, bufferType));
-      } else if (data.version < attribute.version) {
-        updateBuffer(data.buffer, attribute, bufferType);
-        data.version = attribute.version;
+      } else if (data2.version < attribute.version) {
+        updateBuffer(data2.buffer, attribute, bufferType);
+        data2.version = attribute.version;
       }
     }
     return {
@@ -25097,12 +25102,12 @@ Karen Kjaergaard, WDA2020
       let attributesNum = 0;
       for (const key in attributes2) {
         const attribute = attributes2[key];
-        const data = {};
-        data.attribute = attribute;
+        const data2 = {};
+        data2.attribute = attribute;
         if (attribute.data) {
-          data.data = attribute.data;
+          data2.data = attribute.data;
         }
-        cache[key] = data;
+        cache[key] = data2;
         attributesNum++;
       }
       currentState.attributes = cache;
@@ -25173,13 +25178,13 @@ Karen Kjaergaard, WDA2020
             const type = attribute.type;
             const bytesPerElement = attribute.bytesPerElement;
             if (geometryAttribute.isInterleavedBufferAttribute) {
-              const data = geometryAttribute.data;
-              const stride = data.stride;
+              const data2 = geometryAttribute.data;
+              const stride = data2.stride;
               const offset = geometryAttribute.offset;
-              if (data && data.isInstancedInterleavedBuffer) {
-                enableAttributeAndDivisor(programAttribute, data.meshPerAttribute);
+              if (data2 && data2.isInstancedInterleavedBuffer) {
+                enableAttributeAndDivisor(programAttribute, data2.meshPerAttribute);
                 if (geometry._maxInstanceCount === void 0) {
-                  geometry._maxInstanceCount = data.meshPerAttribute * data.count;
+                  geometry._maxInstanceCount = data2.meshPerAttribute * data2.count;
                 }
               } else {
                 enableAttribute(programAttribute);
@@ -25875,9 +25880,9 @@ Karen Kjaergaard, WDA2020
       dispose
     };
   }
-  function DataTexture2DArray(data = null, width = 1, height = 1, depth = 1) {
+  function DataTexture2DArray(data2 = null, width = 1, height = 1, depth = 1) {
     Texture.call(this, null);
-    this.image = {data, width, height, depth};
+    this.image = {data: data2, width, height, depth};
     this.magFilter = NearestFilter;
     this.minFilter = NearestFilter;
     this.wrapR = ClampToEdgeWrapping;
@@ -25888,9 +25893,9 @@ Karen Kjaergaard, WDA2020
   DataTexture2DArray.prototype = Object.create(Texture.prototype);
   DataTexture2DArray.prototype.constructor = DataTexture2DArray;
   DataTexture2DArray.prototype.isDataTexture2DArray = true;
-  function DataTexture3D(data = null, width = 1, height = 1, depth = 1) {
+  function DataTexture3D(data2 = null, width = 1, height = 1, depth = 1) {
     Texture.call(this, null);
-    this.image = {data, width, height, depth};
+    this.image = {data: data2, width, height, depth};
     this.magFilter = NearestFilter;
     this.minFilter = NearestFilter;
     this.wrapR = ClampToEdgeWrapping;
@@ -26203,28 +26208,28 @@ Karen Kjaergaard, WDA2020
     gl.uniform4iv(this.addr, v);
   }
   function setValueV2fArray(gl, v) {
-    const data = flatten(v, this.size, 2);
-    gl.uniform2fv(this.addr, data);
+    const data2 = flatten(v, this.size, 2);
+    gl.uniform2fv(this.addr, data2);
   }
   function setValueV3fArray(gl, v) {
-    const data = flatten(v, this.size, 3);
-    gl.uniform3fv(this.addr, data);
+    const data2 = flatten(v, this.size, 3);
+    gl.uniform3fv(this.addr, data2);
   }
   function setValueV4fArray(gl, v) {
-    const data = flatten(v, this.size, 4);
-    gl.uniform4fv(this.addr, data);
+    const data2 = flatten(v, this.size, 4);
+    gl.uniform4fv(this.addr, data2);
   }
   function setValueM2Array(gl, v) {
-    const data = flatten(v, this.size, 4);
-    gl.uniformMatrix2fv(this.addr, false, data);
+    const data2 = flatten(v, this.size, 4);
+    gl.uniformMatrix2fv(this.addr, false, data2);
   }
   function setValueM3Array(gl, v) {
-    const data = flatten(v, this.size, 9);
-    gl.uniformMatrix3fv(this.addr, false, data);
+    const data2 = flatten(v, this.size, 9);
+    gl.uniformMatrix3fv(this.addr, false, data2);
   }
   function setValueM4Array(gl, v) {
-    const data = flatten(v, this.size, 16);
-    gl.uniformMatrix4fv(this.addr, false, data);
+    const data2 = flatten(v, this.size, 16);
+    gl.uniformMatrix4fv(this.addr, false, data2);
   }
   function setValueT1Array(gl, v, textures) {
     const n = v.length;
@@ -26296,12 +26301,12 @@ Karen Kjaergaard, WDA2020
     this.size = activeInfo.size;
     this.setValue = getPureArraySetter(activeInfo.type);
   }
-  PureArrayUniform.prototype.updateCache = function(data) {
+  PureArrayUniform.prototype.updateCache = function(data2) {
     const cache = this.cache;
-    if (data instanceof Float32Array && cache.length !== data.length) {
-      this.cache = new Float32Array(data.length);
+    if (data2 instanceof Float32Array && cache.length !== data2.length) {
+      this.cache = new Float32Array(data2.length);
     }
-    copyArray(cache, data);
+    copyArray(cache, data2);
   };
   function StructuredUniform(id) {
     this.id = id;
@@ -28218,13 +28223,13 @@ Karen Kjaergaard, WDA2020
     const currentScissor = new Vector4();
     const currentViewport = new Vector4();
     function createTexture(type, target, count) {
-      const data = new Uint8Array(4);
+      const data2 = new Uint8Array(4);
       const texture = gl.createTexture();
       gl.bindTexture(type, texture);
       gl.texParameteri(type, 10241, 9728);
       gl.texParameteri(type, 10240, 9728);
       for (let i = 0; i < count; i++) {
-        gl.texImage2D(target + i, 0, 6408, 1, 1, 0, 6408, 5121, data);
+        gl.texImage2D(target + i, 0, 6408, 1, 1, 0, 6408, 5121, data2);
       }
       return texture;
     }
@@ -31205,14 +31210,14 @@ Karen Kjaergaard, WDA2020
       return this;
     }
     toJSON(meta) {
-      const data = super.toJSON(meta);
+      const data2 = super.toJSON(meta);
       if (this.background !== null)
-        data.object.background = this.background.toJSON(meta);
+        data2.object.background = this.background.toJSON(meta);
       if (this.environment !== null)
-        data.object.environment = this.environment.toJSON(meta);
+        data2.object.environment = this.environment.toJSON(meta);
       if (this.fog !== null)
-        data.object.fog = this.fog.toJSON();
-      return data;
+        data2.object.fog = this.fog.toJSON();
+      return data2;
     }
   };
   function InterleavedBuffer(array, stride) {
@@ -31257,17 +31262,17 @@ Karen Kjaergaard, WDA2020
       this.array.set(value, offset);
       return this;
     },
-    clone: function(data) {
-      if (data.arrayBuffers === void 0) {
-        data.arrayBuffers = {};
+    clone: function(data2) {
+      if (data2.arrayBuffers === void 0) {
+        data2.arrayBuffers = {};
       }
       if (this.array.buffer._uuid === void 0) {
         this.array.buffer._uuid = MathUtils.generateUUID();
       }
-      if (data.arrayBuffers[this.array.buffer._uuid] === void 0) {
-        data.arrayBuffers[this.array.buffer._uuid] = this.array.slice(0).buffer;
+      if (data2.arrayBuffers[this.array.buffer._uuid] === void 0) {
+        data2.arrayBuffers[this.array.buffer._uuid] = this.array.slice(0).buffer;
       }
-      const array = new this.array.constructor(data.arrayBuffers[this.array.buffer._uuid]);
+      const array = new this.array.constructor(data2.arrayBuffers[this.array.buffer._uuid]);
       const ib = new InterleavedBuffer(array, this.stride);
       ib.setUsage(this.usage);
       return ib;
@@ -31276,15 +31281,15 @@ Karen Kjaergaard, WDA2020
       this.onUploadCallback = callback;
       return this;
     },
-    toJSON: function(data) {
-      if (data.arrayBuffers === void 0) {
-        data.arrayBuffers = {};
+    toJSON: function(data2) {
+      if (data2.arrayBuffers === void 0) {
+        data2.arrayBuffers = {};
       }
       if (this.array.buffer._uuid === void 0) {
         this.array.buffer._uuid = MathUtils.generateUUID();
       }
-      if (data.arrayBuffers[this.array.buffer._uuid] === void 0) {
-        data.arrayBuffers[this.array.buffer._uuid] = Array.prototype.slice.call(new Uint32Array(this.array.buffer));
+      if (data2.arrayBuffers[this.array.buffer._uuid] === void 0) {
+        data2.arrayBuffers[this.array.buffer._uuid] = Array.prototype.slice.call(new Uint32Array(this.array.buffer));
       }
       return {
         uuid: this.uuid,
@@ -31380,8 +31385,8 @@ Karen Kjaergaard, WDA2020
       this.data.array[index + 3] = w;
       return this;
     },
-    clone: function(data) {
-      if (data === void 0) {
+    clone: function(data2) {
+      if (data2 === void 0) {
         console.log("THREE.InterleavedBufferAttribute.clone(): Cloning an interlaved buffer attribute will deinterleave buffer data.");
         const array = [];
         for (let i = 0; i < this.count; i++) {
@@ -31392,17 +31397,17 @@ Karen Kjaergaard, WDA2020
         }
         return new BufferAttribute(new this.array.constructor(array), this.itemSize, this.normalized);
       } else {
-        if (data.interleavedBuffers === void 0) {
-          data.interleavedBuffers = {};
+        if (data2.interleavedBuffers === void 0) {
+          data2.interleavedBuffers = {};
         }
-        if (data.interleavedBuffers[this.data.uuid] === void 0) {
-          data.interleavedBuffers[this.data.uuid] = this.data.clone(data);
+        if (data2.interleavedBuffers[this.data.uuid] === void 0) {
+          data2.interleavedBuffers[this.data.uuid] = this.data.clone(data2);
         }
-        return new InterleavedBufferAttribute(data.interleavedBuffers[this.data.uuid], this.itemSize, this.offset, this.normalized);
+        return new InterleavedBufferAttribute(data2.interleavedBuffers[this.data.uuid], this.itemSize, this.offset, this.normalized);
       }
     },
-    toJSON: function(data) {
-      if (data === void 0) {
+    toJSON: function(data2) {
+      if (data2 === void 0) {
         console.log("THREE.InterleavedBufferAttribute.toJSON(): Serializing an interlaved buffer attribute will deinterleave buffer data.");
         const array = [];
         for (let i = 0; i < this.count; i++) {
@@ -31418,11 +31423,11 @@ Karen Kjaergaard, WDA2020
           normalized: this.normalized
         };
       } else {
-        if (data.interleavedBuffers === void 0) {
-          data.interleavedBuffers = {};
+        if (data2.interleavedBuffers === void 0) {
+          data2.interleavedBuffers = {};
         }
-        if (data.interleavedBuffers[this.data.uuid] === void 0) {
-          data.interleavedBuffers[this.data.uuid] = this.data.toJSON(data);
+        if (data2.interleavedBuffers[this.data.uuid] === void 0) {
+          data2.interleavedBuffers[this.data.uuid] = this.data.toJSON(data2);
         }
         return {
           isInterleavedBufferAttribute: true,
@@ -31661,19 +31666,19 @@ Karen Kjaergaard, WDA2020
       }
     },
     toJSON: function(meta) {
-      const data = Object3D.prototype.toJSON.call(this, meta);
+      const data2 = Object3D.prototype.toJSON.call(this, meta);
       if (this.autoUpdate === false)
-        data.object.autoUpdate = false;
-      data.object.levels = [];
+        data2.object.autoUpdate = false;
+      data2.object.levels = [];
       const levels = this.levels;
       for (let i = 0, l = levels.length; i < l; i++) {
         const level = levels[i];
-        data.object.levels.push({
+        data2.object.levels.push({
           object: level.object.uuid,
           distance: level.distance
         });
       }
-      return data;
+      return data2;
     }
   });
   function SkinnedMesh(geometry, material) {
@@ -31877,7 +31882,7 @@ Karen Kjaergaard, WDA2020
       return this;
     },
     toJSON: function() {
-      const data = {
+      const data2 = {
         metadata: {
           version: 4.5,
           type: "Skeleton",
@@ -31886,16 +31891,16 @@ Karen Kjaergaard, WDA2020
         bones: [],
         boneInverses: []
       };
-      data.uuid = this.uuid;
+      data2.uuid = this.uuid;
       const bones = this.bones;
       const boneInverses = this.boneInverses;
       for (let i = 0, l = bones.length; i < l; i++) {
         const bone = bones[i];
-        data.bones.push(bone.uuid);
+        data2.bones.push(bone.uuid);
         const boneInverse = boneInverses[i];
-        data.boneInverses.push(boneInverse.toArray());
+        data2.boneInverses.push(boneInverse.toArray());
       }
-      return data;
+      return data2;
     }
   });
   var _instanceLocalMatrix = new Matrix4();
@@ -32858,24 +32863,24 @@ Karen Kjaergaard, WDA2020
         this.faceVertexUvs[1] = newUvs2;
     },
     toJSON: function() {
-      const data = {
+      const data2 = {
         metadata: {
           version: 4.5,
           type: "Geometry",
           generator: "Geometry.toJSON"
         }
       };
-      data.uuid = this.uuid;
-      data.type = this.type;
+      data2.uuid = this.uuid;
+      data2.type = this.type;
       if (this.name !== "")
-        data.name = this.name;
+        data2.name = this.name;
       if (this.parameters !== void 0) {
         const parameters = this.parameters;
         for (const key in parameters) {
           if (parameters[key] !== void 0)
-            data[key] = parameters[key];
+            data2[key] = parameters[key];
         }
-        return data;
+        return data2;
       }
       const vertices = [];
       for (let i = 0; i < this.vertices.length; i++) {
@@ -32959,15 +32964,15 @@ Karen Kjaergaard, WDA2020
         uvs.push(uv.x, uv.y);
         return uvsHash[hash];
       }
-      data.data = {};
-      data.data.vertices = vertices;
-      data.data.normals = normals;
+      data2.data = {};
+      data2.data.vertices = vertices;
+      data2.data.normals = normals;
       if (colors.length > 0)
-        data.data.colors = colors;
+        data2.data.colors = colors;
       if (uvs.length > 0)
-        data.data.uvs = [uvs];
-      data.data.faces = faces;
-      return data;
+        data2.data.uvs = [uvs];
+      data2.data.faces = faces;
+      return data2;
     },
     clone: function() {
       return new Geometry().copy(this);
@@ -33089,23 +33094,23 @@ Karen Kjaergaard, WDA2020
   var _normal$1 = new Vector3();
   var _triangle = new Triangle();
   var Earcut = {
-    triangulate: function(data, holeIndices, dim) {
+    triangulate: function(data2, holeIndices, dim) {
       dim = dim || 2;
       const hasHoles = holeIndices && holeIndices.length;
-      const outerLen = hasHoles ? holeIndices[0] * dim : data.length;
-      let outerNode = linkedList(data, 0, outerLen, dim, true);
+      const outerLen = hasHoles ? holeIndices[0] * dim : data2.length;
+      let outerNode = linkedList(data2, 0, outerLen, dim, true);
       const triangles = [];
       if (!outerNode || outerNode.next === outerNode.prev)
         return triangles;
       let minX, minY, maxX, maxY, x, y, invSize;
       if (hasHoles)
-        outerNode = eliminateHoles(data, holeIndices, outerNode, dim);
-      if (data.length > 80 * dim) {
-        minX = maxX = data[0];
-        minY = maxY = data[1];
+        outerNode = eliminateHoles(data2, holeIndices, outerNode, dim);
+      if (data2.length > 80 * dim) {
+        minX = maxX = data2[0];
+        minY = maxY = data2[1];
         for (let i = dim; i < outerLen; i += dim) {
-          x = data[i];
-          y = data[i + 1];
+          x = data2[i];
+          y = data2[i + 1];
           if (x < minX)
             minX = x;
           if (y < minY)
@@ -33122,14 +33127,14 @@ Karen Kjaergaard, WDA2020
       return triangles;
     }
   };
-  function linkedList(data, start, end, dim, clockwise) {
+  function linkedList(data2, start, end, dim, clockwise) {
     let i, last;
-    if (clockwise === signedArea(data, start, end, dim) > 0) {
+    if (clockwise === signedArea(data2, start, end, dim) > 0) {
       for (i = start; i < end; i += dim)
-        last = insertNode(i, data[i], data[i + 1], last);
+        last = insertNode(i, data2[i], data2[i + 1], last);
     } else {
       for (i = end - dim; i >= start; i -= dim)
-        last = insertNode(i, data[i], data[i + 1], last);
+        last = insertNode(i, data2[i], data2[i + 1], last);
     }
     if (last && equals(last, last.next)) {
       removeNode(last);
@@ -33262,13 +33267,13 @@ Karen Kjaergaard, WDA2020
       a = a.next;
     } while (a !== start);
   }
-  function eliminateHoles(data, holeIndices, outerNode, dim) {
+  function eliminateHoles(data2, holeIndices, outerNode, dim) {
     const queue = [];
     let i, len, start, end, list;
     for (i = 0, len = holeIndices.length; i < len; i++) {
       start = holeIndices[i] * dim;
-      end = i < len - 1 ? holeIndices[i + 1] * dim : data.length;
-      list = linkedList(data, start, end, dim, false);
+      end = i < len - 1 ? holeIndices[i + 1] * dim : data2.length;
+      list = linkedList(data2, start, end, dim, false);
       if (list === list.next)
         list.steiner = true;
       queue.push(getLeftmost(list));
@@ -33512,10 +33517,10 @@ Karen Kjaergaard, WDA2020
     this.nextZ = null;
     this.steiner = false;
   }
-  function signedArea(data, start, end, dim) {
+  function signedArea(data2, start, end, dim) {
     let sum = 0;
     for (let i = start, j = end - dim; i < end; i += dim) {
-      sum += (data[j] - data[i]) * (data[i + 1] + data[j + 1]);
+      sum += (data2[j] - data2[i]) * (data2[i + 1] + data2[j + 1]);
       j = i;
     }
     return sum;
@@ -33877,10 +33882,10 @@ Karen Kjaergaard, WDA2020
       }
     }
     toJSON() {
-      const data = BufferGeometry.prototype.toJSON.call(this);
+      const data2 = BufferGeometry.prototype.toJSON.call(this);
       const shapes = this.parameters.shapes;
       const options = this.parameters.options;
-      return toJSON(shapes, options, data);
+      return toJSON(shapes, options, data2);
     }
   };
   var WorldUVGenerator = {
@@ -33927,19 +33932,19 @@ Karen Kjaergaard, WDA2020
       }
     }
   };
-  function toJSON(shapes, options, data) {
-    data.shapes = [];
+  function toJSON(shapes, options, data2) {
+    data2.shapes = [];
     if (Array.isArray(shapes)) {
       for (let i = 0, l = shapes.length; i < l; i++) {
         const shape = shapes[i];
-        data.shapes.push(shape.uuid);
+        data2.shapes.push(shape.uuid);
       }
     } else {
-      data.shapes.push(shapes.uuid);
+      data2.shapes.push(shapes.uuid);
     }
     if (options.extrudePath !== void 0)
-      data.options.extrudePath = options.extrudePath.toJSON();
-    return data;
+      data2.options.extrudePath = options.extrudePath.toJSON();
+    return data2;
   }
   var ExtrudeGeometry = class extends Geometry {
     constructor(shapes, options) {
@@ -33953,25 +33958,25 @@ Karen Kjaergaard, WDA2020
       this.mergeVertices();
     }
     toJSON() {
-      const data = super.toJSON();
+      const data2 = super.toJSON();
       const shapes = this.parameters.shapes;
       const options = this.parameters.options;
-      return toJSON$1(shapes, options, data);
+      return toJSON$1(shapes, options, data2);
     }
   };
-  function toJSON$1(shapes, options, data) {
-    data.shapes = [];
+  function toJSON$1(shapes, options, data2) {
+    data2.shapes = [];
     if (Array.isArray(shapes)) {
       for (let i = 0, l = shapes.length; i < l; i++) {
         const shape = shapes[i];
-        data.shapes.push(shape.uuid);
+        data2.shapes.push(shape.uuid);
       }
     } else {
-      data.shapes.push(shapes.uuid);
+      data2.shapes.push(shapes.uuid);
     }
     if (options.extrudePath !== void 0)
-      data.options.extrudePath = options.extrudePath.toJSON();
-    return data;
+      data2.options.extrudePath = options.extrudePath.toJSON();
+    return data2;
   }
   function ParametricBufferGeometry(func, slices, stacks) {
     BufferGeometry.call(this);
@@ -34112,22 +34117,22 @@ Karen Kjaergaard, WDA2020
       }
     }
     toJSON() {
-      const data = BufferGeometry.prototype.toJSON.call(this);
+      const data2 = BufferGeometry.prototype.toJSON.call(this);
       const shapes = this.parameters.shapes;
-      return toJSON$2(shapes, data);
+      return toJSON$2(shapes, data2);
     }
   };
-  function toJSON$2(shapes, data) {
-    data.shapes = [];
+  function toJSON$2(shapes, data2) {
+    data2.shapes = [];
     if (Array.isArray(shapes)) {
       for (let i = 0, l = shapes.length; i < l; i++) {
         const shape = shapes[i];
-        data.shapes.push(shape.uuid);
+        data2.shapes.push(shape.uuid);
       }
     } else {
-      data.shapes.push(shapes.uuid);
+      data2.shapes.push(shapes.uuid);
     }
-    return data;
+    return data2;
   }
   var ShapeGeometry = class extends Geometry {
     constructor(shapes, curveSegments) {
@@ -34145,22 +34150,22 @@ Karen Kjaergaard, WDA2020
       this.mergeVertices();
     }
     toJSON() {
-      const data = Geometry.prototype.toJSON.call(this);
+      const data2 = Geometry.prototype.toJSON.call(this);
       const shapes = this.parameters.shapes;
-      return toJSON$3(shapes, data);
+      return toJSON$3(shapes, data2);
     }
   };
-  function toJSON$3(shapes, data) {
-    data.shapes = [];
+  function toJSON$3(shapes, data2) {
+    data2.shapes = [];
     if (Array.isArray(shapes)) {
       for (let i = 0, l = shapes.length; i < l; i++) {
         const shape = shapes[i];
-        data.shapes.push(shape.uuid);
+        data2.shapes.push(shape.uuid);
       }
     } else {
-      data.shapes.push(shapes.uuid);
+      data2.shapes.push(shapes.uuid);
     }
-    return data;
+    return data2;
   }
   function ShadowMaterial(parameters) {
     Material.call(this);
@@ -35699,19 +35704,19 @@ Karen Kjaergaard, WDA2020
       if (dataUriRegexResult) {
         const mimeType = dataUriRegexResult[1];
         const isBase64 = !!dataUriRegexResult[2];
-        let data = dataUriRegexResult[3];
-        data = decodeURIComponent(data);
+        let data2 = dataUriRegexResult[3];
+        data2 = decodeURIComponent(data2);
         if (isBase64)
-          data = atob(data);
+          data2 = atob(data2);
         try {
           let response;
           const responseType = (this.responseType || "").toLowerCase();
           switch (responseType) {
             case "arraybuffer":
             case "blob":
-              const view = new Uint8Array(data.length);
-              for (let i = 0; i < data.length; i++) {
-                view[i] = data.charCodeAt(i);
+              const view = new Uint8Array(data2.length);
+              for (let i = 0; i < data2.length; i++) {
+                view[i] = data2.charCodeAt(i);
               }
               if (responseType === "blob") {
                 response = new Blob([view.buffer], {type: mimeType});
@@ -35721,13 +35726,13 @@ Karen Kjaergaard, WDA2020
               break;
             case "document":
               const parser = new DOMParser();
-              response = parser.parseFromString(data, mimeType);
+              response = parser.parseFromString(data2, mimeType);
               break;
             case "json":
-              response = JSON.parse(data);
+              response = JSON.parse(data2);
               break;
             default:
-              response = data;
+              response = data2;
               break;
           }
           setTimeout(function() {
@@ -36255,16 +36260,16 @@ Karen Kjaergaard, WDA2020
       return this;
     },
     toJSON: function() {
-      const data = {
+      const data2 = {
         metadata: {
           version: 4.5,
           type: "Curve",
           generator: "Curve.toJSON"
         }
       };
-      data.arcLengthDivisions = this.arcLengthDivisions;
-      data.type = this.type;
-      return data;
+      data2.arcLengthDivisions = this.arcLengthDivisions;
+      data2.type = this.type;
+      return data2;
     },
     fromJSON: function(json) {
       this.arcLengthDivisions = json.arcLengthDivisions;
@@ -36335,16 +36340,16 @@ Karen Kjaergaard, WDA2020
     return this;
   };
   EllipseCurve.prototype.toJSON = function() {
-    const data = Curve.prototype.toJSON.call(this);
-    data.aX = this.aX;
-    data.aY = this.aY;
-    data.xRadius = this.xRadius;
-    data.yRadius = this.yRadius;
-    data.aStartAngle = this.aStartAngle;
-    data.aEndAngle = this.aEndAngle;
-    data.aClockwise = this.aClockwise;
-    data.aRotation = this.aRotation;
-    return data;
+    const data2 = Curve.prototype.toJSON.call(this);
+    data2.aX = this.aX;
+    data2.aY = this.aY;
+    data2.xRadius = this.xRadius;
+    data2.yRadius = this.yRadius;
+    data2.aStartAngle = this.aStartAngle;
+    data2.aEndAngle = this.aEndAngle;
+    data2.aClockwise = this.aClockwise;
+    data2.aRotation = this.aRotation;
+    return data2;
   };
   EllipseCurve.prototype.fromJSON = function(json) {
     Curve.prototype.fromJSON.call(this, json);
@@ -36469,16 +36474,16 @@ Karen Kjaergaard, WDA2020
     return this;
   };
   CatmullRomCurve3.prototype.toJSON = function() {
-    const data = Curve.prototype.toJSON.call(this);
-    data.points = [];
+    const data2 = Curve.prototype.toJSON.call(this);
+    data2.points = [];
     for (let i = 0, l = this.points.length; i < l; i++) {
       const point = this.points[i];
-      data.points.push(point.toArray());
+      data2.points.push(point.toArray());
     }
-    data.closed = this.closed;
-    data.curveType = this.curveType;
-    data.tension = this.tension;
-    return data;
+    data2.closed = this.closed;
+    data2.curveType = this.curveType;
+    data2.tension = this.tension;
+    return data2;
   };
   CatmullRomCurve3.prototype.fromJSON = function(json) {
     Curve.prototype.fromJSON.call(this, json);
@@ -36555,12 +36560,12 @@ Karen Kjaergaard, WDA2020
     return this;
   };
   CubicBezierCurve.prototype.toJSON = function() {
-    const data = Curve.prototype.toJSON.call(this);
-    data.v0 = this.v0.toArray();
-    data.v1 = this.v1.toArray();
-    data.v2 = this.v2.toArray();
-    data.v3 = this.v3.toArray();
-    return data;
+    const data2 = Curve.prototype.toJSON.call(this);
+    data2.v0 = this.v0.toArray();
+    data2.v1 = this.v1.toArray();
+    data2.v2 = this.v2.toArray();
+    data2.v3 = this.v3.toArray();
+    return data2;
   };
   CubicBezierCurve.prototype.fromJSON = function(json) {
     Curve.prototype.fromJSON.call(this, json);
@@ -36596,12 +36601,12 @@ Karen Kjaergaard, WDA2020
     return this;
   };
   CubicBezierCurve3.prototype.toJSON = function() {
-    const data = Curve.prototype.toJSON.call(this);
-    data.v0 = this.v0.toArray();
-    data.v1 = this.v1.toArray();
-    data.v2 = this.v2.toArray();
-    data.v3 = this.v3.toArray();
-    return data;
+    const data2 = Curve.prototype.toJSON.call(this);
+    data2.v0 = this.v0.toArray();
+    data2.v1 = this.v1.toArray();
+    data2.v2 = this.v2.toArray();
+    data2.v3 = this.v3.toArray();
+    return data2;
   };
   CubicBezierCurve3.prototype.fromJSON = function(json) {
     Curve.prototype.fromJSON.call(this, json);
@@ -36645,10 +36650,10 @@ Karen Kjaergaard, WDA2020
     return this;
   };
   LineCurve.prototype.toJSON = function() {
-    const data = Curve.prototype.toJSON.call(this);
-    data.v1 = this.v1.toArray();
-    data.v2 = this.v2.toArray();
-    return data;
+    const data2 = Curve.prototype.toJSON.call(this);
+    data2.v1 = this.v1.toArray();
+    data2.v2 = this.v2.toArray();
+    return data2;
   };
   LineCurve.prototype.fromJSON = function(json) {
     Curve.prototype.fromJSON.call(this, json);
@@ -36685,10 +36690,10 @@ Karen Kjaergaard, WDA2020
     return this;
   };
   LineCurve3.prototype.toJSON = function() {
-    const data = Curve.prototype.toJSON.call(this);
-    data.v1 = this.v1.toArray();
-    data.v2 = this.v2.toArray();
-    return data;
+    const data2 = Curve.prototype.toJSON.call(this);
+    data2.v1 = this.v1.toArray();
+    data2.v2 = this.v2.toArray();
+    return data2;
   };
   LineCurve3.prototype.fromJSON = function(json) {
     Curve.prototype.fromJSON.call(this, json);
@@ -36720,11 +36725,11 @@ Karen Kjaergaard, WDA2020
     return this;
   };
   QuadraticBezierCurve.prototype.toJSON = function() {
-    const data = Curve.prototype.toJSON.call(this);
-    data.v0 = this.v0.toArray();
-    data.v1 = this.v1.toArray();
-    data.v2 = this.v2.toArray();
-    return data;
+    const data2 = Curve.prototype.toJSON.call(this);
+    data2.v0 = this.v0.toArray();
+    data2.v1 = this.v1.toArray();
+    data2.v2 = this.v2.toArray();
+    return data2;
   };
   QuadraticBezierCurve.prototype.fromJSON = function(json) {
     Curve.prototype.fromJSON.call(this, json);
@@ -36757,11 +36762,11 @@ Karen Kjaergaard, WDA2020
     return this;
   };
   QuadraticBezierCurve3.prototype.toJSON = function() {
-    const data = Curve.prototype.toJSON.call(this);
-    data.v0 = this.v0.toArray();
-    data.v1 = this.v1.toArray();
-    data.v2 = this.v2.toArray();
-    return data;
+    const data2 = Curve.prototype.toJSON.call(this);
+    data2.v0 = this.v0.toArray();
+    data2.v1 = this.v1.toArray();
+    data2.v2 = this.v2.toArray();
+    return data2;
   };
   QuadraticBezierCurve3.prototype.fromJSON = function(json) {
     Curve.prototype.fromJSON.call(this, json);
@@ -36801,13 +36806,13 @@ Karen Kjaergaard, WDA2020
     return this;
   };
   SplineCurve.prototype.toJSON = function() {
-    const data = Curve.prototype.toJSON.call(this);
-    data.points = [];
+    const data2 = Curve.prototype.toJSON.call(this);
+    data2.points = [];
     for (let i = 0, l = this.points.length; i < l; i++) {
       const point = this.points[i];
-      data.points.push(point.toArray());
+      data2.points.push(point.toArray());
     }
-    return data;
+    return data2;
   };
   SplineCurve.prototype.fromJSON = function(json) {
     Curve.prototype.fromJSON.call(this, json);
@@ -36928,14 +36933,14 @@ Karen Kjaergaard, WDA2020
       return this;
     },
     toJSON: function() {
-      const data = Curve.prototype.toJSON.call(this);
-      data.autoClose = this.autoClose;
-      data.curves = [];
+      const data2 = Curve.prototype.toJSON.call(this);
+      data2.autoClose = this.autoClose;
+      data2.curves = [];
       for (let i = 0, l = this.curves.length; i < l; i++) {
         const curve = this.curves[i];
-        data.curves.push(curve.toJSON());
+        data2.curves.push(curve.toJSON());
       }
-      return data;
+      return data2;
     },
     fromJSON: function(json) {
       Curve.prototype.fromJSON.call(this, json);
@@ -37029,9 +37034,9 @@ Karen Kjaergaard, WDA2020
       return this;
     },
     toJSON: function() {
-      const data = CurvePath.prototype.toJSON.call(this);
-      data.currentPoint = this.currentPoint.toArray();
-      return data;
+      const data2 = CurvePath.prototype.toJSON.call(this);
+      data2.currentPoint = this.currentPoint.toArray();
+      return data2;
     },
     fromJSON: function(json) {
       CurvePath.prototype.fromJSON.call(this, json);
@@ -37070,14 +37075,14 @@ Karen Kjaergaard, WDA2020
       return this;
     },
     toJSON: function() {
-      const data = Path.prototype.toJSON.call(this);
-      data.uuid = this.uuid;
-      data.holes = [];
+      const data2 = Path.prototype.toJSON.call(this);
+      data2.uuid = this.uuid;
+      data2.holes = [];
       for (let i = 0, l = this.holes.length; i < l; i++) {
         const hole = this.holes[i];
-        data.holes.push(hole.toJSON());
+        data2.holes.push(hole.toJSON());
       }
-      return data;
+      return data2;
     },
     fromJSON: function(json) {
       Path.prototype.fromJSON.call(this, json);
@@ -37106,22 +37111,22 @@ Karen Kjaergaard, WDA2020
       return this;
     },
     toJSON: function(meta) {
-      const data = Object3D.prototype.toJSON.call(this, meta);
-      data.object.color = this.color.getHex();
-      data.object.intensity = this.intensity;
+      const data2 = Object3D.prototype.toJSON.call(this, meta);
+      data2.object.color = this.color.getHex();
+      data2.object.intensity = this.intensity;
       if (this.groundColor !== void 0)
-        data.object.groundColor = this.groundColor.getHex();
+        data2.object.groundColor = this.groundColor.getHex();
       if (this.distance !== void 0)
-        data.object.distance = this.distance;
+        data2.object.distance = this.distance;
       if (this.angle !== void 0)
-        data.object.angle = this.angle;
+        data2.object.angle = this.angle;
       if (this.decay !== void 0)
-        data.object.decay = this.decay;
+        data2.object.decay = this.decay;
       if (this.penumbra !== void 0)
-        data.object.penumbra = this.penumbra;
+        data2.object.penumbra = this.penumbra;
       if (this.shadow !== void 0)
-        data.object.shadow = this.shadow.toJSON();
-      return data;
+        data2.object.shadow = this.shadow.toJSON();
+      return data2;
     }
   });
   function HemisphereLight(skyColor, groundColor, intensity) {
@@ -37415,17 +37420,17 @@ Karen Kjaergaard, WDA2020
       this.projectionMatrixInverse.copy(this.projectionMatrix).invert();
     },
     toJSON: function(meta) {
-      const data = Object3D.prototype.toJSON.call(this, meta);
-      data.object.zoom = this.zoom;
-      data.object.left = this.left;
-      data.object.right = this.right;
-      data.object.top = this.top;
-      data.object.bottom = this.bottom;
-      data.object.near = this.near;
-      data.object.far = this.far;
+      const data2 = Object3D.prototype.toJSON.call(this, meta);
+      data2.object.zoom = this.zoom;
+      data2.object.left = this.left;
+      data2.object.right = this.right;
+      data2.object.top = this.top;
+      data2.object.bottom = this.bottom;
+      data2.object.near = this.near;
+      data2.object.far = this.far;
       if (this.view !== null)
-        data.object.view = Object.assign({}, this.view);
-      return data;
+        data2.object.view = Object.assign({}, this.view);
+      return data2;
     }
   });
   function DirectionalLightShadow() {
@@ -37480,10 +37485,10 @@ Karen Kjaergaard, WDA2020
       return this;
     },
     toJSON: function(meta) {
-      const data = Light.prototype.toJSON.call(this, meta);
-      data.object.width = this.width;
-      data.object.height = this.height;
-      return data;
+      const data2 = Light.prototype.toJSON.call(this, meta);
+      data2.object.width = this.width;
+      data2.object.height = this.height;
+      return data2;
     }
   });
   var SphericalHarmonics3 = class {
@@ -37618,9 +37623,9 @@ Karen Kjaergaard, WDA2020
       return this;
     },
     toJSON: function(meta) {
-      const data = Light.prototype.toJSON.call(this, meta);
-      data.object.sh = this.sh.toArray();
-      return data;
+      const data2 = Light.prototype.toJSON.call(this, meta);
+      data2.object.sh = this.sh.toArray();
+      return data2;
     }
   });
   function MaterialLoader(manager) {
@@ -37925,10 +37930,10 @@ Karen Kjaergaard, WDA2020
       return new this.constructor().copy(this);
     },
     toJSON: function() {
-      const data = BufferGeometry.prototype.toJSON.call(this);
-      data.instanceCount = this.instanceCount;
-      data.isInstancedBufferGeometry = true;
-      return data;
+      const data2 = BufferGeometry.prototype.toJSON.call(this);
+      data2.instanceCount = this.instanceCount;
+      data2.isInstancedBufferGeometry = true;
+      return data2;
     }
   });
   function InstancedBufferAttribute(array, itemSize, normalized, meshPerAttribute) {
@@ -37949,10 +37954,10 @@ Karen Kjaergaard, WDA2020
       return this;
     },
     toJSON: function() {
-      const data = BufferAttribute.prototype.toJSON.call(this);
-      data.meshPerAttribute = this.meshPerAttribute;
-      data.isInstancedBufferAttribute = true;
-      return data;
+      const data2 = BufferAttribute.prototype.toJSON.call(this);
+      data2.meshPerAttribute = this.meshPerAttribute;
+      data2.isInstancedBufferAttribute = true;
+      return data2;
     }
   });
   function BufferGeometryLoader(manager) {
@@ -38292,9 +38297,9 @@ Karen Kjaergaard, WDA2020
       return shapes;
     }
   });
-  function Font(data) {
+  function Font(data2) {
     this.type = "Font";
-    this.data = data;
+    this.data = data2;
   }
   Object.assign(Font.prototype, {
     isFont: true,
@@ -38307,10 +38312,10 @@ Karen Kjaergaard, WDA2020
       return shapes;
     }
   });
-  function createPaths(text, size, data) {
+  function createPaths(text, size, data2) {
     const chars = Array.from ? Array.from(text) : String(text).split("");
-    const scale = size / data.resolution;
-    const line_height = (data.boundingBox.yMax - data.boundingBox.yMin + data.underlineThickness) * scale;
+    const scale = size / data2.resolution;
+    const line_height = (data2.boundingBox.yMax - data2.boundingBox.yMin + data2.underlineThickness) * scale;
     const paths = [];
     let offsetX = 0, offsetY = 0;
     for (let i = 0; i < chars.length; i++) {
@@ -38319,17 +38324,17 @@ Karen Kjaergaard, WDA2020
         offsetX = 0;
         offsetY -= line_height;
       } else {
-        const ret = createPath(char, scale, offsetX, offsetY, data);
+        const ret = createPath(char, scale, offsetX, offsetY, data2);
         offsetX += ret.offsetX;
         paths.push(ret.path);
       }
     }
     return paths;
   }
-  function createPath(char, scale, offsetX, offsetY, data) {
-    const glyph = data.glyphs[char] || data.glyphs["?"];
+  function createPath(char, scale, offsetX, offsetY, data2) {
+    const glyph = data2.glyphs[char] || data2.glyphs["?"];
     if (!glyph) {
-      console.error('THREE.Font: character "' + char + '" does not exists in font family ' + data.familyName + ".");
+      console.error('THREE.Font: character "' + char + '" does not exists in font family ' + data2.familyName + ".");
       return;
     }
     const path = new ShapePath();
@@ -38459,8 +38464,8 @@ Karen Kjaergaard, WDA2020
       return this;
     },
     toJSON: function(meta) {
-      const data = LightProbe.prototype.toJSON.call(this, meta);
-      return data;
+      const data2 = LightProbe.prototype.toJSON.call(this, meta);
+      return data2;
     }
   });
   function AmbientLightProbe(color, intensity) {
@@ -38476,8 +38481,8 @@ Karen Kjaergaard, WDA2020
       return this;
     },
     toJSON: function(meta) {
-      const data = LightProbe.prototype.toJSON.call(this, meta);
-      return data;
+      const data2 = LightProbe.prototype.toJSON.call(this, meta);
+      return data2;
     }
   });
   var _eyeRight = new Matrix4();
@@ -38807,11 +38812,11 @@ Karen Kjaergaard, WDA2020
     }
     getAverageFrequency() {
       let value = 0;
-      const data = this.getFrequencyData();
-      for (let i = 0; i < data.length; i++) {
-        value += data[i];
+      const data2 = this.getFrequencyData();
+      for (let i = 0; i < data2.length; i++) {
+        value += data2[i];
       }
-      return value / data.length;
+      return value / data2.length;
     }
   };
   function PropertyMixer(binding, typeName, valueSize) {
@@ -40150,13 +40155,13 @@ Karen Kjaergaard, WDA2020
       this.meshPerAttribute = source.meshPerAttribute;
       return this;
     },
-    clone: function(data) {
-      const ib = InterleavedBuffer.prototype.clone.call(this, data);
+    clone: function(data2) {
+      const ib = InterleavedBuffer.prototype.clone.call(this, data2);
       ib.meshPerAttribute = this.meshPerAttribute;
       return ib;
     },
-    toJSON: function(data) {
-      const json = InterleavedBuffer.prototype.toJSON.call(this, data);
+    toJSON: function(data2) {
+      const json = InterleavedBuffer.prototype.toJSON.call(this, data2);
       json.isInstancedInterleavedBuffer = true;
       json.meshPerAttribute = this.meshPerAttribute;
       return json;
@@ -42560,13 +42565,6 @@ Karen Kjaergaard, WDA2020
       this.el.userData.data = userdata;
       parent.add(this.el);
       setTimeout(() => {
-        this.tx = -1 + 2 * Math.random();
-        this.ty = -1 + 2 * Math.random();
-        this.tz = -1 + 2 * Math.random();
-        this.tr = this.enabledSize;
-        this.setTarget({x: this.tx, y: this.ty, z: this.tz, o: this.to, r: this.tr});
-      }, 10);
-      setTimeout(() => {
         this.to = 1;
         this.setTarget({x: this.tx, y: this.ty, z: this.tz, o: this.to, r: this.tr});
       }, 500);
@@ -42625,6 +42623,215 @@ Karen Kjaergaard, WDA2020
       this.material.opacity = this.o;
     }
   };
+
+  // lib/anim/AnimCircleSprite.js
+  var fileLoader = new FileLoader();
+  var textureLoader = new TextureLoader();
+  var ComposedTexture = function ComposedTexture2(container2, mapping, wrapS, wrapT, magFilter, minFilter, format, type, anisotropy) {
+    this.canvas = document.createElementNS("http://www.w3.org/1999/xhtml", "canvas");
+    this.ctx = this.canvas.getContext("2d");
+    if (container2) {
+      this.assign(container2);
+    }
+    CanvasTexture.call(this, this.canvas, mapping, wrapS, wrapT, magFilter, minFilter, format, type, anisotropy);
+    this.version = 0;
+  };
+  ComposedTexture.copyCanvas = function() {
+    let canvas, ctx;
+    return {
+      canvas: null,
+      dispose: function() {
+        this.canvas = canvas = ctx = null;
+      },
+      dataToImage: async function(data2, width, height) {
+        if (!canvas) {
+          this.canvas = canvas = document.createElementNS("http://www.w3.org/1999/xhtml", "canvas");
+          ctx = canvas.getContext("2d");
+        }
+        if (width !== canvas.width || height !== canvas.height) {
+          canvas.width = width;
+          canvas.height = height;
+        }
+        const imageData = ctx.getImageData(0, 0, width, height);
+        const buffer = imageData.data;
+        for (let i = 0, l = buffer.length; i < l; i++)
+          buffer[i] = data2[i];
+        ctx.putImageData(imageData, 0, 0);
+        return new Promise((resolve) => {
+          canvas.toBlob((blob) => {
+            const url = URL.createObjectURL(blob);
+            const image = new Image();
+            image.onload = function() {
+              image.onload = null;
+              URL.revokeObjectURL(url);
+              resolve(image);
+            };
+            image.src = url;
+          }, "image/png");
+        });
+      }
+    };
+  }();
+  ComposedTexture.index = [];
+  ComposedTexture.update = function(delta) {
+    for (let texture of this.index)
+      texture.update(delta);
+  };
+  Object.assign(ComposedTexture.prototype, EventDispatcher.prototype, Texture.prototype, CanvasTexture.prototype, {
+    isCanvasTexture: true,
+    isComposedTexture: true,
+    constructor: ComposedTexture,
+    time: 0,
+    duration: 0,
+    frameTime: 0,
+    frameIndex: 0,
+    framePreviousIndex: -1,
+    disposalType: 0,
+    progressive: false,
+    ready: false,
+    loop: true,
+    auto: true,
+    autoplay: true,
+    isPlaying: false,
+    dispose: function() {
+      this.container = this.ctx = this.canvas = null;
+      if (this.auto) {
+        const i = ComposedTexture.index.indexOf(this);
+        if (i > -1)
+          ComposedTexture.index.splice(i, 1);
+      }
+      this.dispatchEvent({type: "dispose"});
+    },
+    pause: function() {
+      this.isPlaying = false;
+    },
+    resume: function() {
+      this.isPlaying = true;
+    },
+    play: function() {
+      this.time = 0;
+      this.frameIndex = 0;
+      this.frameTime = 0;
+      this.isPlaying = true;
+    },
+    stop: function() {
+      this.time = 0;
+      this.frameIndex = 0;
+      this.frameTime = 0;
+      this.isPlaying = false;
+      this.compose(this.frameIndex);
+    },
+    update: function(delta) {
+      if (this.isPlaying) {
+        const container2 = this.container;
+        const frame = container2.frames[this.frameIndex];
+        const t = delta * 1e3;
+        this.frameTime += t;
+        this.time = Math.min(this.duration, this.time + t);
+        if (this.frameTime >= frame.delay) {
+          this.frameTime = 0;
+          if (this.frameIndex < container2.frames.length - 1) {
+            this.frameIndex++;
+          } else {
+            if (this.loop) {
+              this.time = 0;
+              this.frameIndex = 0;
+            } else {
+              this.pause();
+            }
+          }
+          this.compose(this.frameIndex);
+        }
+      }
+    },
+    assign: async function(container2) {
+      this.stop();
+      this.auto = container2.auto !== void 0 ? container2.auto : true;
+      this.duration = 0;
+      this.frameIndex = 0;
+      this.framePreviousIndex = -1;
+      this.disposalType = 0;
+      this.progressive = true;
+      this.ready = false;
+      if (this.auto && ComposedTexture.index.indexOf(this) == -1)
+        ComposedTexture.index.push(this);
+      let {width, height} = container2;
+      const powerOfTwo = container2.downscale ? MathUtils.floorPowerOfTwo : MathUtils.ceilPowerOfTwo;
+      if (!MathUtils.isPowerOfTwo(container2.width))
+        width = powerOfTwo(container2.width);
+      if (!MathUtils.isPowerOfTwo(container2.height))
+        height = powerOfTwo(container2.height);
+      this.canvas.width = width;
+      this.canvas.height = height;
+      this.container = container2;
+      for (let frame of container2.frames) {
+        this.duration += frame.delay;
+        if (frame.disposalType > 1)
+          this.progressive = false;
+        if (!frame.image) {
+          frame.image = await ComposedTexture.copyCanvas.dataToImage(frame.patch, frame.dims.width, frame.dims.height);
+        }
+      }
+      this.ready = true;
+      this.dispatchEvent({type: "ready"});
+      if (this.autoplay)
+        this.play();
+    },
+    compose: function(frameIndex) {
+      if (this.ready) {
+        this.frameIndex = frameIndex;
+        if (this.progressive && (this.framePreviousIndex > frameIndex || this.framePreviousIndex + 1 < frameIndex)) {
+          this.ctx.clearRect(0, 0, this.width, this.height);
+          for (let i = 0; i <= frameIndex; i++)
+            this._render(i);
+        } else if (frameIndex !== this.framePreviousIndex) {
+          this._render(frameIndex);
+        }
+        this.framePreviousIndex = frameIndex;
+      } else if (this.idleRender instanceof Function) {
+        this.idleRender(this.ctx);
+      }
+    },
+    _render: function(frameIndex) {
+      if (frameIndex === 0)
+        this.frameRestoreIndex = -1;
+      const {
+        ctx,
+        container: container2,
+        canvas,
+        disposalType
+      } = this;
+      const currentFrame = container2.frames[frameIndex];
+      const dims = currentFrame.dims;
+      ctx.setTransform(1, 0, 0, 1, 0, 0);
+      ctx.scale(canvas.width / container2.width, canvas.height / container2.height);
+      if (frameIndex > 0) {
+        if (disposalType === 3) {
+          if (this.frameRestoreIndex > -1) {
+            const restoreFrame = container2.frames[this.frameRestoreIndex];
+            const dims2 = restoreFrame.dims;
+            if (restoreFrame.blend === 0)
+              ctx.clearRect(dims2.left, dims2.top, dims2.width, dims2.height);
+            ctx.drawImage(restoreFrame.image, dims2.left, dims2.top, dims2.width, dims2.height);
+          } else {
+            ctx.clearRect(dims.left, dims.top, dims.width, dims.height);
+          }
+        } else {
+          this.frameRestoreIndex = Math.max(frameIndex - 1, 0);
+        }
+        if (disposalType === 2 && this.frameRestoreIndex > -1) {
+          const restoreFrame = container2.frames[this.frameRestoreIndex];
+          const dims2 = restoreFrame.dims;
+          ctx.clearRect(dims2.left, dims2.top, dims2.width, dims2.height);
+        }
+      }
+      if (currentFrame.blend === 0)
+        ctx.clearRect(dims.left, dims.top, dims.width, dims.height);
+      ctx.drawImage(currentFrame.image, dims.left, dims.top, dims.width, dims.height);
+      this.disposalType = currentFrame.disposalType;
+      this.version++;
+    }
+  });
 
   // lib/anim/Eraser.js
   var es6_tween = __toModule(require_Tween_min());
@@ -42718,6 +42925,9 @@ Karen Kjaergaard, WDA2020
     init_scene(selector);
     init_balls();
     update();
+    setTimeout(() => {
+      randomize();
+    }, 10);
     return void 0;
   };
   var init_scene = (selector) => {
@@ -42764,6 +42974,22 @@ Karen Kjaergaard, WDA2020
     }
     window.app.balls = balls;
   };
+  var randomize = () => {
+    const maxSpeed = 0.4;
+    for (let i = 0; i < 2; i++) {
+      const s = Math.random() * maxSpeed;
+      const r = -maxSpeed + s * 2;
+      speeds[i] = r;
+    }
+    balls.forEach((ball) => {
+      const tx = -1 + 2 * Math.random();
+      const ty = -1 + 2 * Math.random();
+      const tz = -1 + 2 * Math.random();
+      const to = 1;
+      const tr = ball.enabledSize;
+      ball.setTarget({x: tx, y: ty, z: tz, o: to, r: tr});
+    });
+  };
   var speeds = [
     0.1 + Math.random() * 0.4,
     0.1 + Math.random() * 0.4,
@@ -42808,7 +43034,7 @@ Karen Kjaergaard, WDA2020
       positions.push({x, y, z});
     }
     applyPositions(positions);
-    window.toFree();
+    window.location.hash = "";
   };
   var applyPositions = (positions, blendMax = null, blendMin = null, hideTrailsFor = 100) => {
     eraser.clearScreen();
@@ -42870,6 +43096,7 @@ Karen Kjaergaard, WDA2020
     balls.forEach((ball) => {
       ball.normal();
     });
+    randomize();
   };
   var focusedNode = null;
   window.toNode = (id) => {
@@ -42941,8 +43168,6 @@ Karen Kjaergaard, WDA2020
         window.location.hash = "#" + DATA_STUDENTS[previousSelectedObjectId].stub;
       }
     } else {
-      if (MODE != "free")
-        toFree();
     }
   };
   function onDocumentMouseMove(event) {
@@ -42960,16 +43185,16 @@ Karen Kjaergaard, WDA2020
       const res = intersects2.filter((res2) => res2 && res2.object)[0];
       if (res && res.object) {
         selectedObject = res.object;
-        const data = selectedObject.userData;
-        const ball = balls[data.i];
+        const data2 = selectedObject.userData;
+        const ball = balls[data2.i];
         if (ball.enabled) {
-          if (previousSelectedObjectId != data.i) {
-            window.app.actions.setStudentSelected(data.data);
+          if (previousSelectedObjectId != data2.i) {
+            window.app.actions.setStudentSelected(data2.data);
             if (document.querySelectorAll('#sidebar [data-key="students"].selected').length) {
               window.app.actions.render_students("");
             }
           }
-          previousSelectedObjectId = data.i;
+          previousSelectedObjectId = data2.i;
           selectedBall = ball;
           ball.hover();
         }
@@ -43039,9 +43264,8 @@ Karen Kjaergaard, WDA2020
   // index.main.js
   document.title = settings.document_title;
   document.querySelector("#logo").innerHTML = settings.title;
-  window.app = {
-    animation: anim_exports
-  };
+  window.app = {};
+  window.app.animation = anim_exports;
   window.app.actions = actions_exports;
   window.app.sidebar = init();
   window.app.search = initSearch("#search");

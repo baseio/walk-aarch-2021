@@ -14,6 +14,7 @@ import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
 import TWEEN, { Tween, Easing, Interpolation, autoPlay } from 'es6-tween';
 import {init_userdraw, showDrawDemo, hideDrawDemo} from './UserDraw.js'
 import {CircleSprite} from './CircleSprite.js'
+import {AnimCircleSprite} from './AnimCircleSprite.js'
 import {Eraser} from './Eraser.js'
 import {GenerateTexture} from './GenerateTexture.js'
 
@@ -51,7 +52,11 @@ export const initAnimation = (selector) => {
 	init_userdraw('#userdraw', DRAWING_SIZE, onPathCreated)
 	init_scene(selector)
 	init_balls()
-	update()	
+	update()
+
+	setTimeout( () => {
+		randomize()
+	}, 10 )
 
 	return this
 }
@@ -134,10 +139,40 @@ const init_balls = () => {
 	const normalTexture = GenerateTexture('#eee', '#fff', 10)
 	const hoverTexture  = GenerateTexture('#fff', '#000', 20)
 
+	// numballs = 1
+	// for(let i=0; i<1; i++){
 	for(let i=0; i<numballs; i++){
 		balls.push( new CircleSprite(group, i, DATA.DATA_STUDENTS[i], normalTexture, hoverTexture))
+		// balls.push( new AnimCircleSprite(group, i, DATA.DATA_STUDENTS[i], normalTexture, hoverTexture))
 	}
 	window.app.balls = balls
+}
+
+const randomize = () => {
+	// console.log('randomize()');
+
+	const maxSpeed = 0.4
+	for(let i=0; i<2; i++){
+		const s = Math.random() * maxSpeed
+		const r = -maxSpeed + s * 2
+		speeds[i] = r
+	}
+	// console.log(speeds);
+
+	// speeds = [
+	// 	0.1 + (Math.random() * 0.4),
+	// 	0.1 + (Math.random() * 0.4),
+	// 	0.1 + (Math.random() * 0.4)
+	// ]
+
+	balls.forEach( ball => {
+		const tx = -1 + (2*Math.random())
+		const ty = -1 + (2*Math.random())
+		const tz = -1 + (2*Math.random())
+		const to = 1
+		const tr = ball.enabledSize
+		ball.setTarget({x:tx, y:ty, z:tz, o:to, r:tr})
+	})
 }
 
 // loop
@@ -204,16 +239,12 @@ const onPathCreated = (path /* svg */) => {
 		positions.push({x,y,z})
 	}
 	applyPositions(positions)
-	window.toFree()
+	// window.toFree()
+	window.location.hash = ''
 }
 
 // set ball positions to provided array
 const applyPositions = (positions, blendMax=null, blendMin=null, hideTrailsFor=100) => {
-	// console.log('# applyPositions', 'blendMax:', blendMax, 'blendMin:', blendMin);
-
-	// eraser.material.opacity = 1
-	// renderer.render( scene, camera );
-	// eraser.blendUp(blendMax)
 
 	eraser.clearScreen()
 
@@ -230,16 +261,6 @@ const applyPositions = (positions, blendMax=null, blendMin=null, hideTrailsFor=1
 		eraser.blendDown(blendMin)
 	}, delay + hideTrailsFor)
 }
-
-
-const reset_rotations = () => {
-	controls.enableRotate  = false;
-	controls.enableDamping = false;
-	controls.reset()
-
-	group.rotation.set( 0, Math.PI, Math.PI);
-}
-
 
 
 
@@ -289,9 +310,6 @@ export const applyFilter = (key, val) => {
 	if( currentFilter === 'student' ){
 
 	}
-
-	// eraser.upDown()
-	
 }
 
 // layouts
@@ -314,9 +332,12 @@ window.toFree = () => {
 	controls.enableDamping = true;
 	MODE = 'free'
 
+
 	balls.forEach( ball => {
 		ball.normal()
 	})
+
+	randomize()
 }
 
 
@@ -333,8 +354,6 @@ window.toNode = (id) => {
 
 	console.log('toNode', id, focusedNode);
 
-	//reset_rotations()
-
 	balls.forEach( ball => {
 		if( ball.i != focusedNode.i ){
 			// ball.r = ball.disabledSize
@@ -342,10 +361,6 @@ window.toNode = (id) => {
 		}
 	})
 	
-	// focusedNode.material.color.set( '#09f' );
-	// focusedNode.tr = 10 // big enough to cover screen
-	// focusedNode.setTarget(0, 0, 0)
-	// focusedNode.setTarget(0, 0, -0.25)
 	focusedNode.focus()
 	
 	window.app.actions.render_student(focusedNode.el.userData.data.stub)
@@ -353,18 +368,6 @@ window.toNode = (id) => {
 	setTimeout( () => {
 		window.app.pauseRendering = true
 	}, 1000 )
-
-
-
-	/*
-	let dist = 1 / 2 / Math.tan(Math.PI * camera.fov / 360);
-	dist += 0.1 // fits in screen
-	
-	// dist = 0.5 // fills screen
-	camera.position.set(0,0,dist)
-
-	console.log('dist', dist);
-	*/
 
 	return true
 }
@@ -380,10 +383,6 @@ window.toGrid = () => {
 	window.app.pauseRendering = false
 	window.app.actions.hide_render_student()
 	
-	// eraser.upDown(1500)
-	// eraser.blendUp()
-	
-	// reset_rotations()
 	controls.enableRotate  = false;
 	controls.enableDamping = false;
 	controls.reset()
@@ -391,21 +390,7 @@ window.toGrid = () => {
 	group.rotation.set( 0, Math.PI, Math.PI);
 
 	camera.position.set(0,0,2)
-	// camera.fov = FOV
-	// camera.updateProjectionMatrix();
 
-	// const cameraTween = new Tween({z:camera.position.z, fov:camera.fov}).to({z:2, fov:FOV}, 1000)
-	// 	.easing( Easing.Sinusoidal.InOut )
-	// 	.on('update', (o) => {
-	// 		// if( MODE != 'grid') {
-	//    			camera.position.set(0,0,o.z)
-	//    			camera.fov = o.fov
-	//    			camera.updateProjectionMatrix();
-	//    		// }
- // 		})
- // 		.start()
-
-		
 	const scale = 0.1
 	const cols = Math.ceil( Math.sqrt(numballs))
 
@@ -451,8 +436,6 @@ const onDocumentMouseDown = () => {
 				focusedNode = null
 			}
 			console.log('@anim onDocumentMouseDown collapse', currentFilter, currentThemeFilterValue, b);
-			// applyFilter(currentFilter, currentThemeFilterValue)
-			// window.toGrid()
 
 			const theme = DATA.THEMES.filter(t => t.id === b.el.userData.data.theme)[0]
 
@@ -462,12 +445,10 @@ const onDocumentMouseDown = () => {
 			// focus
 			console.log('@anim onDocumentMouseDown focus', DATA.DATA_STUDENTS[previousSelectedObjectId].name );
 			window.location.hash = '#'+ DATA.DATA_STUDENTS[previousSelectedObjectId].stub
-
-			// window.toNode( previousSelectedObjectId )
 		}
 
 	}else{
-	 	if( MODE != 'free') toFree()
+	 	// if( MODE != 'free') toFree()
 	}
 }
 
