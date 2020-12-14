@@ -4,14 +4,18 @@ import './styles.sidebar.css'
 
 
 const FEATS = [
-	{id:'about', name:'ABOUT'},
+	// {id:'about', name:'INTERACT'},
+	{id:'interact', name:'INTERACT'},
 	// {id:'credits', name:'CREDITS'},
 	// {id:'live', name:'LIVE'},
 	// {id:'archive', name:'ARCHIVE'},
 	// {id:'videos', name:'VIDEOS'},
 	// {id:'script', name:'SCRIPT'},
-	{id:'graduates', name:'GRADUATES'}
+	// {id:'graduates', name:'SUBJECTS'}
+	{id:'subjects', name:'SUBJECTS'}
 ]
+
+let hideMenu = null
 
 export const init = () => {
 
@@ -70,5 +74,13 @@ export const init = () => {
 
 	// show sidebar
 	document.querySelector('#sidebar').style.display = 'block'
+
+	document.addEventListener("mousemove", () => {
+		clearTimeout( hideMenu )
+		document.querySelector('#sidebar').classList.remove('fadedOut')
+		hideMenu = setTimeout( () => {
+			document.querySelector('#sidebar').classList.add('fadedOut')
+		}, 2000 )
+	})
 }
 

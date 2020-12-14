@@ -31,10 +31,10 @@ export const action = (trigger, action, id, args=[]) => {
 			return
 		}
 		if( action === 'show'){
-			if( id === 'about' ) render_text(id)
+			if( id === 'interact' ) render_text(id)
 			if( id === 'live' ) render_live(id)
 			if( id === 'videos' ) render_videos(id)
-			if( id === 'students' ) render_students(id)			
+			if( id === 'subjects' ) render_students(id)			
 		}
 	}
 

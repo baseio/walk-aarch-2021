@@ -5,6 +5,10 @@
   opacity: 1;
 }
 
+#sidebar.fadedOut {
+  opacity: 0;
+}
+
 #showhide {
   margin-top: -12px;
   padding-left: 7px;
