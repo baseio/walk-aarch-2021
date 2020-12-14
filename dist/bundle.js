@@ -16496,7 +16496,7 @@ Karen Kjaergaard, WDA2020
     document.querySelector("#overlay").style.pointerEvents = "all";
     container.style.overflowY = "auto";
     let html = "";
-    html += '<div style="display:flex;height:100%;"><div style="align-self: flex-end;">';
+    html += '<div style="height:100%;"><div style="align-self: flex-end;">';
     DATA_STUDENTS.forEach((s) => {
       if (themeFilter) {
         if (s.theme === themeFilter) {
@@ -43251,7 +43251,7 @@ Karen Kjaergaard, WDA2020
     const term = el.value;
     console.log("searching for", term);
     let html = "";
-    html += '<div style="display:flex;height:100%;"><div style="align-self: flex-end;">';
+    html += '<div style="height:100%;"><div style="align-self: flex-end;">';
     DATA_STUDENTS.forEach((s) => {
       if (s.name.indexOf(term) > -1) {
         const st = "/" + term + "/gi";

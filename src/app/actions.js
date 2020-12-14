@@ -222,7 +222,7 @@ export const render_students = (id) => {
 
 	let html = ''
 
-	html += '<div style="display:flex;height:100%;"><div style="align-self: flex-end;">'
+	html += '<div style="height:100%;"><div style="align-self: flex-end;">'
 
 	DATA.DATA_STUDENTS.forEach( s => {
 

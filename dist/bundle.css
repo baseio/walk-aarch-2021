@@ -120,6 +120,7 @@ a {
   background-color: #fff;
   text-transform: uppercase;
   margin: 2px;
+  user-select: none;
 }
 #content a.student:hover {
   color: #fff;
