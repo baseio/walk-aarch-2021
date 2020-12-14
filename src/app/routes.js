@@ -68,11 +68,10 @@ export const handleHash = (rawHash) => {
 
 		// action
 		window.app.actions.clear_content()
-		if( hash === 'interact' ) 	window.app.actions.render_text(hash)
-
+		if( hash === 'about' ) 		window.app.actions.render_text(hash)
 		if( hash === 'live' ) 		window.app.actions.render_live(hash)
 		if( hash === 'videos' ) 	window.app.actions.render_videos(hash)
-		if( hash === 'subjects' ) 	window.app.actions.render_students(hash)			
+		if( hash === 'graduates' ) 	window.app.actions.render_students(hash)			
 		
 	}else if( window.location.hash === '' ){
 		// index
@@ -83,8 +82,9 @@ export const handleHash = (rawHash) => {
 			el.classList.remove('selected')
 		})
 
+		window.app.actions.clear_content()
 
-		window.toFree()
+		// window.toFree()
 	}
 
 }

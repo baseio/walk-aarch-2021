@@ -34,7 +34,7 @@ export const action = (trigger, action, id, args=[]) => {
 			if( id === 'interact' ) render_text(id)
 			if( id === 'live' ) render_live(id)
 			if( id === 'videos' ) render_videos(id)
-			if( id === 'subjects' ) render_students(id)			
+			if( id === 'graduates' ) render_students(id)			
 		}
 	}
 
@@ -100,7 +100,7 @@ export const clear_content = () => {
 	document.querySelector('#content').innerHTML = ''
 	document.querySelector('#content').classList = 'hide'
 	// document.querySelector('#content').style.overflowY = 'auto'
-	// document.querySelector('#curtain').classList = ''
+	document.querySelector('#curtain').classList = ''
 	document.querySelector('#overlay').style.pointerEvents = 'none'
 	window.app.pauseRendering = false
 }

@@ -221,6 +221,8 @@ const OnWindowResize = () => {
 // called by user-draw
 // distribute balls evenly along the path
 const onPathCreated = (path /* svg */) => {	
+
+	console.log('onPathCreated');
 	eraser.clearScreen()
 
 	const length = path.getTotalLength()

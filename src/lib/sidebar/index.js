@@ -4,15 +4,13 @@ import './styles.sidebar.css'
 
 
 const FEATS = [
-	// {id:'about', name:'INTERACT'},
-	{id:'interact', name:'INTERACT'},
+	{id:'about', name:'ABOUT'},
 	// {id:'credits', name:'CREDITS'},
 	// {id:'live', name:'LIVE'},
 	// {id:'archive', name:'ARCHIVE'},
 	// {id:'videos', name:'VIDEOS'},
 	// {id:'script', name:'SCRIPT'},
-	// {id:'graduates', name:'SUBJECTS'}
-	{id:'subjects', name:'SUBJECTS'}
+	{id:'graduates', name:'GRADUATES'}
 ]
 
 let hideMenu = null
@@ -33,7 +31,7 @@ export const init = () => {
 
 	// populate themes menu
 	html = ''
-	html = '<div class="section-header">Categories:</div>'
+	html = '<div class="section-header">Subjects:</div>'
 	THEMES.forEach( t => {
 		html += `
 			<div class="toggle" data-trigger="theme" data-key="${t.slug}">
