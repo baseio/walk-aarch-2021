@@ -1,4 +1,5 @@
 
+import {settings} from './settings.js'
 import * as DATA from './data.js'
 
 
@@ -7,6 +8,7 @@ let _filterThemeTimeout = null
 let themeFilter = null
 let studentSelected = null
 
+/*
 export const action = (trigger, action, id, args=[]) => {
 	console.log('action():', trigger, action, id)
 	container = document.querySelector('#content')
@@ -58,6 +60,7 @@ export const action = (trigger, action, id, args=[]) => {
 
 
 }
+*/
 
 export const setStudentSelected = (s) => {
 	console.log('setStudentSelected', s);
@@ -66,14 +69,14 @@ export const setStudentSelected = (s) => {
 
 ///
 
-const clearFeatSelection = () => {
+export const clearFeatSelection = () => {
 	console.log('@sidebar clearFeatSelection');
 	Array.from( document.querySelectorAll(`#sidebar [data-trigger="filter:feat"]`)).forEach( el => {
 		el.classList.remove('selected')
 	})
 }
 
-const clearThemeSelection = () => {
+export const clearThemeSelection = () => {
 	console.log('@sidebar clearThemeSelection');
 	Array.from( document.querySelectorAll(`#sidebar [data-trigger="filter:theme"]`)).forEach( el => {
 		el.classList.remove('selected')
@@ -83,16 +86,24 @@ const clearThemeSelection = () => {
 
 ///
 
-const render_theme = (val) => {
-	themeFilter = val
-	window.app.animation.applyFilter('theme', val)
-
-	let studentsToggleSelected = document.querySelector('#sidebar [data-key="students"]').classList.contains("selected")
-	console.log('studentsToggleSelected', studentsToggleSelected);
-	if( studentsToggleSelected ){
-		render_students()
-	}
+export const render_theme = (val) => {
+	console.log('render_theme:', val);
+	document.querySelector('#logo').innerHTML = settings.title + `:<br />#`+ val.name.replace(/ /g, '&nbsp;')
+	// document.querySelector('#logo').innerHTML = settings.title + '&nbsp;#'+ val.name.replace(/ /g, '&nbsp;')
+	// themeFilter = val
+	// window.app.animation.applyFilter('theme', val)
+	// let studentsToggleSelected = document.querySelector('#sidebar [data-key="students"]').classList.contains("selected")
+	// console.log('studentsToggleSelected', studentsToggleSelected);
+	// if( studentsToggleSelected ){
+	// 	render_students()
+	// }
 }
+
+export const clear_theme = () => {
+	document.querySelector('#logo').innerHTML = settings.title	
+}
+
+//
 
 export const clear_content = () => {
 	window.toFree()
@@ -205,6 +216,9 @@ export const render_student = (stub) => {
 		content.innerHTML = html
 		content.classList = 'show'
 	}, 750);
+
+	const theme = DATA.THEMES.filter(t => t.id === s.theme)[0]
+	document.querySelector('#logo').innerHTML = settings.title + `:<br />#`+ theme.name.replace(/ /g, '&nbsp;')
 }
 export const hide_render_student = () => {
 	document.querySelector('#curtain').classList = 'hide'

@@ -385,8 +385,9 @@ window.toFree = () => {
 
 	window.app.pauseRendering = false
 	window.app.actions.hide_render_student()
-	window.app.actions.action('clearThemeSelection')
-	window.app.actions.action('clearFeatSelection')
+	window.app.actions.clear_theme()
+	window.app.actions.clearThemeSelection()
+	window.app.actions.clearFeatSelection()
 
 	controls.enableRotate  = true;
 	controls.enableDamping = true;

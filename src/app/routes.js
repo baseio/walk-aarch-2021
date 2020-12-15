@@ -49,6 +49,8 @@ export const handleHash = (rawHash) => {
 		// app.actions.action('filter:theme', 'show', ''+theme.id)
 		window.app.animation.applyFilter('theme', theme.id)
 		
+
+		window.app.actions.render_theme(theme)	
 	
 
 	}else if( rawHash != '' ){
