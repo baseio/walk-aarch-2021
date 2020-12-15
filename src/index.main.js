@@ -1,3 +1,13 @@
+/*! 
+
+ *******************************************************************************
+ * Hi!                                                                         *
+ * Drop js@dearstudio.dk an email if you want access to the un-minified source *
+ * (CC BY-NC-SA 4.0)                                                           *
+ *******************************************************************************
+ 
+*/
+
 import {settings} from './app/settings.js'
 
 import * as actions from './app/actions.js'
