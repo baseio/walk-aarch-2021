@@ -7,16 +7,20 @@ import {
 	PerspectiveCamera,
 	Raycaster,
 	Vector3,
-	Quaternion,
+	Quaternion
+
 } from 'three';
 
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
 import TWEEN, { Tween, Easing, Interpolation, autoPlay } from 'es6-tween';
 import {init_userdraw, clearDrawing, showDrawDemo, hideDrawDemo} from './UserDraw.js'
-import {CircleSprite} from './CircleSprite.js'
-import {AnimCircleSprite} from './AnimCircleSprite.js'
 import {Eraser} from './Eraser.js'
 import {GenerateTexture} from './GenerateTexture.js'
+
+import {CircleSprite} from './CircleSprite.js'
+// import {CircleSprite} from './CircleSpriteCustomShader.js'
+// import {CircleSprite} from './CircleSpriteCustomShader-2.js'
+// import {AnimCircleSprite} from './AnimCircleSprite.js' // requires gif.js too (in index.html)
 
 import * as DATA from '../../app/data.js'
 
@@ -48,6 +52,7 @@ let currentThemeFilterValue = ''
 
 // main
 export const initAnimation = (selector) => {
+	hideTooltip()
 	autoPlay(true) // tween	
 	init_userdraw('#userdraw', DRAWING_SIZE, onPathCreated)
 	init_scene(selector)
@@ -103,6 +108,8 @@ const init_scene = (selector) => {
 	controls.update()
 	controls.saveState()
 	window.app.controls = controls
+
+	// projector = new Projector();
 
 	eraser = new Eraser()
 	scene.add( eraser.el );
@@ -209,8 +216,47 @@ const update = () => {
 	}
 
 	renderer.render( scene, camera );
+
+	// setTooltipOrigin()
 }
 
+
+// tooltip
+
+const hideTooltip = () => {
+	const el = document.querySelector('#tooltip')
+	if( el ){
+		el.style.display = 'none'
+	}
+}
+
+const showTooltip = ( pos, label='' ) => {
+
+	const el = document.querySelector('#tooltip')
+	if( !el ) return
+
+	if( pos === null ){
+		el.style.display = 'none'
+		return
+	}else{
+		el.style.display = 'block'
+	}
+
+
+ 	const canvasHalfWidth  = ( renderer.domElement.width / window.devicePixelRatio )  / 2;
+ 	const canvasHalfHeight = ( renderer.domElement.height / window.devicePixelRatio )  / 2;
+ 	// var canvasHalfWidth  = renderer.domElement.offsetWidth  / 2;
+    // var canvasHalfHeight = renderer.domElement.offsetHeight / 2;
+
+    var point = pos.clone().project(camera);
+    point.x =  (point.x * canvasHalfWidth)  + canvasHalfWidth  + renderer.domElement.offsetLeft;
+    point.y =  (point.y * canvasHalfHeight) + canvasHalfHeight + renderer.domElement.offsetTop;
+
+    point.y -= 14
+  
+  	el.style.transform = 'translate(' + point.x + 'px, ' + point.y + 'px)';
+  	el.innerHTML = label
+}
 
 // events
 
@@ -376,6 +422,8 @@ window.toNode = (id) => {
 	})
 	
 	focusedNode.focus()
+
+	hideTooltip()
 	
 	window.app.actions.render_student(focusedNode.el.userData.data.stub)
 
@@ -484,7 +532,8 @@ function onDocumentMouseMove( event ) {
 	if( selectedBall ){
 		// console.log('selectedBall:', selectedBall);
 		selectedBall.unhover()
-		selectedBall = null;	
+		selectedBall = null;
+		hideTooltip()
 	}
 
 
@@ -506,6 +555,8 @@ function onDocumentMouseMove( event ) {
 				previousSelectedObjectId = data.i
 				selectedBall = ball
 				ball.hover()
+				//
+				showTooltip( ball.el.position, data.data.name )
 			}
 		}
 	}else{
