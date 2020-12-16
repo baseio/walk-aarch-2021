@@ -31,11 +31,12 @@ document.querySelector('#logo').innerHTML = settings.title
 
 window.app = {}
 
-setTimeout( () => {
-	window.app.animation = Animation
-	window.app.actions = actions
-	window.app.sidebar = sidebar.init()
-	window.app.search  = initSearch('#search')
-	Animation.initAnimation('#animation')
-	window.app.router = new Router(handleHash)
-}, 1)
+window.app.animation = Animation
+window.app.actions = actions
+window.app.sidebar = sidebar.init()
+window.app.search  = initSearch('#search')
+
+Animation.initAnimation('#animation')
+
+window.app.router = new Router(handleHash)
+

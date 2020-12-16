@@ -90,6 +90,12 @@ export const render_theme = (val) => {
 	console.log('render_theme:', val);
 	document.querySelector('#logo').innerHTML = settings.title + `:<br />#`+ val.name.replace(/ /g, '&nbsp;')
 
+	const studentsToggleSelected = document.querySelector(`#sidebar [data-trigger="feat"][data-key="graduates"]`).classList.contains("selected")
+	// console.log('render_theme: studentsToggleSelected', studentsToggleSelected);
+	if( !studentsToggleSelected ){
+		document.querySelector('#overlay').style.pointerEvents = 'none'
+	}
+
 	// themeFilter = val
 	
 	// // if $graduates is selected, just filter the text-list
@@ -253,6 +259,7 @@ export const render_students_filtered = (theme) => {
 }
 export const clear_students_filter = () => {
 	document.querySelector('#logo').innerHTML = settings.title
+	document.querySelector('#overlay').style.pointerEvents = 'none'
 	themeFilter = null
 }
 

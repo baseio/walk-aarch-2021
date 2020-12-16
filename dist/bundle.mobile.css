@@ -1,1 +1,26 @@
-html,body{background:#000;color:#fff;font-family:helvetica;font-size:24px}#animation{display:none}#sidebar{display:none}.student{background:white;color:#000;padding:10px 15px;border-radius:20px;margin:10px;user-select:none;cursor:pointer}.student:hover{background:#eee}
+/* styles.mobile.css */
+html,
+body {
+  background: #000;
+  color: #fff;
+  font-family: helvetica;
+  font-size: 24px;
+}
+#animation {
+  display: none;
+}
+#sidebar {
+  display: none;
+}
+.student {
+  background: white;
+  color: #000;
+  padding: 10px 15px;
+  border-radius: 20px;
+  margin: 10px;
+  user-select: none;
+  cursor: pointer;
+}
+.student:hover {
+  background: #eee;
+}
