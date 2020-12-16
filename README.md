@@ -75,41 +75,7 @@ Netlify is linked to the above repo
 - ball-hover when entering via direct link (Safari?)
 
 
----
 
-Draft afleverings mail:
-
-Hej Karen og Casper
-
-I kan kigge ind på https://vibrant-nobel-c7d9ea.netlify.app for et preview af
-det smukke lille Processing Architecture website.
-
-Den er bygget sådan at man kan linke direkte til 
-- about, e.g. https://vibrant-nobel-c7d9ea.netlify.app/#about
-- en kategori, e.g. https://vibrant-nobel-c7d9ea.netlify.app/#theme:landscapes-in-transition
-- en student, e.g. https://vibrant-nobel-c7d9ea.netlify.app/#anne-soeby-nielsen
-- student listen: https://vibrant-nobel-c7d9ea.netlify.app/#graduates
-
-
-Ting vi ikke har kunnet lave endnu, som dermed ender i Fase 2 (nyt budget):
-- De studerendes kontakt information (tilføjes som kolonner i excel filen)
-- De studerendes projekt billeder (sends til os som 1920x1080px 72DPI JPG fil), én pr student
-- Afklaring og integration af video-afspiller
-- Afklaring og integration af live-videostream afspiller
-- Integration mod wordpress sitet
-
-
-Og her er en liste over "open ends", altså ting jeg har brug for at I reagerer på:
-- Hosting/Server-setup: Afventer Tony (aftalt leveringsdato var d. 9 Dec)
-- Sitets titel ("AAA-21: PROCESSING ARCHITECTURE") og meta-beskrivelse ("Offical website for the 2021-winter graduation from Aarhus School of Architecture") må i gerne rætte til.
-- Jeg har tegnet et lille "favicon" (som vises ved siden af websitets titel (i browseren). @Casper: Du må gerne lave et bedre, hvis det er brug for det).
-- Jeg plejer at give intresserede adgang til kilde-koden med en "CC BY-NC-SA 4.0" licens (som er beskrevet her: https://creativecommons.org/licenses/by-nc-sa/4.0/ ). OK?
-
-
-
-
-
----
 
 ## Worklog
 
@@ -130,7 +96,6 @@ Og her er en liste over "open ends", altså ting jeg har brug for at I reagerer 
 - [ ] figure out how to schedule this
 - [ ] test "book zoom" -> ?
 - [x] sketch index
-- [ ] automatically get subtitles from youtube
 - [x] colorize subtitles (nlp)
 - [x] play youtube movie in custom player
 - [x] students data: get from karen
@@ -145,13 +110,13 @@ Og her er en liste over "open ends", altså ting jeg har brug for at I reagerer 
 - [x] search
 - [ ] update subtitles to use VTT
 - [ ] send subtitles spec (VTT)
-- [ ] present and get feedback: meeting thursday @ 09
+- [ ] present and get feedback: meeting thursday @ 09: Meeting was canceled by Karen.
 - [ ] agree on menu, text-deliveries, integrations
 
 #### W49: Concept approval
 
-- [ ] test twitch or vimeo for the live feature
-- [ ] test twitch or vimeo schedule api
+- [ ] test twitch or vimeo for the live feature: Await AARCH
+- [ ] test twitch or vimeo schedule api: Await decision on platform
 - [x] focus-node / student-page
 - [x] text page
 - [x] filtering
@@ -162,14 +127,18 @@ Og her er en liste over "open ends", altså ting jeg har brug for at I reagerer 
 - [x] Solve color theme
 - [x] Static layouts
 - [x] project layout flex
-- [ ] hash-router directly to student view
+- [x] hash-router directly to student view
 - [x] complete navigation
-- [ ] student pill-layout (searchable)
+- [x] student pill-layout (searchable)
 - [-] student contact info (await Karen)
 - [-] server (await Tony)
-- [ ] verify fonts (and minimize selection)
+- [x] verify fonts (and minimize selection)
 - [ ] fork mobile to separate html file (to avoid document.write)
-- [ ] Demonstrate all features 
+
+#### W51: Finalize Phase 1
+
+- [x] Bug fix, and demonstrate all features 
+- [x] Reach "all green" on Lighthouse
 
 #### W01: Plan production
 
