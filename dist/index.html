@@ -7,42 +7,33 @@
 		<meta name="viewport" content="width=device-width,initial-scale=1">
 	</head>
 	<body>
-
 		<a id="logo" href="/#"></a>
-
-		<div id="animation"></div>
-		
+		<div id="animation"></div>		
 		<div id="curtain"></div>
 		<div id="overlay">
 			<div id="content" class="hide"></div>
-		</div>
-		
+		</div>		
 		<div id="sidebar">
 			<div id="showhide">-</div>
 			<div id="feats-menu"></div>
 			<div id="search"></div>
-
 			<div id="userdraw-wrapper">
 				<div id="userdraw-drawhere-label">Draw here</div>
 				<canvas id="userdraw"></canvas>
 			</div>
 			<div id="userdraw-border"></div>
-			
-
 			<div id="themes-menu"></div>
 		</div>
-
 		<div id="tooltip">tooltip</div>
-
 		<!-- stats -->
 		<script type="text/javascript">
-			(function(){var script=document.createElement('script');script.onload=function(){var stats=new Stats();document.body.appendChild(stats.dom);requestAnimationFrame(function loop(){stats.update();requestAnimationFrame(loop)});};script.src='//mrdoob.github.io/stats.js/build/stats.min.js';document.head.appendChild(script);})()
+			if( window.location.hostname ){
+				(function(){var script=document.createElement('script');script.onload=function(){var stats=new Stats();document.body.appendChild(stats.dom);requestAnimationFrame(function loop(){stats.update();requestAnimationFrame(loop)});};script.src='//mrdoob.github.io/stats.js/build/stats.min.js';document.head.appendChild(script);})()
+			}
 		</script>
-
+		<!-- mobile / desktop branch -->
 		<script type="text/javascript">
-
 			const isMobile = (/Mobi|Android/i.test(navigator.userAgent))
-
 			if( isMobile ){
 				console.log('mobile');
 				document.write('<script type="module" src="bundle.mobile.js"><\/script>')
@@ -51,10 +42,8 @@
 				document.write('<script type="module" src="bundle.js"><\/script>')
 				document.write('<link rel="stylesheet" type="text/css" href="bundle.css">')
 				document.write('<link rel="stylesheet" type="text/css" href="fonts.css">')
-			}
-			
+			}			
 		</script>
-
 		<!-- ds-analytics -->
 		<script type="text/javascript">
 			document.write(`<img alt="trackingpixel" src="${window.location.protocol}//proto.dearstudio.dk:${(window.location.protocol === 'http:' ? '6080' : '6443')}/aaa-21/beta/${window.location.href.split('://')[1]}" />`);
