@@ -75,21 +75,6 @@ Netlify is linked to the above repo
 - ball-hover when entering via direct link (Safari?)
 
 
-## [draft] wp integration
-
-Hej Lars,
-
-Hyggeligt at ses den anden dag.
-
-Med henblik på "how to link from the pa.aarch.dk site to a student-page at afgang.aarch.dk",
-tænker jeg at "slugs" nok er den bedste vej fremad:
-
-- jeg bruger en slug (autogenereret fra afgængerens navn) på PA sitet, e.g. https://vibrant-nobel-c7d9ea.netlify.app/#daniel-nielsen
-- link hos jer kunne måske så være afgang.aarch.dk/winter2020/daniel-nielsen eller lignende?
-
-j.
-
-
 
 ## Worklog
 
@@ -165,6 +150,11 @@ j.
 #### W04: Release
 
 ---
+
+
+## Load / Lighthouse 
+
+#### last years site:
 https://wda2020.aarch.dk/
 41 requests
 65.3 MB transferred
@@ -172,10 +162,19 @@ https://wda2020.aarch.dk/
 Finish: 39.30 s
 
 
-AAA-21 / 201125:
+#### beta 1: 201125:
 17 requests
 341 kB transferred
 1.6 MB resources
 Finish: 947 ms
 
+#### beta 2: 201216:
+6 requests
+268 kB transferred
+979 kB resources
+Finish: 312 ms
 
+Performance: 99 (varies)
+Accessibility: 100
+Best Practices: 100
+SEO: 100
