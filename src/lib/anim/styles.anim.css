@@ -85,4 +85,5 @@
   user-select: none;
   pointer-events: none;
   cursor: pointer;
+  display: none;
 }
