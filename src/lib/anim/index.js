@@ -311,6 +311,12 @@ export const getMode = () => {
 	return MODE
 }
 
+// export const normalize = () => {
+// 	balls.forEach( ball => {
+// 		ball.normal()
+// 	})
+// }
+
 // filters
 
 

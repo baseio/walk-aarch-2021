@@ -9,15 +9,14 @@ export const handleHash = (rawHash) => {
 	const b = window.app.balls.filter( b => b.el.userData.data.stub === hash )[0]
 	// console.log('OnHashChanged #3', b);
 	
+	// if $graduates is selected, just filter the text-list
+	const inGraduatesMode = document.querySelector(`#sidebar [data-trigger="feat"][data-key="graduates"]`).classList.contains("selected")
+
 
 	if( b ){
 		// student
 		const accepted = window.toNode( b.i )
-		console.log('OnHashChanged #4 accepted', accepted, b);
-		
 		const theme_slug = DATA.THEMES.filter(t => t.id === b.el.userData.data.theme)[0]?.slug
-		console.log('OnHashChanged #4 theme id:', accepted, b.el.userData.data.theme, 'theme_slug:', theme_slug);
-
 
 		if( accepted ){
 			// select theme
@@ -34,6 +33,14 @@ export const handleHash = (rawHash) => {
 		const theme = DATA.THEMES.filter(t => t.slug === slug )[0]
 
 		console.log('OnHashChanged theme:', hash, slug, theme);
+
+		
+		if( inGraduatesMode ){
+			console.log('OnHashChanged theme inGraduatesMode!');
+			window.app.animation.applyFilter('theme', theme.id)
+			window.app.actions.render_students_filtered(theme)
+			return
+		}
 
 		// unselect all 
 		document.querySelectorAll('#sidebar [data-trigger]').forEach( el => {
@@ -68,6 +75,16 @@ export const handleHash = (rawHash) => {
 			btn.classList.add('selected')
 		}
 
+
+		// due to the graduates+theme feature,
+		// a click/route to #graduates when the hash is a $theme
+		// needs to observe the dom:
+		if( inGraduatesMode ){
+			console.log('OnHashChanged page inGraduatesMode!');
+			document.querySelector(`#sidebar [data-trigger="feat"][data-key="graduates"]`).classList.remove("selected")
+			window.app.actions.clear_students_filter()
+		}
+
 		// action
 		window.app.actions.clear_content()
 		if( hash === 'about' ) 		window.app.actions.render_text(hash)
@@ -85,8 +102,7 @@ export const handleHash = (rawHash) => {
 		})
 
 		window.app.actions.clear_content()
-
-		// window.toFree()
+		window.app.actions.clear_students_filter()
 	}
 
 }

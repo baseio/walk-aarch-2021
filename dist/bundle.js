@@ -15822,11 +15822,13 @@
     clearFeatSelection: () => clearFeatSelection,
     clearThemeSelection: () => clearThemeSelection,
     clear_content: () => clear_content,
+    clear_students_filter: () => clear_students_filter,
     clear_theme: () => clear_theme,
     hide_render_student: () => hide_render_student,
     render_live: () => render_live,
     render_student: () => render_student,
     render_students: () => render_students,
+    render_students_filtered: () => render_students_filtered,
     render_text: () => render_text,
     render_theme: () => render_theme,
     render_videos: () => render_videos,
@@ -16296,11 +16298,11 @@
   // app/data/themes.js
   var THEMES = [
     {id: "1", slug: "new-commons", name: "NEW COMMONS"},
-    {id: "2", slug: "building-for-culture", name: "BUILDING CULTURE"},
-    {id: "3", slug: "development", name: "URBAN DEVELOPMENT"},
+    {id: "2", slug: "building-culture", name: "BUILDING CULTURE"},
+    {id: "3", slug: "urban-development", name: "URBAN DEVELOPMENT"},
     {id: "4", slug: "sustainable-architecture", name: "SUSTAINABLE ARCHITECTURE"},
     {id: "5", slug: "landscapes-in-transition", name: "LANDSCAPES IN TRANSITION"},
-    {id: "6", slug: "heritage", name: "CULTURAL HERITAGE"},
+    {id: "6", slug: "cultural-heritage", name: "CULTURAL HERITAGE"},
     {id: "7", slug: "extreme-architecture", name: "EXTREME ARCHITECTURE"}
   ];
 
@@ -16466,8 +16468,25 @@ Karen Kjaergaard, WDA2020
     document.querySelector("#curtain").classList = "hide";
     content.innerHTML = "";
   };
+  var render_students_filtered = (theme) => {
+    console.log("render_students_filtered", theme);
+    themeFilter = theme.id;
+    render_students("graduates");
+    document.querySelector("#logo").innerHTML = settings.title + `:<br />#` + theme.name.replace(/ /g, "&nbsp;");
+    document.querySelectorAll('#sidebar [data-trigger="theme"]').forEach((el2) => {
+      el2.classList.remove("selected");
+    });
+    const btn = document.querySelector(`#sidebar [data-trigger="theme"][data-key="${theme.slug}"]`);
+    if (btn) {
+      btn.classList.add("selected");
+    }
+  };
+  var clear_students_filter = () => {
+    document.querySelector("#logo").innerHTML = settings.title;
+    themeFilter = null;
+  };
   var render_students = (id) => {
-    console.log("render_students", id, studentSelected);
+    console.log("render_students", id, studentSelected, themeFilter);
     container = document.querySelector("#content");
     container.classList = id;
     document.querySelector("#overlay").style.pointerEvents = "all";
@@ -16488,7 +16507,10 @@ Karen Kjaergaard, WDA2020
       }
     });
     html += "</div></div>";
+    if (themeFilter)
+      console.log("studs, with themeFilter:", themeFilter, html);
     container.innerHTML = html;
+    document.querySelector("#logo").innerHTML = settings.title + ":<br />@All";
   };
 
   // app/routes.js
@@ -16496,11 +16518,10 @@ Karen Kjaergaard, WDA2020
     let hash = rawHash.replace("#", "");
     console.log("handleHash:", "rawHash:", rawHash, "hash:", hash);
     const b = window.app.balls.filter((b2) => b2.el.userData.data.stub === hash)[0];
+    const inGraduatesMode = document.querySelector(`#sidebar [data-trigger="feat"][data-key="graduates"]`).classList.contains("selected");
     if (b) {
       const accepted = window.toNode(b.i);
-      console.log("OnHashChanged #4 accepted", accepted, b);
       const theme_slug = THEMES.filter((t) => t.id === b.el.userData.data.theme)[0]?.slug;
-      console.log("OnHashChanged #4 theme id:", accepted, b.el.userData.data.theme, "theme_slug:", theme_slug);
       if (accepted) {
         const btn = document.querySelector(`#sidebar [data-trigger="theme"][data-key="${theme_slug}"]`);
         if (btn) {
@@ -16512,6 +16533,12 @@ Karen Kjaergaard, WDA2020
       const slug = hash.toLowerCase().replace(/ /g, "-");
       const theme = THEMES.filter((t) => t.slug === slug)[0];
       console.log("OnHashChanged theme:", hash, slug, theme);
+      if (inGraduatesMode) {
+        console.log("OnHashChanged theme inGraduatesMode!");
+        window.app.animation.applyFilter("theme", theme.id);
+        window.app.actions.render_students_filtered(theme);
+        return;
+      }
       document.querySelectorAll("#sidebar [data-trigger]").forEach((el2) => {
         el2.classList.remove("selected");
       });
@@ -16530,6 +16557,11 @@ Karen Kjaergaard, WDA2020
       if (btn) {
         btn.classList.add("selected");
       }
+      if (inGraduatesMode) {
+        console.log("OnHashChanged page inGraduatesMode!");
+        document.querySelector(`#sidebar [data-trigger="feat"][data-key="graduates"]`).classList.remove("selected");
+        window.app.actions.clear_students_filter();
+      }
       window.app.actions.clear_content();
       if (hash === "about")
         window.app.actions.render_text(hash);
@@ -16545,6 +16577,7 @@ Karen Kjaergaard, WDA2020
         el2.classList.remove("selected");
       });
       window.app.actions.clear_content();
+      window.app.actions.clear_students_filter();
     }
   };
 

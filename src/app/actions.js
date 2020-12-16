@@ -89,14 +89,21 @@ export const clearThemeSelection = () => {
 export const render_theme = (val) => {
 	console.log('render_theme:', val);
 	document.querySelector('#logo').innerHTML = settings.title + `:<br />#`+ val.name.replace(/ /g, '&nbsp;')
-	// document.querySelector('#logo').innerHTML = settings.title + '&nbsp;#'+ val.name.replace(/ /g, '&nbsp;')
+
 	// themeFilter = val
-	// window.app.animation.applyFilter('theme', val)
-	// let studentsToggleSelected = document.querySelector('#sidebar [data-key="students"]').classList.contains("selected")
+	
+	// // if $graduates is selected, just filter the text-list
+	// const studentsToggleSelected = document.querySelector(`#sidebar [data-trigger="feat"][data-key="graduates"]`).classList.contains("selected")
 	// console.log('studentsToggleSelected', studentsToggleSelected);
 	// if( studentsToggleSelected ){
-	// 	render_students()
+	// 	studentSelected = false
+	//  	render_students('graduates', val)
+	// }else{
+
+	// 	window.app.animation.applyFilter('theme', val.id)	
+
 	// }
+
 }
 
 export const clear_theme = () => {
@@ -225,9 +232,32 @@ export const hide_render_student = () => {
 	content.innerHTML = ''
 }
 
-// unfinnished: style as pills
+
+export const render_students_filtered = (theme) => {
+	console.log('render_students_filtered', theme);
+	themeFilter = theme.id
+	render_students('graduates')
+
+	document.querySelector('#logo').innerHTML = settings.title + `:<br />#`+ theme.name.replace(/ /g, '&nbsp;')
+
+	// unselect all 
+	document.querySelectorAll('#sidebar [data-trigger="theme"]').forEach( el => {
+		el.classList.remove('selected')
+	})
+
+	// select
+	const btn = document.querySelector(`#sidebar [data-trigger="theme"][data-key="${theme.slug}"]`)
+	if( btn ){
+		btn.classList.add('selected')
+	}
+}
+export const clear_students_filter = () => {
+	document.querySelector('#logo').innerHTML = settings.title
+	themeFilter = null
+}
+
 export const render_students = (id) => {
-	console.log('render_students', id, studentSelected);
+	console.log('render_students', id, studentSelected, themeFilter);
 	container = document.querySelector('#content')
 	container.classList = id
 
@@ -239,6 +269,8 @@ export const render_students = (id) => {
 	html += '<div style="height:100%;"><div style="align-self: flex-end;">'
 
 	DATA.DATA_STUDENTS.forEach( s => {
+
+		// console.log(themeFilter, s.theme, s.theme === themeFilter );
 
 		if( themeFilter ){
 			if( s.theme === themeFilter ){
@@ -256,6 +288,10 @@ export const render_students = (id) => {
 
 	html += '</div></div>'
 
+	if( themeFilter ) console.log('studs, with themeFilter:', themeFilter, html);
+
 	container.innerHTML = html
+
+	document.querySelector('#logo').innerHTML = settings.title + ':<br />@All'
 }
 
