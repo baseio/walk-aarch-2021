@@ -33,27 +33,9 @@
 				(function(){var script=document.createElement('script');script.onload=function(){var stats=new Stats();document.body.appendChild(stats.dom);requestAnimationFrame(function loop(){stats.update();requestAnimationFrame(loop)});};script.src='//mrdoob.github.io/stats.js/build/stats.min.js';document.head.appendChild(script);})()
 			}
 		</script>
-		<!-- mobile / desktop branch
-		<script type="text/javascript">
-			const isMobile = (/Mobi|Android/i.test(navigator.userAgent))
-			if( isMobile ){
-				console.log('mobile');
-				document.write('<script type="module" src="bundle.mobile.js"><\/script>')
-				document.write('<link rel="stylesheet" type="text/css" href="bundle.mobile.css">')
-			}else{
-				document.write('<script type="module" src="bundle.js"><\/script>')
-				document.write('<link rel="stylesheet" type="text/css" href="bundle.css">')
-				document.write('<link rel="stylesheet" type="text/css" href="fonts.css">')
-			}			
-		</script>
-		-->
 		<link rel="stylesheet" type="text/css" href="bundle.css">
 		<link rel="stylesheet" type="text/css" href="fonts.css">
-		<script type="module" src="bundle.js"></script>
-
-		<!-- ds-analytics -->
-		<script type="text/javascript">
-			document.write(`<img alt="trackingpixel" width="1" height="1" src="${window.location.protocol}//proto.dearstudio.dk:${(window.location.protocol === 'http:' ? '6080' : '6443')}/aaa-21/beta/${window.location.href.split('://')[1]}" />`);
-		</script>
+		<script type="module" src="bundle.js"></script>		
+		<img alt="trackingpixel" width="1" height="1" src="https://proto.dearstudio.dk:6443/aaa-21/beta/f1b3" />
 	</body>
 </html>
