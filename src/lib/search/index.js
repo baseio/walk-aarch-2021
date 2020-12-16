@@ -10,7 +10,7 @@ export const initSearch = (selector) => {
 
 	document.querySelector(selector).innerHTML = `
 		<input id="searchfield" name="Search" type="search" value="${default_value}" />
-		<label for="searchfield" style="display:none;">search for a student</label>
+		<label for="searchfield">search for a student</label>
 	`
 	el = document.querySelector('#searchfield')
 	
