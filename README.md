@@ -2,7 +2,7 @@
 
 AARCH Winter 2021, Graduation website.
 
-## Dev
+[![License: CC BY-NC-SA 4.0](https://img.shields.io/badge/License-CC%20BY--NC--SA%204.0-lightgrey.svg)](https://creativecommons.org/licenses/by-nc-sa/4.0/)
 
 [![Netlify Status](https://api.netlify.com/api/v1/badges/36622290-ab7c-4011-a494-660cef836fa5/deploy-status)](https://app.netlify.com/sites/vibrant-nobel-c7d9ea/deploys)
 
@@ -60,10 +60,11 @@ Netlify is linked to the above repo
 
 - Hosting
 - Change slugs to wp compat
-- Intro
 
-- mobile
+### Tweak notes
 
+- dot radius: see anim/CircleSprite.js @update
+- clearTrails: see UserDraw.js @showDrawDemo @pathCreatedCallback(path, false) OR anim/index.js @onPathCreated
 
 
 
