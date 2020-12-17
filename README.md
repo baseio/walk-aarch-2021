@@ -1,6 +1,6 @@
 # walk-aarch-2021
 
-AARCH Winter 2021, Graduation website.
+## Aarhus School of Architecture - Winter graduation 2021
 
 [![License: CC BY-NC-SA 4.0](https://img.shields.io/badge/License-CC%20BY--NC--SA%204.0-lightgrey.svg)](https://creativecommons.org/licenses/by-nc-sa/4.0/)
 
@@ -11,8 +11,9 @@ Demo: <a href="https://vibrant-nobel-c7d9ea.netlify.app/">
 </a>
 
 ## Team
-Casper Riis Jensen <casper@walk.agency>  
-Karen Kjærgaard <kje@aarch.dk>
+Exhibition curator, concept: Karen Kjærgaard <kje@aarch.dk>
+Graphic Design: Casper Riis Jensen <casper@walk.agency>
+Interaction Design, development: Jørgen Skogmo <j@dearstudio.dk>
 
 
 ## General idea
@@ -22,6 +23,16 @@ Let students present their project on a live video-stream
 Let visitors book/invite a student to video-conference
 (COVID-19 times...)
 
+
+## Code architecture 
+
+Settings: Define static props
+Index:  Bootstrap, based on settings
+Routes: Decide what to do (triggered by location.hash changes)
+Action: Decide how to do it (including orchestration of other modules)
+
+
+---
 
 ## Thoughts about 'how to reuse this for the next graduation'
 
@@ -33,14 +44,6 @@ settins.js could point to the active "fx/effect".
 src/data/* can easily be updated (see tools/).
 
 Making a custom effect for each graduation would be great fun!
-
-
-## Code architecture 
-
-Settings: Define static props
-Index:  Bootstrap, based on settings
-Routes: Decide what to do (triggered by location.hash changes)
-Action: Decide how to do it (including orchestration of other modules)
 
 
 ## Notes on setting up a dev env
@@ -132,7 +135,7 @@ Netlify is linked to the above repo
 #### W51: Finalize Phase 1
 
 - [x] Bug fix, and demonstrate all features 
-- [x] Reach "all green" on Lighthouse
+- [x] Reach "all green" on Lighthouse (100,100,100,100!)[https://gitlab.com/dearstudioworks/walk-aarch-2021/-/blob/28d0bfceef27bc1750599bc2d0dc1538d6a4736f/process/grabs/201216-AAA21-beta-lighthouse.mov]
 
 #### W01: Plan production
 
