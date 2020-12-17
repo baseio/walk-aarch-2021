@@ -77,6 +77,8 @@ export const init = () => {
 		clearTimeout( hideMenu )
 		document.querySelector('#sidebar').classList.remove('fadedOut')
 		hideMenu = setTimeout( () => {
+			if( window.app.userDrawPlaying ) return
+				
 			document.querySelector('#sidebar').classList.add('fadedOut')
 		}, 2000 )
 	})

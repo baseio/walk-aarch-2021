@@ -58,21 +58,15 @@ Netlify is linked to the above repo
 
 ## Tasks
 
-
-- Get OK for: Code License
-- Get OK for: HTML Meta description
 - Hosting
-- Can we Host live-stream with Vimeo (instead of Twitch)
-- WP content workflow
-- Sort students
+- Change slugs to wp compat
+- Intro
 
-- test show icon/image/animation when hovering a ball (SLOW!!)
-- setup server (when it lands)
+- mobile
 
-+ let search affect the balls
-+ add Categories and Draw here labels
-+ about text max width
-- ball-hover when entering via direct link (Safari?)
+
+
+
 
 
 

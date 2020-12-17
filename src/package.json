@@ -1,20 +1,19 @@
 {
   "name": "AAA-21",
-  "version": "0.0.1",
+  "version": "0.0.5",
   "description": "Offical website for the 2021-winter graduation from Aarhus School of Architecture",
   "scripts": {
-    "bundle-main": "esbuild index.main.js --bundle --minify --outfile=../dist/bundle.js",
-    "bundle-mobile": "esbuild index.mobile.js --bundle --minify --outfile=../dist/bundle.mobile.js",
     
-    "terser-main": "terser ../dist/bundle.js --comments -c -m -o ../dist/bundle.js",
+    "watch": "watchexec --exts js,css,html -i /*.bundle.js/ npm run _dev-all",    
+    "_dev-all": "npm run _dev-main && npm run _dev-mobile",
+    "_dev-main": "esbuild index.main.js --bundle --outfile=../dist/bundle.js",
+    "_dev-mobile": "esbuild index.mobile.js --bundle --outfile=../dist/bundle.mobile.js",
     
-    "bundle-main-dev": "esbuild index.main.js --bundle --outfile=../dist/bundle.js",
-    "bundle-mobile-dev": "esbuild index.mobile.js --bundle --outfile=../dist/bundle.mobile.js",
-    
-    "bundle": "npm run bundle-main && npm run bundle-mobile && npm run terser-main",
-    "bundle-dev": "npm run bundle-main-dev && npm run bundle-mobile-dev",
-    
-    "watch": "watchexec --exts js,css,html -i /*.bundle.js/ npm run bundle-dev"
+    "release": "npm run _dev-all && npm run _release-all",
+    "_release-all": "npm run _release-main && npm run _release-mobile",
+    "_release-main": "terser ../dist/bundle.js --comments -c drop_console=true -m -o ../dist/bundle.js",
+    "_release-mobile": "terser ../dist/bundle.mobile.js --comments -c drop_console=true -m -o ../dist/bundle.mobile.js"
+
   },
   "keywords": [],
   "author": "Jørgen Skogmo <js@dearstudio.dk>",

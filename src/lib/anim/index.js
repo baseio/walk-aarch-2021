@@ -69,6 +69,7 @@ export const initAnimation = (selector) => {
 const init_scene = (selector) => {
 
 	window.app.pauseRendering = false
+	window.app.userDrawPlaying = false
 
 	window.addEventListener( 'resize', OnWindowResize, false );
 	window.addEventListener( 'mousemove', onDocumentMouseMove, false );
@@ -109,8 +110,6 @@ const init_scene = (selector) => {
 	controls.saveState()
 	window.app.controls = controls
 
-	// projector = new Projector();
-
 	eraser = new Eraser()
 	scene.add( eraser.el );
 	window.app.eraser = eraser
@@ -118,26 +117,6 @@ const init_scene = (selector) => {
 	targetQuat = new Quaternion().setFromEuler(group.rotation)
 	originQuat = new Quaternion().setFromEuler(group.rotation)
 
-	/*
-	const cameraTween = new Tween({z:-10, fov:camera.fov}).to({z:2, fov:FOV}, 2000)
-		.easing( Easing.Sinusoidal.InOut )
-		.on('update', (o) => {
-			if( MODE != 'grid') {
-	   			camera.position.set(0,0,o.z)
-	   			// camera.fov = o.fov
-	   			camera.updateProjectionMatrix();
-	   		}
- 		})
- 		.start()
-	*/ 		
-
-	
-	// eraser.blendDown()
-	// eraser.blendUp()
-	// eraser.material.opacity = 1
-
-	// window.app.eraser.material.opacity = 1
-	// window.app.eraser.to = 0.001
 }
 
 
@@ -245,10 +224,8 @@ const showTooltip = ( pos, label='' ) => {
 
  	const canvasHalfWidth  = ( renderer.domElement.width / window.devicePixelRatio )  / 2;
  	const canvasHalfHeight = ( renderer.domElement.height / window.devicePixelRatio )  / 2;
- 	// var canvasHalfWidth  = renderer.domElement.offsetWidth  / 2;
-    // var canvasHalfHeight = renderer.domElement.offsetHeight / 2;
-
-    var point = pos.clone().project(camera);
+ 	
+    const point = pos.clone().project(camera);
     point.x =  (point.x * canvasHalfWidth)  + canvasHalfWidth  + renderer.domElement.offsetLeft;
     point.y =  (point.y * canvasHalfHeight) + canvasHalfHeight + renderer.domElement.offsetTop;
 
@@ -268,10 +245,10 @@ const OnWindowResize = () => {
 
 // called by user-draw
 // distribute balls evenly along the path
-const onPathCreated = (path /* svg */) => {	
+const onPathCreated = (path /* svg */, clearTrails=true) => {	
 
-	console.log('onPathCreated');
-	eraser.clearScreen()
+	// console.log('onPathCreated:', path);
+	// if( clearTrails ) eraser.clearScreen()
 
 	const length = path.getTotalLength()
 	const inc = length / numballs
@@ -283,15 +260,22 @@ const onPathCreated = (path /* svg */) => {
 		const z = 0
 		positions.push({x,y,z})
 	}
-	applyPositions(positions)
-	// window.toFree()
+	
+	if( clearTrails ){
+		// normal
+		applyPositions(positions)
+	}else{
+		applyPositions(positions,null,null,0.0001,false)
+	}
+	
+
 	window.location.hash = ''
 }
 
 // set ball positions to provided array
-const applyPositions = (positions, blendMax=null, blendMin=null, hideTrailsFor=100) => {
+const applyPositions = (positions, blendMax=null, blendMin=null, hideTrailsFor=100, clearTrails=true) => {
 
-	eraser.clearScreen()
+	if( clearTrails ) eraser.clearScreen()
 
 	let delay = 0
 	for(let i=0; i<numballs; i++){

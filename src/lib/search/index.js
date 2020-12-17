@@ -42,22 +42,12 @@ const search = () => {
 	DATA.DATA_STUDENTS.forEach( s => {
 
 		if( s.name.indexOf( term ) > -1 ){
+			// const st = '/'+ term +'/gi'
+			// const re = new RegExp(st)
 
-			// html += `<a class="student" href="/#${s.stub}">${s.name}</a>`
-			
-			//const re = new RegExp(`\\b${word}\\b`)//(,"b");
+			const re = new RegExp('/'+ term +'/gi')
 
-			// const re = new RegExp(`\\${term}\\gi`)
-			const st = '/'+ term +'/gi'
-			// console.log(st);
-
-
-			const re = new RegExp(st)
-
-
-			// let text = s.name.replace(re, (match) => {
-			let text = s.name.replace(term, (match) => {
-				// console.log('a', match);
+			const text = s.name.replace(term, (match) => {
 				return '<span class="highlight">' + match + '</span>'
 			})
 
@@ -72,8 +62,6 @@ const search = () => {
 	html += '</div></div>'
 
 	document.querySelector('#content').innerHTML = html
-
-
 	document.querySelector('#overlay').style.pointerEvents = 'all'
 	document.querySelector('#content').style.overflowY = 'auto'
 	
