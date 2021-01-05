@@ -211,6 +211,7 @@ export const render_student = (stub) => {
 			<div class="div3">
 				<div class="projectimage">
 					<img alt="${s.title}" src="images/${s.id}-${s.stub}.png" />
+					<!-- <img alt="${s.title}" src="project-images/${s.id}.jpg" /> -->
 				</div>
 			</div>
 

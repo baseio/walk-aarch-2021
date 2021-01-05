@@ -5,6 +5,8 @@ export const handleHash = (rawHash) => {
 	let hash = rawHash.replace('#', '')
 	console.log('handleHash:', 'rawHash:', rawHash, 'hash:', hash)
 
+	window.app.userDrawPlaying = false
+
 	// console.log('OnHashChanged #2', app.balls);
 	const b = window.app.balls.filter( b => b.el.userData.data.stub === hash )[0]
 	// console.log('OnHashChanged #3', b);

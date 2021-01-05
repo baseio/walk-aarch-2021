@@ -2,21 +2,36 @@
 // import { fabric } from "../../vendor/fabric.all.js" // all things included - wont bundle :(
 import { fabric } from "fabric"
 
+let demoIndex = 0
+let timeout = null
 
-/// from https://codepen.io/chriscoyier/pen/NRwANp
-const DEMOS = [
-  `<path d="M2,2 L8,8" />`,
-  `<path d="M2,8 L5,2 L8,8" />`,
-  `<path d="M2,2 Q8,2 8,8" />`,
-  `<path d="M2,5 C2,8 8,8 8,5" />`,
-  `<path d="M2,2 L8,2 L2,5 L8,5 L2,8 L8,8" />`,
-  `<path d="M2,5 A 5 25 0 0 1 8 8" />`,
-  `<path d="M2,5 S2,-2 4,5 S7,8 8,4" />`,
-  `<path d="M5,2 Q 2,5 5,8" />`,
-  `<path d="M2,2 Q5,2 5,5 T8,8" />`
-]
+let canvas
+let lastPath
 
-const getDemoPath = (index, displaySize=200) => {
+let pathCreatedCallback
+let userDrawSize
+
+
+
+const DEMOS_200 = [
+ '<path stroke="black" stroke-width="10" fill="none" stroke-linecap="round" stroke-linejoin="round" d="M21.25,42.5 L170,170" />',
+ '<path stroke="black" stroke-width="10" fill="none" stroke-linecap="round" stroke-linejoin="round" d="M21.25,170 L106.25,42.5 L170,170" />',
+ '<path stroke="black" stroke-width="10" fill="none" stroke-linecap="round" stroke-linejoin="round" d="M21.25,42.5 Q170,42.5 170,170" />',
+ '<path stroke="black" stroke-width="10" fill="none" stroke-linecap="round" stroke-linejoin="round" d="M21.25,106.25 C42.5,170 170,170 170,106.25" />',
+ '<path stroke="black" stroke-width="10" fill="none" stroke-linecap="round" stroke-linejoin="round" d="M21.25,42.5 L170,42.5 L42.5,106.25 L170,106.25 L42.5,170 L170,170" />',
+ '<path stroke="black" stroke-width="10" fill="none" stroke-linecap="round" stroke-linejoin="round" d="M21.25,106.25 S42.5,-42.5 85,106.25 S148.75,170 170,85" />',
+ '<path stroke="black" stroke-width="10" fill="none" stroke-linecap="round" stroke-linejoin="round" d="M42.5,42.5 Q 42.5,106.25 106.25,170" />',
+ '<path stroke="black" stroke-width="10" fill="none" stroke-linecap="round" stroke-linejoin="round" d="M21.25,42.5 Q106.25,42.5 106.25,106.25 T170,170" />'
+] 
+let availableDemos = DEMOS_200.length
+
+const getDemoPath = (index) => {
+	return DEMOS_200[index]
+}
+
+// tool: compute all paths for a given displaySize. Used to generate the DEMOS_200 const above (at dev time)
+// note: rename to getDemoPath() and comment out the above to use a (slower) live generator - nice if we want to change the demo paths
+const computeDemoPaths = (index, displaySize=200) => {
 
 	const style = `stroke="black" stroke-width="10" fill="none" stroke-linecap="round" stroke-linejoin="round"`
 
@@ -30,55 +45,41 @@ const getDemoPath = (index, displaySize=200) => {
 	const P6 = 6 * scale
 	const P7 = 7 * scale
 	const P8 = 8 * scale
-	 
+	
+	/// from https://codepen.io/chriscoyier/pen/NRwANp
+	// [
+	//   `<path d="M2,2 L8,8" />`,
+	//   `<path d="M2,8 L5,2 L8,8" />`,
+	//   `<path d="M2,2 Q8,2 8,8" />`,
+	//   `<path d="M2,5 C2,8 8,8 8,5" />`,
+	//   `<path d="M2,2 L8,2 L2,5 L8,5 L2,8 L8,8" />`,
+	//   `<path d="M2,5 A 5 25 0 0 1 8 8" />`,
+	//   `<path d="M2,5 S2,-2 4,5 S7,8 8,4" />`,
+	//   `<path d="M5,2 Q 2,5 5,8" />`,
+	//   `<path d="M2,2 Q5,2 5,5 T8,8" />`
+	// ]
 	const demos = [
 		`<path ${style} d="M${P1},${P2} L${P8},${P8}" />`,
 		`<path ${style} d="M${P1},${P8} L${P5},${P2} L${P8},${P8}" />`,
 		`<path ${style} d="M${P1},${P2} Q${P8},${P2} ${P8},${P8}" />`,
 		`<path ${style} d="M${P1},${P5} C${P2},${P8} ${P8},${P8} ${P8},${P5}" />`,
 		`<path ${style} d="M${P1},${P2} L${P8},${P2} L${P2},${P5} L${P8},${P5} L${P2},${P8} L${P8},${P8}" />`,
-		`<path ${style} d="M${P1},${P5} A ${P5} 2${P5} 0 0 1 ${P8} ${P8}" />`,
+		// `<path ${style} d="M${P1},${P5} A ${P5} 2${P5} 0 0 1 ${P8} ${P8}" />`,
 		`<path ${style} d="M${P1},${P5} S${P2},-${P2} ${P4},${P5} S${P7},${P8} ${P8},${P4}" />`,
 		`<path ${style} d="M${P2},${P2} Q ${P2},${P5} ${P5},${P8}" />`,
 		`<path ${style} d="M${P1},${P2} Q${P5},${P2} ${P5},${P5} T${P8},${P8}" />`
 	]
 
-	// console.log('getDemoPath', index, demos[index]);
+	// console.log('getDemoPath', index);
+	console.log('getDemoPath', JSON.stringify(demos, null, ' ') );
+	availableDemos = demos.length
 
 	return demos[index]
 }
 
 
-let demoIndex = 0
-let timeout = null
-
-let canvas
-let lastPath
-
-let pathCreatedCallback
-let userDrawSize
-
-window.test = (index = 0, size=userDrawSize) => {
-	/// https://codepen.io/wadeharrell/pen/iebdw/?editors=0010
-	canvas.remove(...canvas.getObjects());
-
-	fabric.loadSVGFromString(`<svg xmlns="http://www.w3.org/2000/svg">${getDemoPath(index)}</svg>`, (objects, options) => {
-
-		var obj = fabric.util.groupSVGElements(objects, options);
-
-		canvas.add(objects[0]).renderAll();
-
-		const parser = new DOMParser();
-		const doc = parser.parseFromString(`<svg xmlns="http://www.w3.org/2000/svg">${getDemoPath(index)}</svg>`, 'image/svg+xml');
-		const path = doc.querySelector('path')
-
-		pathCreatedCallback(path)
-
-  	})
-}
 
 export const init_userdraw = (selector, size, onPathCreated) => {
-
 	
 	pathCreatedCallback = onPathCreated
 	userDrawSize = size
@@ -114,7 +115,7 @@ export const init_userdraw = (selector, size, onPathCreated) => {
 	});
 
 
-    // demo
+    // start autoplay/demo
     setTimeout( () => {
     	showDrawDemo()
     }, 50 )}
@@ -124,28 +125,27 @@ export const init_userdraw = (selector, size, onPathCreated) => {
 export const showDrawDemo = () => {
 	window.app.userDrawPlaying = true
 
-	// console.log('showDrawDemo', demoIndex, '(0..8)');
+	canvas.remove(...canvas.getObjects());
 
-	canvas.remove(...canvas.getObjects());	
+	const newPath = getDemoPath(demoIndex)
 	
-	fabric.loadSVGFromString(`<svg xmlns="http://www.w3.org/2000/svg">${getDemoPath(demoIndex)}</svg>`, (objects, opts) => {
+	fabric.loadSVGFromString(`<svg xmlns="http://www.w3.org/2000/svg">${newPath}</svg>`, (objects, opts) => {
 
 		canvas.add(objects[0]).renderAll();
 
 		const parser = new DOMParser();
-		const doc = parser.parseFromString(`<svg xmlns="http://www.w3.org/2000/svg">${getDemoPath(demoIndex)}</svg>`, 'image/svg+xml');
+		const doc = parser.parseFromString(`<svg xmlns="http://www.w3.org/2000/svg">${newPath}</svg>`, 'image/svg+xml');
 		const path = doc.querySelector('path')
 		pathCreatedCallback(path, false)
   	})
 
 	document.querySelector('#userdraw-wrapper').addEventListener("mousedown", () => {
-		// console.log('clicked #userdraw-wrapper');
 		hideDrawDemo()
 	})
 	
 	timeout = setTimeout( () => {
 		if( window.app.userDrawPlaying ){
-			demoIndex = ++demoIndex % DEMOS.length
+			demoIndex = ++demoIndex % availableDemos
 			showDrawDemo()
 		}
 	}, 3000 )

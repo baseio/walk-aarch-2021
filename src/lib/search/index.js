@@ -25,11 +25,14 @@ export const initSearch = (selector) => {
 	el.addEventListener('keydown', search)
 	el.addEventListener('paste', search)
 	el.addEventListener('submit', search)
+
+	window.app.data = DATA
 }
 
 const search = () => {
 
-	const term = el.value//.toLowerCase()
+	const term = el.value.toLowerCase()
+	const re = new RegExp('/'+ term +'/gi')
 
 	console.log('searching for', term);
 
@@ -41,13 +44,14 @@ const search = () => {
 
 	DATA.DATA_STUDENTS.forEach( s => {
 
-		if( s.name.indexOf( term ) > -1 ){
-			// const st = '/'+ term +'/gi'
-			// const re = new RegExp(st)
+		const name = s.name.toLowerCase()
 
-			const re = new RegExp('/'+ term +'/gi')
+		console.log(name.indexOf( term ), term, name);
 
-			const text = s.name.replace(term, (match) => {
+		// if( s.name.indexOf( term ) > -1 ){
+		if( name.indexOf( term ) > -1 ){
+	
+			const text = name.replace(term, (match) => {
 				return '<span class="highlight">' + match + '</span>'
 			})
 
@@ -60,6 +64,8 @@ const search = () => {
 	})
 
 	html += '</div></div>'
+
+	document.querySelector('#content').classList = 'search-test'
 
 	document.querySelector('#content').innerHTML = html
 	document.querySelector('#overlay').style.pointerEvents = 'all'

@@ -286,7 +286,7 @@ const applyPositions = (positions, blendMax=null, blendMin=null, hideTrailsFor=1
 	}
 
 	setTimeout( () => {
-		console.log('applyPositions reveal trails');
+		// console.log('applyPositions reveal trails');
 		eraser.blendDown(blendMin)
 	}, delay + hideTrailsFor)
 }
@@ -509,7 +509,11 @@ function onDocumentMouseMove( event ) {
 
 	// console.log('@@', MODE, renderer.domElement.id);
 	
-	if( MODE != 'grid' ) return
+	if( MODE != 'grid' ){
+		hideTooltip()
+		return
+	}
+
 	if( event.target.id != renderer.domElement.id ) return
 
 	event.preventDefault();

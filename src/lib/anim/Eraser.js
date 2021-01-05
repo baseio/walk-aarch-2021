@@ -30,21 +30,22 @@ export class Eraser {
 
 	setTargetOpacity( opacity, time=300 ){
 		this.to = opacity
-		console.log('# Eraser setTargetOpacity', this.to);
+		// console.log('# Eraser setTargetOpacity', this.to);
 	}
 
 	// tweens opacity to OPACITY_HIGH
 	blendUp( target = ERASER_OPACITY_HIGH ){
 		// this.setTargetOpacity( target || ERASER_OPACITY_HIGH )
 		this.to = target
-		console.log('# Eraser blendUp', this.to);
+		// console.log('# Eraser blendUp', this.to);
 	}
 
 	// tweens opacity to OPACITY_LOW
 	blendDown(target = ERASER_OPACITY_LOW){
 		// this.setTargetOpacity( target || ERASER_OPACITY_LOW )
 		this.to = target || ERASER_OPACITY_LOW
-		console.log('# Eraser blendDown', this.to);
+		// console.log('# Eraser blendDown', this.to);
+		this.material.transparent = true
 	}
 
 	// tweens up, then down after delay
@@ -56,15 +57,14 @@ export class Eraser {
 	}
 
 	clearScreen(){
-		console.log('# Eraser clearScreen');
+		// console.log('# Eraser clearScreen');
 		this.o = 1
 		this.to = 1
 		this.material.opacity = 1
-		this.material.transparent = false
+		// this.material.transparent = false
 		setTimeout( () => {
-			// this.to = ERASER_OPACITY_LOW
-			// this.material.opacity = ERASER_OPACITY_LOW
 			this.material.transparent = true
+			// console.log('# Eraser clearScreen > this.material.transparent:', this.material.transparent);
 		}, 100 )	
 	}
 
