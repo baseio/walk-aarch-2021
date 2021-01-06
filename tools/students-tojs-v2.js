@@ -11,7 +11,7 @@ const headers = [
 	'SurName',
 	'Title',
 	'Email',
-	'Mibile',
+	'Mobile',
 	'Studio',
 	'Text',
 	'Alumni',

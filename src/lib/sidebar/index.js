@@ -14,6 +14,7 @@ const FEATS = [
 ]
 
 let hideMenu = null
+let lastMouseX = window.innerWidth
 
 export const init = () => {
 
@@ -73,12 +74,18 @@ export const init = () => {
 	// show sidebar
 	document.querySelector('#sidebar').style.display = 'block'
 
-	document.addEventListener("mousemove", () => {
+	document.addEventListener("mousemove", (evnt) => {
 		clearTimeout( hideMenu )
+
+
+		lastMouseX = evnt.screenX
+
 		document.querySelector('#sidebar').classList.remove('fadedOut')
 		hideMenu = setTimeout( () => {
 			if( window.app.userDrawPlaying ) return
-				
+			if( window.app.animation.getMode() != 'free' ) return
+			if( lastMouseX > document.querySelector('#sidebar').getBoundingClientRect().x ) return
+
 			document.querySelector('#sidebar').classList.add('fadedOut')
 		}, 2000 )
 	})
