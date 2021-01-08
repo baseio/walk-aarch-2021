@@ -11,17 +11,17 @@ Demo: <a href="https://vibrant-nobel-c7d9ea.netlify.app/">
 </a>
 
 ## Team
-Exhibition curator, concept: Karen Kjærgaard <kje@aarch.dk>
-Graphic Design: Casper Riis Jensen <casper@walk.agency>
-Interaction Design, development: Jørgen Skogmo <j@dearstudio.dk>
+Exhibition curator, concept: Karen Kjærgaard <kje@aarch.dk>  
+Graphic Design: Casper Riis Jensen <casper@walk.agency>  
+Interaction Design, development: Jørgen Skogmo <j@dearstudio.dk>  
 
 
 ## General idea
 
-Procedural graphics ala Processing.org
-Let students present their project on a live video-stream
-Let visitors book/invite a student to video-conference
-(COVID-19 times...)
+Procedural graphics ala Processing.org  
+Let students present their project on a live video-stream  
+Let visitors book/invite a student to video-conference  
+(COVID-19 times...)  
 
 
 ## Code architecture 
