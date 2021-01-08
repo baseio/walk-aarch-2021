@@ -10,6 +10,8 @@ import TWEEN, { Tween, Easing, Interpolation, autoPlay } from 'es6-tween';
 const ERASER_OPACITY_HIGH = 0.1
 const ERASER_OPACITY_LOW = 0.001
 
+const ERASER_COLOR = 0x000000;
+
 
 export class Eraser {
 
@@ -18,7 +20,7 @@ export class Eraser {
 		this.o  = 1
 		this.to = 1
 		
-		this.material = new SpriteMaterial( { color: 0x000000, transparent: true, opacity:1 } )
+		this.material = new SpriteMaterial( { color: ERASER_COLOR, transparent: true, opacity:1 } )
 		this.el = new Sprite( this.material );
 		
 		this.el.position.set( 0, 0, -100 );

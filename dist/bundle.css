@@ -98,7 +98,7 @@ a {
   opacity: 0.75;
 }
 #content {
-  top: 130px;
+  top: 150px;
   position: relative;
   width: 100%;
   height: calc(100% - 130px);
@@ -311,7 +311,7 @@ div.studentinfo .projectimage > img {
 #themes-menu,
 #feats-menu {
   display: grid;
-  grid-row-gap: 20px;
+  grid-row-gap: 15px;
 }
 #sidebar div.toggle {
   display: grid;
@@ -333,7 +333,7 @@ div.studentinfo .projectimage > img {
   background: #000;
 }
 #sidebar div.toggle .label {
-  font-size: 16px;
+  font-size: 14px;
   color: #111;
 }
 #sidebar div.toggle:hover .label {

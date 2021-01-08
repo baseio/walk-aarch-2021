@@ -111,7 +111,7 @@ a {
 }
 
 #content {
-	top: 130px;
+	top: 150px;
     position: relative;
     width: 100%;
     height: calc(100% - 130px);

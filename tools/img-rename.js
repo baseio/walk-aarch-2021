@@ -2,19 +2,21 @@ const { join } = require('path');
 const { renameSync } = require('fs');
 const glob = require('glob');
 
-const SOURCE = '../process/in/201229-casper/ok-optim/'
-const DEST   = '../dist/project-images/'
+const SOURCE = '../process/in/210108-karen+anne/AFGANG E20 rettede billeder OK/'
+const DEST   = '../dist/project-images-2/'
 
-let files = glob.sync('**/*.{jpg,png,jpeg,gif}', {
-	cwd: '../process/in/201229-casper/ok-optim/'
+// let files = glob.sync('**/*.{jpg,png,jpeg,gif}', {
+let files = glob.sync('**/*.jpg', {
+	cwd: SOURCE
 })
 
 console.log(files.length, files);
 
 files.map( (f,i) => {
 
-	const id = f.split(' ')[0]
-	const ext = f.split('.').pop()
+	const img = f.split('/')[1]
+	const id  = img.split(' ')[0]
+	const ext = img.split('.').pop()
 	const name = `${id}.${ext}`
 
 

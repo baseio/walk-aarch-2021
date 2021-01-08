@@ -32,12 +32,12 @@ export const init = () => {
 
 	// populate themes menu
 	html = ''
-	html = '<div class="section-header">Subjects:</div>'
+	html = '<div class="section-header">7 Subjects:</div>'
 	THEMES.forEach( t => {
 		html += `
 			<div class="toggle" data-trigger="theme" data-key="${t.slug}">
 				<div class="circle"></div>
-				<div class="label">${t.name}</div>
+				<div class="label">#${t.name}</div>
 			</div>`
 	})
 	document.querySelector('#themes-menu').innerHTML = html

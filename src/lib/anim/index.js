@@ -17,7 +17,8 @@ import {init_userdraw, clearDrawing, showDrawDemo, hideDrawDemo} from './UserDra
 import {Eraser} from './Eraser.js'
 import {GenerateTexture} from './GenerateTexture.js'
 
-import {CircleSprite} from './CircleSprite.js'
+import {CircleSprite} from './CircleSpriteTextured.js'
+// import {CircleSprite} from './CircleSprite.js'
 // import {CircleSprite} from './CircleSpriteCustomShader.js'
 // import {CircleSprite} from './CircleSpriteCustomShader-2.js'
 // import {AnimCircleSprite} from './AnimCircleSprite.js' // requires gif.js too (in index.html)

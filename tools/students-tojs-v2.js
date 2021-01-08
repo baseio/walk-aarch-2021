@@ -1,6 +1,6 @@
 
-const org_fn = 'afgang-e20-2021-01-05 AK _LISTE HELT UDEN FORSINKEDE.xlsx'
-const csv_fn = 'afgang-e20-2021-01-05 AK _LISTE HELT UDEN FORSINKEDE.xlsx.csv'
+const org_fn = 'afgang-e20-2021-01-08-AK.xlsx'
+const csv_fn = 'afgang-e20-2021-01-08-AK.csv'
 
 const fs = require('fs')
 const parse = require('csv-parse')
@@ -9,12 +9,12 @@ const sourcefile = fs.readFileSync(csv_fn);
 const headers = [
 	'FirstName',
 	'SurName',
+	'Theme',
 	'Title',
 	'Email',
 	'Mobile',
 	'Studio',
 	'Text',
-	'Theme',
 	'ID'
 ]
 
@@ -67,7 +67,7 @@ export const DATA_STUDENTS = ${ JSON.stringify(data, null, '  ')}
 `
  		console.log('data', str)
 		
-		// fs.writeFileSync(`../src/lib/data/students.js`, str)
+		fs.writeFileSync(`../src/app/data/students.js`, str)
 
  })
 

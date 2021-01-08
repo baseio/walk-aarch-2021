@@ -54,7 +54,7 @@
 - [-] student contact info (await Karen)
 - [-] server (await Tony)
 - [x] verify fonts (and minimize selection)
-- [ ] fork mobile to separate html file (to avoid document.write)
+- [x] fork mobile to separate html file (to avoid document.write)
 
 #### W51: Finalize Phase 1
 
@@ -70,3 +70,11 @@
 #### W02: Production
 #### W03: Production
 #### W04: Release
+
+- new about text (x2)
+- new credits section
+- new excel data
+- new project images
+- mobile site
+- images-in-circles
+
