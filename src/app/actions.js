@@ -194,13 +194,14 @@ export const render_student = (stub) => {
 				<br />
 				<br />
 				<span class="studio">PROGRAMME:<br />
-				${s.studio} [todo: map studio-id to studio-data]
+				STUDIO ${s.studio}
 				</span>
 
 				<br />
 				<br />
 				<span class="studio">CONTACT:<br />
-				${s.id}@stud.aarch.dk
+				${s.email}
+				${s.mobile}
 				</span>
 			</div>
 
@@ -210,7 +211,6 @@ export const render_student = (stub) => {
 			
 			<div class="div3">
 				<div class="projectimage">
-					<!-- <img alt="${s.title}" src="images/${s.id}-${s.stub}.png" /> -->
 					<img alt="${s.title}" src="project-images/${s.id}.jpg" />
 				</div>
 			</div>

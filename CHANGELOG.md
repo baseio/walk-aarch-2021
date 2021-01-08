@@ -74,7 +74,7 @@
 - new about text (x2)
 - new credits section
 - new excel data
-- new project images
+- new project images (some missing, Anne is on it!)
 - mobile site
-- images-in-circles
+- images-in-circles (some missing)
 

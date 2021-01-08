@@ -5,59 +5,6 @@ import {
 } from 'three';
 
 
-const TEMP = ['16723 copy.png',
-'16728 copy.png',
-'16737 copy.png',
-'16754 copy.png',
-'16758 copy.png',
-'16760 copy.png',
-'16762 copy.png',
-'16764 copy.png',
-'16765 copy.png',
-'16766 copy.png',
-'16768 copy.png',
-'16769 copy.png',
-'16771 copy.png',
-'16772 copy.png',
-'16773 copy.png',
-'16777 copy.png',
-'16778 copy.png',
-'16779 copy.png',
-'16780 copy.png',
-'16781 copy.png',
-'16782 copy.png',
-'16783 copy.png',
-'16784 copy.png',
-'16785 copy.png',
-'16786 copy.png',
-'16787 copy.png',
-'16788 copy.png',
-'16789 copy.png',
-'16790 copy.png',
-'16791 copy.png',
-'16792 copy.png',
-'16793 copy.png',
-'16800 copy.png',
-'16801 copy.png',
-'16802 copy.png',
-'16804 copy.png',
-'16806 copy.png',
-'16809 copy.png',
-'16810 copy.png',
-'16812 copy.png',
-'16813 copy.png',
-'16817 copy.png',
-'16820 copy.png',
-'16821 copy.png',
-'16864 copy.png',
-'16870 copy.png',
-'16871 copy.png',
-'16873 copy.png',
-'16875 copy.png',
-'16877 copy.png']
-
-
-
 export class CircleSprite {
 	constructor(parent, i, userdata, normalTexture, hoverTexture){
 		this.i = i
@@ -90,9 +37,7 @@ export class CircleSprite {
 		});
 
 		this.loader = new TextureLoader()
-		const TEMP_IMAGE_INDEX = i % TEMP.length
-		console.log(i, TEMP.length, TEMP_IMAGE_INDEX);
-		this.loader.load( `circletextures/${TEMP[TEMP_IMAGE_INDEX]}`, (texture) => {
+		this.loader.load( `circletextures/${userdata.id}.png`, (texture) => {
 			this.material.map = texture
 			this.normalTexture = texture
 		})

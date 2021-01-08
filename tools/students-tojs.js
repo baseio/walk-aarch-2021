@@ -1,12 +1,22 @@
 
-const org_fn = 'Afgang Efteråret 2020_inkl forsinkede.xlsx'
-const csv_fn = 'AAA-21.csv'
+const org_fn = 'afgang-e20-2021-01-08-AK.xlsx'
+const csv_fn = 'afgang-e20-2021-01-08-AK.csv'
 
 const fs = require('fs')
 const parse = require('csv-parse')
 const sourcefile = fs.readFileSync(csv_fn);
 
-const headers = ['Studio','Navn','TEMA','Mail','Sprog_Projekt','Titel','Kommentarer']
+const headers = [
+	'FirstName',
+	'SurName',
+	'Theme',
+	'Title',
+	'Email',
+	'Mobile',
+	'Studio',
+	'Text',
+	'ID'
+]
 
 let data = []
 
@@ -33,13 +43,28 @@ parse(sourcefile, {
   let record
   while(record = this.read()){
     // console.log('record', record)
+    const name = record['FirstName'] + ' ' + record['SurName']
+    let mobile = record['Mobile'] || ''
+    mobile = mobile.replace(/ /g, '').trim()
+    if ( mobile.length === 8 ){
+    	mobile = `+45${mobile}`
+    }else if( mobile.length === 10){
+    	mobile = `+${mobile}`
+    }
+
+    // console.log(mobile, record['Mobile']);
+
+
 	data.push({
-    	'id': record['Mail'].split('@')[0],
+    	'id': record['ID'],
     	'studio': record['Studio'].replace('Studio', '').trim(),
-    	'name': record['Navn'],
-    	'theme': record['TEMA'],
-    	'title': record['Titel'],
-    	'stub': getstub(record['Navn'])
+    	name,
+    	'theme': record['Theme'],
+    	'title': record['Title'],
+    	'email': record['Email'],
+    	mobile, 
+    	'text': record['Text'].replace(/\s+\r\n/g, '<br /><br />'),
+    	'stub': getstub(name)
     })
   }
  }).on('end', () => {
@@ -52,9 +77,10 @@ export const DATA_ORIGIN   = "${org_fn}"
 export const DATA_PARSEDATE = "${version}"
 export const DATA_STUDENTS = ${ JSON.stringify(data, null, '  ')}
 `
- 		// console.log('data', str)
+ 		console.log('data', str)
+ 		console.log('data', data.length)
 		
-		fs.writeFileSync(`../src/lib/data/students.js`, str)
+		fs.writeFileSync(`../src/app/data/students.js`, str)
 
  })
 
