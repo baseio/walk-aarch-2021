@@ -1,6 +1,6 @@
 
-const org_fn = 'TEKSTER afgang-e20-2020-12-22.xlsx'
-const csv_fn = 'AAA-21-v2.csv'
+const org_fn = 'afgang-e20-2021-01-05 AK _LISTE HELT UDEN FORSINKEDE.xlsx'
+const csv_fn = 'afgang-e20-2021-01-05 AK _LISTE HELT UDEN FORSINKEDE.xlsx.csv'
 
 const fs = require('fs')
 const parse = require('csv-parse')
@@ -14,10 +14,8 @@ const headers = [
 	'Mobile',
 	'Studio',
 	'Text',
-	'Alumni',
-	'ID',
-	'Entry Date'
-	//'TEMA',
+	'Theme',
+	'ID'
 ]
 
 let data = []
@@ -50,7 +48,7 @@ parse(sourcefile, {
     	'id': record['ID'],
     	'studio': record['Studio'].replace('Studio', '').trim(),
     	'name': name,
-    	'theme': record['TEMA'],
+    	'theme': record['Theme'],
     	'title': record['Title'],
     	'email': record['Email'],
     	'text': record['Text'].replace(/\s+\r\n/g, '<br /><br />'),

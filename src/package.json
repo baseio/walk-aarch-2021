@@ -12,7 +12,9 @@
     "release": "npm run _dev-all && npm run _release-all",
     "_release-all": "npm run _release-main && npm run _release-mobile",
     "_release-main": "terser ../dist/bundle.js --comments -c drop_console=true -m -o ../dist/bundle.js",
-    "_release-mobile": "terser ../dist/bundle.mobile.js --comments -c drop_console=true -m -o ../dist/bundle.mobile.js"
+    "_release-mobile": "terser ../dist/bundle.mobile.js --comments -c drop_console=true -m -o ../dist/bundle.mobile.js",
+
+    "upload": "rsync -avz --exclude \".DS_Store\" -e \"ssh -i $HOME/.ssh/ds_rsa\" ../dist/* dearstudio@pa.aarch.dk:/home/dearstudio/www"
 
   },
   "keywords": [],
