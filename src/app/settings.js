@@ -5,4 +5,6 @@ export const settings = {
 	title: 	`//&nbsp;2021 //&nbsp;PROCESSING //&nbsp;ARCHITECTURE`,
 	// title: 	`/* *&nbsp;2020/2021 *&nbsp;PROCESSING *&nbsp;ARCHITECTURE **/`,
 
+	background_color: '#f50',
+
 }

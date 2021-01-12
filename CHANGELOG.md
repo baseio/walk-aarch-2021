@@ -63,18 +63,35 @@
 
 #### W01: Plan production
 
-- [ ] student content info
-- [ ] student hero images
-- [ ] mobile
+- [x] student content info
+- [x] student hero images
+- [x] mobile
+
+*beta 0.0.8 / 210108*  
+- [x] new about text (x2)
+- [x] new credits section
+- [x] new excel data
+- [x] new project images (some missing, Anne is on it!)
+- [x] mobile site
+- [x] images-in-circles (some missing)
+
 
 #### W02: Production
+
+*beta 0.0.9 / 210112*    
+- [x] keep circle-image on dot-hover
+- [x] more thematic 'random positions'
+- [x] searching from within a graduates/student-view fails
+- [ ] permalinks dont establish full views
+- [ ] include project texts? (Await Casper / Karen)
+- [ ] colors? (Await Casper / Karen)
+
+Uploaded a version to our staging-server (vibrant-nobel-c7d9ea.netlify.app) in orange (just to check how easy it would be to change the main color),
+that is using plain circles until you mouse-over a student (where it shows the circular project-image).
+Also made the random-positions (used when exiting a theme) slightly more 'thematic' (the circles now enters a randomly choosen shape, not just a random position).
+Also fixed a bug where search did not work when a student was already selected.
+
 #### W03: Production
 #### W04: Release
 
-- new about text (x2)
-- new credits section
-- new excel data
-- new project images (some missing, Anne is on it!)
-- mobile site
-- images-in-circles (some missing)
 

@@ -1,3 +1,4 @@
+import {settings} from '../../app/settings.js'
 
 import {	
 	Sprite,
@@ -10,7 +11,8 @@ import TWEEN, { Tween, Easing, Interpolation, autoPlay } from 'es6-tween';
 const ERASER_OPACITY_HIGH = 0.1
 const ERASER_OPACITY_LOW = 0.001
 
-const ERASER_COLOR = 0x000000;
+// const ERASER_COLOR = 0x000000;
+const ERASER_COLOR = settings.background_color;
 
 
 export class Eraser {

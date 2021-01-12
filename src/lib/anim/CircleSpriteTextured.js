@@ -38,8 +38,9 @@ export class CircleSprite {
 
 		this.loader = new TextureLoader()
 		this.loader.load( `circletextures/${userdata.id}.png`, (texture) => {
-			this.material.map = texture
-			this.normalTexture = texture
+			// this.material.map = texture
+			// this.normalTexture = texture
+			this.hoverTexture = texture // keep the texture on hover
 		})
 
 

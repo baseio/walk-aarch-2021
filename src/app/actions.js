@@ -177,6 +177,14 @@ export const render_student = (stub) => {
 	const s = DATA.DATA_STUDENTS.filter( student => student.stub === stub)[0]
 	console.log('render_student', stub, s);
 
+	document.querySelectorAll('#sidebar [data-trigger="theme"]').forEach( el => {
+		el.classList.remove('selected')
+	})
+	// const btn = document.querySelector(`#sidebar [data-trigger="theme"][data-key="${theme.slug}"]`)
+	// if( btn ){
+	// 	btn.classList.add('selected')
+	// }
+
 	const html = `
 
 		<div class="studentinfo">

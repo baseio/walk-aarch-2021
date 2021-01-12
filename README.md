@@ -19,29 +19,28 @@ Interaction Design, development: Jørgen Skogmo <j@dearstudio.dk>
 ## General idea
 
 Procedural graphics ala Processing.org  
+
+## Canceled ideas
 Let students present their project on a live video-stream  
 Let visitors book/invite a student to video-conference  
 (COVID-19 times...)  
+Reason for cancelation: Weak support with the students, "more work"
 
 
 ## Code architecture 
+Settings: Define static props  
+Index:  Bootstrap, based on settings  
+Routes: Decide what to do (triggered by location.hash changes)  
+Action: Decide how to do it (including orchestration of other modules)  
 
-Settings: Define static props
-Index:  Bootstrap, based on settings
-Routes: Decide what to do (triggered by location.hash changes)
-Action: Decide how to do it (including orchestration of other modules)
-
-
----
 
 ## Thoughts about 'how to reuse this for the next graduation'
-
 A decent strategy whould be to consider this site a 'landing pages' or 'concept site'
 for a graduation.
 One could swap the "src/lib/animation" (rename to sth like src/fx ?),
 keeping the hash-route-scheme.
-settins.js could point to the active "fx/effect".
-src/data/* can easily be updated (see tools/).
+settings.js could point to the active "fx/effect".
+src/data/* can easily be updated (see tools/).  
 
 Making a custom effect for each graduation would be great fun!
 
@@ -51,25 +50,40 @@ Making a custom effect for each graduation would be great fun!
 Development versions: node v14.15.1
 Tested against: chrome/86.0.4240.198 safari/537.36 opera/72.0.3815.400
 
+### install:
 git clone
+cd src
 npm i
+
+### dev:
 npm run watch
-cd dist/ && serve (can we script this to run in bg? bundle serve as node_module?)
+cd dist && serve # (can we script this to run in bg? bundle serve as node_module?)
 
-Netlify is linked to the above repo
+### make release:
+cd src/
+npm run release
 
+### push to netlify:
+git push origin master
+
+### push online:
+cd src/
+npm run upload
+
+
+---
 
 ## Tasks
 
-- Hosting
-- Change slugs to wp compat
+- Change slugs (wp compat)
+- Link to archive website (await apparat)
+
+---
 
 ### Tweak notes
 
 - dot radius: see anim/CircleSprite.js @update
 - clearTrails: see UserDraw.js @showDrawDemo @pathCreatedCallback(path, false) OR anim/index.js @onPathCreated
-
-
 
 ---
 
@@ -78,25 +92,25 @@ Netlify is linked to the above repo
 
 #### last years site:
 https://wda2020.aarch.dk/
-41 requests
-65.3 MB transferred
-66.4 MB resources
-Finish: 39.30 s
+41 requests  
+65.3 MB transferred  
+66.4 MB resources  
+Finish: 39.30 s  
 
 
 #### beta 1: 201125:
-17 requests
-341 kB transferred
-1.6 MB resources
-Finish: 947 ms
+17 requests  
+341 kB transferred  
+1.6 MB resources  
+Finish: 947 ms  
 
 #### beta 2: 201216:
-6 requests
-268 kB transferred
-979 kB resources
-Finish: 312 ms
+6 requests  
+268 kB transferred  
+979 kB resources  
+Finish: 312 ms  
 
-Performance: 99 (varies)
-Accessibility: 100
-Best Practices: 100
-SEO: 100
+Performance: 99 (varies)  
+Accessibility: 100  
+Best Practices: 100  
+SEO: 100  
