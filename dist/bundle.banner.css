@@ -1,0 +1,23 @@
+/* lib/anim/styles.banner.css */
+#logo {
+  position: absolute;
+  top: 0;
+  left: 30px;
+  z-index: 500;
+  mix-blend-mode: difference;
+  font: 13px/1.65em "Univers LT W02 55 Roman", "HelveticaNeue", "Helvetica Neue", Helvetica, Arial, sans-serif;
+  font-weight: 700;
+  font-size: 48px;
+  line-height: 100%;
+  padding-top: 35px;
+  width: 10px;
+  color: #fff;
+  text-decoration: none;
+}
+#animation {
+  position: absolute;
+  top: 0;
+  left: 0;
+  background-color: #202020;
+  border-radius: 30px;
+}

@@ -19,7 +19,6 @@
 #themes-menu, #feats-menu {
   display: grid;
   grid-row-gap: 15px;
-  /*grid-row-gap: 20px;*/
 }
 
 #sidebar div.toggle {
@@ -46,7 +45,6 @@
 
 #sidebar div.toggle .label {
   font-size: 14px;
-  /*font-size: 16px;*/
   color: #111;
 }
 
@@ -54,11 +52,73 @@
   text-decoration: underline;
 }
 
-
-
 #sidebar .section-header {
   font-size: 16px;
   color: #111;
   font-weight: 700;
   text-transform: uppercase;
+}
+
+@media only screen and (max-height: 800px) {
+
+  /*#sidebar {
+    background-color: #f00 !important;
+  }*/
+
+  #showhide {
+    height: 25px;
+    color: #f00 !important;
+  }
+  #sidebar.closed #showhide {
+    height: 35px;
+  }
+
+  #search {
+    margin-top: 14px;
+  }
+
+  #search label {
+    opacity: 0;
+  }
+
+  #searchfield {
+    font-size: 14px;
+  }
+
+  #userdraw-drawhere-label {
+    font-size: 14px;
+    left: 15px;
+    top: 10px;
+  }
+
+  #sidebar .section-header {
+    font-size: 14px;
+  }
+
+
+  #sidebar div.toggle {
+    grid-template-columns: 24px 1fr;
+  }
+
+  #sidebar div.toggle .label {
+    font-size: 14px;
+  }
+
+  #sidebar div.toggle .circle {
+    width: 12px;
+    height: 12px;
+
+    width: 10px;
+    height: 10px;
+    align-self: self-start;
+    position: relative;
+    top: 4px;
+  }
+
+  #themes-menu, body.small #feats-menu {
+    grid-row-gap: 15px;
+    grid-row-gap: 1vh;
+    /*grid-auto-columns: max-content;*/
+  }
+
 }

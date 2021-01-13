@@ -5,14 +5,16 @@
   "scripts": {
     
     "watch": "watchexec --exts js,css,html -i /*.bundle.js/ npm run _dev-all",    
-    "_dev-all": "npm run _dev-main && npm run _dev-mobile",
+    "_dev-all": "npm run _dev-main && npm run _dev-mobile && npm run _dev-banner",
     "_dev-main": "esbuild index.main.js --bundle --outfile=../dist/bundle.js",
     "_dev-mobile": "esbuild index.mobile.js --bundle --outfile=../dist/bundle.mobile.js",
+    "_dev-banner": "esbuild index.banner.js --bundle --outfile=../dist/bundle.banner.js",
     
     "release": "npm run _dev-all && npm run _release-all",
-    "_release-all": "npm run _release-main && npm run _release-mobile",
+    "_release-all": "npm run _release-main && npm run _release-mobile && npm run _release-banner",
     "_release-main": "terser ../dist/bundle.js --comments -c drop_console=true -m -o ../dist/bundle.js",
     "_release-mobile": "terser ../dist/bundle.mobile.js --comments -c drop_console=true -m -o ../dist/bundle.mobile.js",
+    "_release-banner": "terser ../dist/bundle.banner.js --comments -c drop_console=true -m -o ../dist/bundle.banner.js",
 
     "upload": "rsync -avz --exclude \".DS_Store\" -e \"ssh -i $HOME/.ssh/ds_rsa\" ../dist/* dearstudio@pa.aarch.dk:/home/dearstudio/www"
 
