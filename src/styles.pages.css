@@ -2,19 +2,26 @@ div.studentinfo {
 	position: relative;
     top: 0;
     color: #000;
-    /*height: calc(100% - 130px);*/
     height: 100%;
     display: grid;
 	grid-template-columns: 370px 1fr;
 	grid-template-rows: 1fr 50px;
 	grid-column-gap: 0px;
 	grid-row-gap: 0px;
+
+	margin-top: 50px;
+    height: calc(100% - 50px);
 }
 
 div.studentinfo .div1 { grid-area: 1 / 1 / 2 / 2; padding-right: 20px; } /* topleft */
 div.studentinfo .div2 { grid-area: 2 / 1 / 3 / 2; } /* btmleft */
 div.studentinfo .div3 { grid-area: 1 / 2 / 2 / 3; } /* topright */
 div.studentinfo .div4 { grid-area: 2 / 2 / 3 / 3; } /* btmright */
+
+div.studentinfo .name {
+	font-size: 28px;
+    line-height: 100%;
+}
 
 div.studentinfo a.projectlink {
 	color: #000;

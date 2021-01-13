@@ -88,7 +88,7 @@ export const clearThemeSelection = () => {
 
 export const render_theme = (val) => {
 	console.log('render_theme:', val);
-	document.querySelector('#logo').innerHTML = settings.title + `:<br />#`+ val.name.replace(/ /g, '&nbsp;')
+	document.querySelector('#logo').innerHTML = settings.title + `:<br />#<span class="spacer-hash">&nbsp;</span>`+ val.name.replace(/ /g, '&nbsp;')
 
 	const studentsToggleSelected = document.querySelector(`#sidebar [data-trigger="feat"][data-key="graduates"]`).classList.contains("selected")
 	// console.log('render_theme: studentsToggleSelected', studentsToggleSelected);
@@ -193,7 +193,7 @@ export const render_student = (stub) => {
 
 				<span class="name">${s.name}</span>
 				
-				<br />
+				<br /><br /><br />
 				<br />
 				<span class="theme">GRADUATION PROJECT:<br />
 				${s.title}
@@ -208,13 +208,13 @@ export const render_student = (stub) => {
 				<br />
 				<br />
 				<span class="studio">CONTACT:<br />
-				${s.email}
+				${s.email}<br />
 				${s.mobile}
 				</span>
 			</div>
 
 			<div class="div2">
-				<a class="projectlink" href="http://wp/${s.stub}">SE PROJECT</a>
+				<a class="projectlink" style="text-align:center;" href="http://wp/${s.stub}">SEE PROJECT</a>
 			</div>
 			
 			<div class="div3">
@@ -240,7 +240,7 @@ export const render_student = (stub) => {
 	}, 750);
 
 	const theme = DATA.THEMES.filter(t => t.id === s.theme)[0]
-	document.querySelector('#logo').innerHTML = settings.title + `:<br />#`+ theme.name.replace(/ /g, '&nbsp;')
+	document.querySelector('#logo').innerHTML = settings.title + `:<br />#<span class="spacer-hash">&nbsp;</span>`+ theme.name.replace(/ /g, '&nbsp;')
 }
 export const hide_render_student = () => {
 	document.querySelector('#curtain').classList = 'hide'
@@ -253,7 +253,7 @@ export const render_students_filtered = (theme) => {
 	themeFilter = theme.id
 	render_students('graduates')
 
-	document.querySelector('#logo').innerHTML = settings.title + `:<br />#`+ theme.name.replace(/ /g, '&nbsp;')
+	document.querySelector('#logo').innerHTML = settings.title + `:<br />#<span class="spacer-hash">&nbsp;</span>`+ theme.name.replace(/ /g, '&nbsp;')
 
 	// unselect all 
 	document.querySelectorAll('#sidebar [data-trigger="theme"]').forEach( el => {
@@ -291,7 +291,7 @@ export const render_students = (id) => {
 		if( themeFilter ){
 			if( s.theme === themeFilter ){
 				if( studentSelected && s.stub === studentSelected.stub) {
-					html += `<a class="student selectedHilite" href="/#${s.stub}">${s.name}</a>`
+					html += `<a class="student selectedHilite" href="/#&nbsp;${s.stub}">${s.name}</a>`
 				}else{
 					html += `<a class="student" href="/#${s.stub}">${s.name}</a>`
 				}
@@ -308,6 +308,7 @@ export const render_students = (id) => {
 
 	container.innerHTML = html
 
-	document.querySelector('#logo').innerHTML = settings.title + ':<br />@All'
+	// document.querySelector('#logo').innerHTML = settings.title + ':<br />@<span class="spacer-alpha">&nbsp;</span>All'
+	document.querySelector('#logo').innerHTML = settings.title + ':<br />#<span class="spacer-hash">&nbsp;</span>GRADUATES'
 }
 

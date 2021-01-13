@@ -37,7 +37,7 @@
   height: 24px;
   border-radius: 100%;
   pointer-events: none;
-  border: 1.5px solid #111;
+  border: 2px solid #111;
 }
 
 #sidebar div.toggle.selected .circle {

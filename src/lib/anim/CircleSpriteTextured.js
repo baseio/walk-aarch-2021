@@ -11,7 +11,6 @@ export class CircleSprite {
 		this.enabled = true
 
 		this.enabledSize = 0.1
-		// this.disabledSize = 0 //0.01
 
 		this.normalTexture = normalTexture
 		this.hoverTexture  = hoverTexture
@@ -38,8 +37,8 @@ export class CircleSprite {
 
 		this.loader = new TextureLoader()
 		this.loader.load( `circletextures/${userdata.id}.png`, (texture) => {
-			// this.material.map = texture
-			// this.normalTexture = texture
+			this.material.map = texture
+			this.normalTexture = texture
 			this.hoverTexture = texture // keep the texture on hover
 		})
 

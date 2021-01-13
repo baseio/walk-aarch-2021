@@ -70,6 +70,9 @@ git push origin master
 cd src/
 npm run upload
 
+### push just one file:
+rsync -avz -e "ssh -i $HOME/.ssh/ds_rsa" mobile.html dearstudio@pa.aarch.dk:/home/dearstudio/www/
+
 
 ---
 

@@ -1,4 +1,4 @@
-console.log('index.mobile.js');
+// console.log('index.mobile.js');
 
 import {settings} from './app/settings.js'
 import * as DATA from './app/data.js'
@@ -8,7 +8,7 @@ import './styles.mobile.css'
 const init = () => {
 	
 	document.title = settings.document_title
-	document.querySelector('#logo').innerHTML = settings.title.replace(' ', '<br />')
+	document.querySelector('#logo').innerHTML = settings.title //.replace(' ', '<br />')
 
 	let html = ''
 
