@@ -1,9 +1,10 @@
 import {
+	Texture,
 	Sprite,
-	SpriteMaterial,	
-	TextureLoader
+	SpriteMaterial
 } from 'three';
 
+import {CIRCLEIMAGESB64} from '../../app/data/circletextures-b64.js'
 
 export class CircleSprite {
 	constructor(parent, i, userdata, normalTexture, hoverTexture){
@@ -35,12 +36,14 @@ export class CircleSprite {
 		    color: 0xffffff
 		});
 
-		this.loader = new TextureLoader()
-		this.loader.load( `circletextures-256/${userdata.id}.png`, (texture) => {
-			this.material.map = texture
-			this.normalTexture = texture
-			this.hoverTexture = texture // keep the texture on hover
-		})
+		// this.loader = new TextureLoader()
+		// this.loader.load( `circletextures/${userdata.id}.png`, (texture) => {
+		// 	this.material.map = texture
+		// 	this.normalTexture = texture
+		// 	this.hoverTexture = texture // keep the texture on hover
+		// })
+
+		this.makeTexture( userdata.id )
 
 
 		this.el = new Sprite( this.material );
@@ -62,6 +65,30 @@ export class CircleSprite {
 			this.to = 1
 			this.setTarget({x:this.tx, y:this.ty, z:this.tz, o:this.to, r:this.tr})
 		}, 500)
+	}
+
+	makeTexture( id ){
+		// console.log('makeTexture', id);
+
+		const b64s = CIRCLEIMAGESB64[id]
+
+		const canvas = document.createElement('canvas');
+		const size = 64
+		canvas.width = size;
+		canvas.height = size;
+		const c = canvas.getContext('2d');
+
+		const image = new Image();
+	    image.onload = (res) => {
+	      	c.drawImage(image, 0, 0);
+	      	const texture = new Texture(canvas);
+			texture.needsUpdate = true;
+	      	
+	      	this.material.map = texture
+			// this.normalTexture = texture
+			// this.hoverTexture = texture // keep the texture on hover
+	    }
+    	image.src = "data:image/png;base64," + CIRCLEIMAGESB64[id]    
 	}
 
 	setTarget( obj ){
