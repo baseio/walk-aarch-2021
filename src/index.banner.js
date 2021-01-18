@@ -35,6 +35,8 @@ import * as DATA from './app/data.js'
 
 import './lib/anim/styles.banner.css'
 
+import {checkWebGL} from './app/fallback.js'
+
 // config
 const DRAWING_SIZE = 200 // size of the userdraw canvas
 
@@ -84,7 +86,7 @@ const initAnimation = (selector) => {
 
 	timeout = setInterval( () => {
 		randomize()
-	}, 10000 )
+	}, 14000 )
 	
 	randomize()
 }
@@ -376,4 +378,6 @@ const OnWindowResize = () => {
 
 // begin
 
-initAnimation('#animation')
+if( checkWebGL() ){
+	initAnimation('#animation')
+}

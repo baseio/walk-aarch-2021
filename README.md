@@ -80,6 +80,10 @@ rsync -avz -e "ssh -i $HOME/.ssh/ds_rsa" mobile.html dearstudio@pa.aarch.dk:/hom
 
 - Change slugs (wp compat)
 - Link to archive website (await apparat)
+- approve banner design
+- banner, integrate with aarch.dk
+- banner, cta
+- banner, fallback image
 
 ---
 

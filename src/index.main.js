@@ -26,17 +26,37 @@ import {initSearch} from './lib/search/index.js'
 import './styles.main.css'
 import './styles.pages.css'
 
+
 document.title = settings.document_title
-document.querySelector('#logo').innerHTML = settings.title
 
-window.app = {}
 
-window.app.animation = Animation
-window.app.actions = actions
-window.app.sidebar = sidebar.init()
-window.app.search  = initSearch('#search')
+const checkWebGL = (selector) => {
+	const c = document.createElement('canvas')
+	const gl = c.getContext("webgl") || c.getContext("experimental-webgl");
+    //return false;
+    return (gl && gl instanceof WebGLRenderingContext)
+}
 
-Animation.initAnimation('#animation')
+// if( !checkWebGL('#animation') ){
+// 	console.log('Error: WebGL not supported');
+// 	document.body.innerHTML = `
+// 		<div>Webgl not supported</div>
 
-window.app.router = new Router(handleHash)
+// 	`
+// }else{
+	
+	document.querySelector('#logo').innerHTML = settings.title
+
+	window.app = {}
+
+	window.app.animation = Animation
+	window.app.actions = actions
+	window.app.sidebar = sidebar.init()
+	window.app.search  = initSearch('#search')
+
+	Animation.initAnimation('#animation')
+
+	window.app.router = new Router(handleHash)
+
+// }
 
