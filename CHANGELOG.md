@@ -93,10 +93,9 @@ Also fixed a bug where search did not work when a student was already selected.
 
 #### W03: Production
 
-- [ ] banner
-- [ ] banner, integrate with aarch.dk
-- [ ] banner, cta
-- [ ] banner, fallback
+- [ ] hasGL check: pass when mobile
+- [ ] banner, mobile
+- [ ] banner, new CTA ("visit graduation show")
 
 #### W04: Release
 

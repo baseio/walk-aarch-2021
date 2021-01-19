@@ -120,16 +120,12 @@ const init_scene = (selector) => {
 	camera.position.set(0,0,2)
 	camera.lookAt( group.position );
 
-	controls = new OrbitControls( camera, renderer.domElement );
-	controls.enableRotate = true;
-	controls.enableDamping = true;
-	controls.dampingFactor = 0.02;
-	// controls.minDistance = 10;
-	// controls.maxDistance = 100;
-	// controls.maxPolarAngle = Math.PI * 0.5;
+	// controls = new OrbitControls( camera, renderer.domElement );
+	// controls.enableRotate = true;
+	// controls.enableDamping = true;
+	// controls.dampingFactor = 0.02;
+	// controls.update()
 	// controls.saveState()
-	controls.update()
-	controls.saveState()
 
 	eraser = new Eraser()
 	scene.add( eraser.el );
@@ -350,7 +346,7 @@ const update = () => {
 	balls.forEach( b => b.update() )
 
 	eraser.update()
-	controls.update()
+	// controls.update()
 
 	const speed = 0.33 //0.5
 
