@@ -165,7 +165,7 @@ export const render_student = (stub) => {
 			</div>
 
 			<div class="div2">
-				<a class="projectlink" style="text-align:center;" href="http://wp/${s.stub}">SEE PROJECT</a>
+				<a class="projectlink" style="text-align:center;" href="https://afgang.aarch.dk/2021/student/${s.stub}">SEE PROJECT</a>
 			</div>
 			
 			<div class="div3">
@@ -175,7 +175,7 @@ export const render_student = (stub) => {
 			</div>
 
 			<div class="div4">
-				(pdf-link?)
+				<!-- (pdf-link?) -->
 			</div>
 
 		</div>

@@ -9,21 +9,26 @@
 		<style type="text/css">
 			html, body { padding: 0; margin: 0; }
 			
-			#animation { position: absolute; top:0; left:0; }
+			#animation {
+				position: absolute;
+				top:0;
+				left:0;
+			}
 			
-			#title { position: absolute;
-			  top: 248px; /* 35px; */
-			  left: 30px;
-			  width: calc(0.5 * 669px);
-			  height: calc(0.5 * 275px);
-			  
-			  mix-blend-mode: difference;
-			  background-blend-mode: difference;
+			#title {
+				position: absolute;
+				top: 248px; /* 35px; */
+				left: 30px;
+				width: calc(0.5 * 669px);
+				height: calc(0.5 * 275px);
 
-			  background-repeat: no-repeat;
-			  background-size: contain;
-			  
-			  z-index: 500;
+				mix-blend-mode: difference;
+				background-blend-mode: difference;
+
+				background-repeat: no-repeat;
+				background-size: contain;
+
+				z-index: 500;
 			}
 
 			#cta {
@@ -38,10 +43,27 @@
 			#cta:hover path {
 				fill: #444;
 			}
+
+			#fallback {
+				display: none;
+				position: absolute;
+				top: 0;
+				left: 0;
+				right: 0;
+				bottom: 0;
+				width: 100%;
+				height: 100%;
+				background-color: #222;
+				background-image: url(fallback.png);
+				background-repeat: no-repeat;
+				background-position: center;
+				background-size: cover;
+			}
 		</style>
 	</head>
 	<body>
 		<div id="animation"></div>
+		<div id="fallback"></div>
 		<div id="title"></div>
 		<div id="cta">
 			<a href="https://pa.aarch.dk">

@@ -1,6 +1,6 @@
 
-const org_fn = 'afgang-e20-2021-01-08-AK.xlsx'
-const csv_fn = 'afgang-e20-2021-01-08-AK.csv'
+const org_fn = 'afgang-e20-2021-01-19 AK _LISTE UDEN FORSINKEDE.xlsx + URL liste afgang.aarch.dk.xlsx'
+const csv_fn = 'afgang-e20-2021-01-05.csv'
 
 const fs = require('fs')
 const parse = require('csv-parse')
@@ -9,12 +9,12 @@ const sourcefile = fs.readFileSync(csv_fn);
 const headers = [
 	'FirstName',
 	'SurName',
+	'Slug',
 	'Theme',
 	'Title',
 	'Email',
 	'Mobile',
 	'Studio',
-	'Text',
 	'ID'
 ]
 
@@ -51,8 +51,11 @@ parse(sourcefile, {
     }else if( mobile.length === 10){
     	mobile = `+${mobile}`
     }
-
     // console.log(mobile, record['Mobile']);
+
+    let slug = record['Slug'] // https://afgang.aarch.dk/2021/student/huiru-huang/ 
+    slug = slug.replace('https://afgang.aarch.dk/2021/student/', '')
+    slug = slug.replace('/', '')
 
 
 	data.push({
@@ -63,8 +66,9 @@ parse(sourcefile, {
     	'title': record['Title'],
     	'email': record['Email'],
     	mobile, 
-    	'text': record['Text'].replace(/\s+\r\n/g, '<br /><br />'),
-    	'stub': getstub(name)
+    	// 'text': record['Text'].replace(/\s+\r\n/g, '<br /><br />'),
+    	// 'stub': getstub(name),
+    	'stub': slug //record['Slug'].replace('https://afgang.aarch.dk/', '/')
     })
   }
  }).on('end', () => {
