@@ -10,6 +10,10 @@ Demo: <a href="https://vibrant-nobel-c7d9ea.netlify.app/">
 	https://vibrant-nobel-c7d9ea.netlify.app
 </a>
 
+
+Analytics:  
+https://analytics.google.com/analytics/web/?authuser=3#/a187911964p259766919/admin/streams/table/
+
 ## Team
 Exhibition curator, concept: Karen Kjærgaard <kje@aarch.dk>  
 Graphic Design: Casper Riis Jensen <casper@walk.agency>  

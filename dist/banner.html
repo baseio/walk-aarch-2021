@@ -18,17 +18,22 @@
 			#title {
 				position: absolute;
 				top: 248px; /* 35px; */
-				left: 30px;
-				width: calc(0.5 * 669px);
+				left: 40px;
+				width: calc(100% - 40px);
+    			max-width: calc(0.5 * 669px);
 				height: calc(0.5 * 275px);
-
 				mix-blend-mode: difference;
 				background-blend-mode: difference;
-
 				background-repeat: no-repeat;
 				background-size: contain;
-
 				z-index: 500;
+				/*border: 1px solid #f00;*/
+			}
+			@media (max-device-width: 768px) {
+				#title {
+					left: 20px;
+					width: calc(100% - 20px);
+				}
 			}
 
 			#cta {
@@ -66,7 +71,7 @@
 		<div id="fallback"></div>
 		<div id="title"></div>
 		<div id="cta">
-			<a href="https://pa.aarch.dk">
+			<a href="https://pa.aarch.dk" target="_blank">
 			<?xml version="1.0" encoding="utf-8"?>
 <!-- Generator: Adobe Illustrator 25.1.0, SVG Export Plug-In . SVG Version: 6.00 Build 0)  -->
 <svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"

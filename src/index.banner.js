@@ -98,7 +98,7 @@ const initAnimation = (selector) => {
 
 	timeout = setInterval( () => {
 		randomize()
-	}, 14000 )
+	}, 4000 ) // 14000
 	
 	randomize()
 }
@@ -117,6 +117,7 @@ const init_scene = (selector) => {
 	renderer = new WebGLRenderer( { preserveDrawingBuffer: true, antialias: true } );
 	renderer.setPixelRatio( window.devicePixelRatio );
 	renderer.setSize( window.innerWidth, window.innerHeight );
+	window.renderer = renderer
 	renderer.autoClearColor = false;
 	renderer.domElement.id = 'three'
 	document.querySelector(selector).appendChild( renderer.domElement );
@@ -228,7 +229,7 @@ const _moveto_random_positions = () => {
 }
 
 const _moveto_ransom_path = () => {
-	console.log('_moveto_ransom_path()');
+	// console.log('_moveto_ransom_path()');
 
 	// from: http://svgicons.sparkk.fr
 	const paths = [
@@ -280,7 +281,7 @@ const _moveto_ransom_path = () => {
 	const width  = vb.split(' ')[2] * 1.0
 	const height = vb.split(' ')[3] * 1.0
 	const size = Math.max(width, height)
-	console.log('viewBox:', vb, 'width:', width, 'height:', height, 'size:', size );	
+	// console.log('viewBox:', vb, 'width:', width, 'height:', height, 'size:', size );	
 
 	const S = size // + (size/2) // 30 // DRAWING_SIZE
 	
@@ -288,7 +289,9 @@ const _moveto_ransom_path = () => {
 	const length = path.getTotalLength()
 	const inc = length / numballs
 	const positions = []
+
 	for(let i=0; i<numballs; i++){	
+		// console.log('numballs:', numballs, 'length:', length, 'ball:', i, 'inc:', inc * i);
 		const p = path.getPointAtLength( inc * i)
 		const x = -1 + (2* (p.x / S ))
 		const y = -1 + (2* (p.y / S ))
@@ -319,7 +322,7 @@ const applyPositions = (positions, blendMax=null, blendMin=null, hideTrailsFor=1
 
 	setTimeout( () => {
 		eraser.blendDown(blendMin)
-	}, delay + hideTrailsFor)
+	}, delay + hideTrailsFor + 100)
 
 	/*
 	for(let i=0; i<numballs; i++){
