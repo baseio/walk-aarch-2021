@@ -205,7 +205,7 @@ const _moveto_ransom_path = () => {
 	const parser = new DOMParser();
 
 	const index = Math.floor(Math.random() * paths.length)
-	console.log('using index', index);
+	// console.log('using index', index);
 	const newPath = paths[ index ]
 	const fixedPath = newPath.replace('<svg', `<svg xmlns="http://www.w3.org/2000/svg"`)
 	const doc = parser.parseFromString(fixedPath, 'image/svg+xml');
@@ -215,7 +215,7 @@ const _moveto_ransom_path = () => {
 	const width  = vb.split(' ')[2] * 1.0
 	const height = vb.split(' ')[3] * 1.0
 	const size = Math.max(width, height)
-	console.log('viewBox:', vb, 'width:', width, 'height:', height, 'size:', size );	
+	// console.log('viewBox:', vb, 'width:', width, 'height:', height, 'size:', size );	
 
 	const S = size + (size/2) // 30 // DRAWING_SIZE
 	
@@ -328,6 +328,7 @@ const OnWindowResize = () => {
 const onPathCreated = (path /* svg */, clearTrails=true) => {	
 
 	// console.log('onPathCreated:', path);
+	console.log('onPathCreated: mode:', MODE);
 	// if( clearTrails ) eraser.clearScreen()
 
 	const length = path.getTotalLength()
@@ -348,8 +349,9 @@ const onPathCreated = (path /* svg */, clearTrails=true) => {
 		applyPositions(positions,null,null,0.0001,false)
 	}
 	
-
-	window.location.hash = ''
+	if( MODE != 'free' ){
+		window.location.hash = ''		
+	}
 }
 
 // set ball positions to provided array
@@ -441,12 +443,12 @@ export const applyFilter = (key, val) => {
 
 // release focus/grid to normal drawing mode
 window.toFree = () => {
-	console.log('toFree');
 	
 	if( MODE === 'free' ){
 		console.log('toFree: Allready in free - aborting');
 		return false
 	}
+	console.log('toFree');
 
 	window.app.pauseRendering = false
 	window.app.actions.hide_render_student()
@@ -512,6 +514,8 @@ window.toGrid = () => {
 		console.log('toNode: Allready in grid - aborting');
 		return false
 	}
+	console.log('toNode')
+
 	MODE = 'grid'
 	window.app.pauseRendering = false
 	window.app.actions.hide_render_student()
@@ -523,6 +527,12 @@ window.toGrid = () => {
 	group.rotation.set( 0, Math.PI, Math.PI);
 
 	camera.position.set(0,0,2)
+
+	//
+
+	// camera.lookAt( group.position );
+
+	//
 
 	const scale = 0.1
 	const cols = Math.ceil( Math.sqrt(numballs))

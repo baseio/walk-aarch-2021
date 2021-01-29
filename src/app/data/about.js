@@ -2,7 +2,12 @@ export const DATA_ABOUT = `
 
 RECTOR'S SPEECH
 <br /><br />
-(awaiting content)
+
+<div style="position:relative; overflow:hidden; padding-top:56.25%;">
+<iframe style="position:absolute; top:0; left:0; width:100%; height:100%; border:0;" src="https://player.vimeo.com/video/505177896" allow="autoplay; fullscreen; picture-in-picture" allowfullscreen></iframe>
+</div>
+<br />
+<a href="https://vimeo.com/505177896/6e7317c083">Torben Nielsen - Afgangstale 2021</a>
 
 <br /><br /><br /><br />
 CURATOR’S VOICE
@@ -32,15 +37,27 @@ January 2021 
 CREDITS
 
 <br /><br />
-Curatorial Concept: Karen Kjaergaard, curator & Head of Exhibitions, <a href="https://aarch.dk" style="color:#fff; text-decoration:underline;">AARCH</a>
+Curatorial Concept: Karen Kjaergaard, curator & Head of Exhibitions, <a href="https://aarch.dk">AARCH</a>
 
 <br /><br />
-Graphics: Casper Riis / <a href="https://www.walk.agency/" style="color:#fff; text-decoration:underline;">Walk Agency</a>
+Graphics: Casper Riis / <a href="https://www.walk.agency/">Walk Agency</a>
 
 <br /><br />
-Programming: Jørgen Skogmo / <a href="https://dearstudio.dk/" style="color:#fff; text-decoration:underline;">dearstudio</a>
+Graphics Programming: Jørgen Skogmo / <a href="https://dearstudio.dk/">dearstudio</a>
 
 <br /><br />
-Lars Steen Møller / <a href="https://www.apparat.dk/" style="color:#fff; text-decoration:underline;">Apparat</a>
+Lars Steen Møller / <a href="https://www.apparat.dk/">Apparat</a>
 
+<br /><br />
+Technical Support: Anne Kamp Jensen / <a href="mailto:anne@kampjensen.dk">anne@kampjensen.dk</a>
+
+ 
+<br /><br /><br /><br />
+
+CONTACT
+
+<br /><br />
+Communication: Niels Rysz Olsen / <a href="mailto:nro@aarch.dk">nro@aarch.dk</a>
+
+ 
 `

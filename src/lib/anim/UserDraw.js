@@ -115,10 +115,15 @@ export const init_userdraw = (selector, size, onPathCreated) => {
 	});
 
 
-    // start autoplay/demo
-    setTimeout( () => {
-    	showDrawDemo()
-    }, 50 )}
+    // start autoplay/demo if we're inited without a window.location.hash
+    if( window.location.hash === ''){
+	    setTimeout( () => {
+	    	showDrawDemo()
+	    }, 50 )
+	}
+
+
+}
 
 
 

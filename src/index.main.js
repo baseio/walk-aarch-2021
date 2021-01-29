@@ -37,13 +37,13 @@ const checkWebGL = (selector) => {
     return (gl && gl instanceof WebGLRenderingContext)
 }
 
-// if( !checkWebGL('#animation') ){
-// 	console.log('Error: WebGL not supported');
-// 	document.body.innerHTML = `
-// 		<div>Webgl not supported</div>
+if( !checkWebGL('#animation') ){
+	console.log('Error: WebGL not supported');
+	document.body.innerHTML = `
+		<div>Webgl not supported</div>
 
-// 	`
-// }else{
+	`
+}else{
 	
 	document.querySelector('#logo').innerHTML = settings.title
 
@@ -58,5 +58,5 @@ const checkWebGL = (selector) => {
 
 	window.app.router = new Router(handleHash)
 
-// }
+}
 

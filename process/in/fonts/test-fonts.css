@@ -1,0 +1,60 @@
+
+
+@font-face {
+    font-family: 'Univers LT W02 55 Roman';
+    src: url("4d1e8df3-6c45-428d-a522-84c8a6a4e533.woff") format("woff");
+    font-style: normal;
+    font-weight: 400
+}
+
+@font-face {
+    font-family: 'Univers LT W02 65 Bold';
+    src: url("3145f7f3-577b-4fc5-b041-fd8a5b0b2d40.woff") format("woff");
+    font-style: normal;
+    font-weight: 700
+}
+
+@font-face {
+    font-family: 'Univers LT W02 45 Light';
+    src: url("47a5b741-405e-4d03-ba4a-e50cc7716ddf.woff") format("woff");
+    font-style: normal;
+    font-weight: 100
+}
+
+
+@font-face {
+    font-family: 'Univers LT W02 67 Bold Cn';
+    src: url("b2388651-dd56-4c8e-8455-c55318f6a734.woff") format("woff");
+    font-style: normal;
+    font-weight: 700
+}
+
+
+body {
+	font: 13px/1.65em "Univers LT W02 55 Roman", "HelveticaNeue", "Helvetica Neue", Helvetica, Arial, sans-serif;
+}
+
+h1,h2,h3,h4,h5,h6,a {
+	font-family: "Univers LT W02 67 Bold Cn";
+	/*text-transform: uppercase;*/
+}
+
+.light_100 {
+    font-family: "Univers LT W02 45 Light";
+    font-weight: 100;
+}
+
+.roman_400 {
+    font-family: "Univers LT W02 55 Roman";
+    font-weight: 400;
+}
+
+.bold_700 {
+    font-family: "Univers LT W02 65 Bold";
+    font-weight: 700;
+}
+
+.bold_cn_700 {
+    font-family: "Univers LT W02 67 Bold Cn";
+    font-weight: 700;
+}

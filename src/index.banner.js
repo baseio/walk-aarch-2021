@@ -98,7 +98,7 @@ const initAnimation = (selector) => {
 
 	timeout = setInterval( () => {
 		randomize()
-	}, 4000 ) // 14000
+	}, 14000 ) // 14000
 	
 	randomize()
 }
@@ -130,7 +130,7 @@ const init_scene = (selector) => {
 
 	camera = new PerspectiveCamera( 50, window.innerWidth / window.innerHeight, 0.001, 1000 );
 	scene.add( camera );
-	camera.position.set(0,0,2)
+	camera.position.set(0,0,4)
 	camera.lookAt( group.position );
 
 	// controls = new OrbitControls( camera, renderer.domElement );

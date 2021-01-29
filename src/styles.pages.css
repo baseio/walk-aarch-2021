@@ -48,4 +48,14 @@ div.studentinfo .projectimage > img {
 
 #overlay .copytext {
 	max-width: 800px;
+	padding-right: 20px;
+}
+
+#overlay .copytext a:link {
+	color:#fff;
+	text-decoration:underline;
+}
+#overlay .copytext a:visited {
+	color:#fff;
+	text-decoration:underline;
 }

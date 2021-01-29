@@ -13,7 +13,7 @@ const init = () => {
 	let html = ''
 
 	DATA.DATA_STUDENTS.forEach( s => {
-		html += `<a class="student pill">${s.name}</a>`
+		html += `<a class="student pill" href="https://afgang.aarch.dk/2021/student/${s.stub}">${s.name}</a>`
 	})
 
 	document.querySelector('#list').innerHTML = html

@@ -1,5 +1,7 @@
 import * as DATA from './data.js'
 
+let firstLoad = true
+
 export const handleHash = (rawHash) => {
 
 	let hash = rawHash.replace('#', '')
@@ -17,6 +19,8 @@ export const handleHash = (rawHash) => {
 
 	if( b ){
 		// student
+		console.log('handleHash: student')
+
 		const accepted = window.toNode( b.i )
 		const theme_slug = DATA.THEMES.filter(t => t.id === b.el.userData.data.theme)[0]?.slug
 
@@ -30,6 +34,8 @@ export const handleHash = (rawHash) => {
 
 	}else if( rawHash.indexOf('#theme:') === 0 ){
 		// theme
+		console.log('handleHash: theme')
+
 		hash = hash.split(':')[1]
 		const slug  = hash.toLowerCase().replace(/ /g, '-')
 		const theme = DATA.THEMES.filter(t => t.slug === slug )[0]
@@ -54,17 +60,25 @@ export const handleHash = (rawHash) => {
 		if( btn ){
 			btn.classList.add('selected')
 		}
-		// window.toFree()
-		// app.actions.action('filter:theme', 'show', ''+theme.id)
-		window.app.animation.applyFilter('theme', theme.id)
+
+		console.log('firstLoad:', firstLoad);
+		if( firstLoad ){
+			window.toFree()
+			setTimeout( () => {
+				window.app.animation.applyFilter('theme', theme.id)
+			}, 500)
 		
+		}else{
+			window.app.animation.applyFilter('theme', theme.id)			
+		}
 
 		window.app.actions.render_theme(theme)	
 	
 
 	}else if( rawHash != '' ){
 		// page / feature
-		console.log('OnHashChanged page', hash);
+		console.log('handleHash: page:', hash)
+		console.log('handleHash: page:', hash, 'inGraduatesMode:', inGraduatesMode)
 
 		// unselect all 
 		document.querySelectorAll('#sidebar [data-trigger]').forEach( el => {
@@ -86,7 +100,7 @@ export const handleHash = (rawHash) => {
 			document.querySelector(`#sidebar [data-trigger="feat"][data-key="graduates"]`).classList.remove("selected")
 			window.app.actions.clear_students_filter()
 		}
-
+		
 		// action
 		window.app.actions.clear_content()
 		if( hash === 'about' ) 		window.app.actions.render_text(hash)
@@ -96,8 +110,8 @@ export const handleHash = (rawHash) => {
 		
 	}else if( window.location.hash === '' ){
 		// index
-		console.log('OnHashChanged index');
-
+		console.log('handleHash: index')
+		
 		// unselect all 
 		document.querySelectorAll('#sidebar [data-trigger]').forEach( el => {
 			el.classList.remove('selected')
@@ -107,4 +121,6 @@ export const handleHash = (rawHash) => {
 		window.app.actions.clear_students_filter()
 	}
 
+
+	firstLoad = false
 }

@@ -17,7 +17,7 @@
 			
 			#title {
 				position: absolute;
-				top: 248px; /* 35px; */
+				top: 148px;
 				left: 40px;
 				width: calc(100% - 40px);
     			max-width: calc(0.5 * 669px);
@@ -37,11 +37,19 @@
 			}
 
 			#cta {
-			  width: 50vw;
-			  position: absolute;
-			  right: 50px;
-			  bottom: 50px;
+				width: 330px;
+				position: absolute;
+				right: 50px;
+				bottom: 50px;
 			}
+			@media (max-device-width: 430px) {
+				#cta {
+					width: calc(100vw - 20px);
+					margin: 0 10px;
+					right: unset;
+				}
+			}
+
 			#cta path {
 				fill: #ffffff;
 			}

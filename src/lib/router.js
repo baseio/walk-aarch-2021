@@ -16,6 +16,8 @@ export class Router {
 
 	OnHashChanged(){
 		const h = window.location.hash
+		// console.log('router: OnHashChanged:', h);
+		
 		this.history.push(h)
 
 		// let h = window.location.hash || '#index'

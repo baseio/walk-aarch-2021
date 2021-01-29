@@ -50,7 +50,9 @@ export class Eraser {
 		this.to = target || ERASER_OPACITY_LOW
 		console.log('# Eraser blendDown', this.to);
 
-		renderer.autoClearColor = false;
+		if( window.renderer ){
+			window.renderer.autoClearColor = false;
+		}
 
 
 		this.material.transparent = true
@@ -65,8 +67,11 @@ export class Eraser {
 	}
 
 	clearScreen(){
-		console.log('# Eraser clearScreen', window.renderer);
-		renderer.autoClearColor = "#000000"
+		// console.log('# Eraser clearScreen', window.renderer);
+
+		if( window.renderer ){
+			renderer.autoClearColor = "#000000"
+		}
 
 		this.o = 1
 		this.to = 1
