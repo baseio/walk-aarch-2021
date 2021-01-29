@@ -34,6 +34,15 @@ January 2021 
 
 <br /><br /><br /><br />
 
+SUPPORTED by <a href="https://augustinusfonden.dk">AUGUSTINUS FONDEN</a>
+
+<br /><br />
+<img src="/Augustinus_Fonden_logo_RGB_white.png" width="41%" />
+
+
+
+<br /><br /><br /><br />
+
 CREDITS
 
 <br /><br />
