@@ -5,7 +5,7 @@ import * as DATA from './data.js'
 import {render_hash} from './hash.js'
 
 
-let container
+// let container
 let _filterThemeTimeout = null
 let themeFilter = null
 let studentSelected = null
@@ -72,9 +72,9 @@ export const clear_theme = () => {
 export const clear_content = () => {
 	window.toFree()
 
-	document.querySelector('#content').innerHTML = ''
-	document.querySelector('#content').classList = 'hide'
-	// document.querySelector('#content').style.overflowY = 'auto'
+	const container = document.querySelector('#content')
+	container.innerHTML = ''
+	container.classList = 'hide'
 	document.querySelector('#curtain').classList = ''
 	document.querySelector('#overlay').style.pointerEvents = 'none'
 	window.app.pauseRendering = false
@@ -83,7 +83,7 @@ export const clear_content = () => {
 
 export const render_text = (id) => {
 	console.log('render_text', id);
-	container = document.querySelector('#content')
+	const container = document.querySelector('#content')
 	if( id === 'about' ){
 		container.innerHTML = `<div class="copytext">${DATA.DATA_ABOUT}</div>`
 		container.classList = 'show'
@@ -101,7 +101,7 @@ export const render_text = (id) => {
 // pending client
 // unfinnished
 export const render_live = (id) => {
-	container = document.querySelector('#content')
+	const container = document.querySelector('#content')
 	container.classList = id
 	container.innerHTML = `<iframe
     src="https://player.twitch.tv/?channel=jorgenskogmo&parent=vibrant-nobel-c7d9ea.netlify.app"
@@ -116,7 +116,7 @@ export const render_live = (id) => {
 // pending client
 // unfinnished: needs test with multiple vimeo-thumbs and a layout
 export const render_videos = (id) => {
-	container = document.querySelector('#content')
+	const container = document.querySelector('#content')
 	container.classList = id
 	container.innerHTML = 'render_videos'
 }
@@ -183,12 +183,15 @@ export const render_student = (stub) => {
 
 	`
 
-	content.classList = 'hide'
+	const container = document.querySelector('#content')
+	container.classList = 'hide'
+	
 	document.querySelector('#curtain').classList = 'show'
 	setTimeout( () => {
-		content.innerHTML = html
-		content.classList = 'show'
-	}, 750);
+		const container = document.querySelector('#content')
+		container.innerHTML = html
+		container.classList = 'show'
+	}, 750); 
 
 	const theme = DATA.THEMES.filter(t => t.id === s.theme)[0]
 	// document.querySelector('#logo').innerHTML = settings.title + render_hash() + theme.name.replace(/ /g, '&nbsp;')
@@ -196,7 +199,7 @@ export const render_student = (stub) => {
 }
 export const hide_render_student = () => {
 	document.querySelector('#curtain').classList = 'hide'
-	content.innerHTML = ''
+	document.querySelector('#content').innerHTML = ''
 }
 
 
@@ -227,7 +230,7 @@ export const clear_students_filter = () => {
 
 export const render_students = (id) => {
 	console.log('render_students', id, studentSelected, themeFilter);
-	container = document.querySelector('#content')
+	const container = document.querySelector('#content')
 	container.classList = id
 
 	document.querySelector('#overlay').style.pointerEvents = 'all'
