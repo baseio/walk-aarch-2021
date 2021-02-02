@@ -99,4 +99,18 @@ Also fixed a bug where search did not work when a student was already selected.
 
 #### W04: Release
 
+---
 
+#### 210203: Update 1
+
+- [x] Update 5 project-images
+
+**Feature:** Estimate communicated: 6 timer + correspondence  
+- [x] Remove link to 'afgang.aarch.dk' from select students (see data/excludes.js)
+- [x] On mobile, excluded students will be completely removed (as their only presence is a link...)
+
+**Layout bugfix:** See Casper's 'Webfeedback2.pdf' a 210118
+- [x] Collapse sidebar was rendered in RED on small screens
+- [x] iPad (Casper gets a black screen)
+- [x] Improve scrollbar css 
+- [x] Improve layout on wide+low screens

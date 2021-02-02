@@ -2,7 +2,7 @@ const fs = require('fs')
 const { join } = require('path');
 const glob = require('glob')
 
-const SOURCE = '../dist/circletextures/'
+const SOURCE = '../dist/circletextures-64/'
 const DEST   = '../src/app/data/circletextures-b64.js'
 
 const files = glob.sync('**/*.png', {
@@ -13,7 +13,7 @@ let result = {}
 
 files.map( (f,i) => {
 
-	const id  = f.split(' ')[0]
+	const id  = f.split('.')[0]
 	const file = join(SOURCE, f);
 
 	const bitmap = fs.readFileSync(file)

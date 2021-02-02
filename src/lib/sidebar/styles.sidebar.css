@@ -67,7 +67,7 @@
 
   #showhide {
     height: 25px;
-    color: #f00 !important;
+    /*color: #f00 !important;*/
   }
   #sidebar.closed #showhide {
     height: 35px;

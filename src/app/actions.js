@@ -136,6 +136,13 @@ export const render_student = (stub) => {
 	// 	btn.classList.add('selected')
 	// }
 
+	// Check if we should hide the project link from this student
+	let PROJECT_LINK = `<a class="projectlink" style="text-align:center;" href="https://afgang.aarch.dk/2021/student/${s.stub}" target="_blank">SEE PROJECT</a>`
+	if( DATA.DATA_EXCLUDE_PROJECTLINK.includes( s.id ) ){
+		PROJECT_LINK = ''
+		console.log('HIDE PROJECT LINK for:', s.id, s);
+	}
+
 	const html = `
 
 		<div class="studentinfo">
@@ -165,19 +172,17 @@ export const render_student = (stub) => {
 			</div>
 
 			<div class="div2">
-				<a class="projectlink" style="text-align:center;" href="https://afgang.aarch.dk/2021/student/${s.stub}" target="_blank">SEE PROJECT</a>
+				${PROJECT_LINK}				
 			</div>
 			
-			<div class="div3">
-				<div class="projectimage">
-					<img alt="${s.title}" src="project-images/${s.id}.jpg" />
-				</div>
+			<div class="div3" style="background-image: url(project-images/${s.id}.jpg);">
 			</div>
 
+			<!--
 			<div class="div4">
 				<!-- (pdf-link?) -->
 			</div>
-
+			-->
 		</div>
 
 

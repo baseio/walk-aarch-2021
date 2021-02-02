@@ -2,26 +2,34 @@ const { join } = require('path');
 const { renameSync } = require('fs');
 const glob = require('glob');
 
-const SOURCE = '../dist/circletextures'
+const SOURCES = ['../dist/circletextures-64', '../dist/circletextures-128', '../dist/circletextures-256']
 
-let files = glob.sync('**/*.png', {
-	cwd: SOURCE
-})
+const proc = (dir) => {
 
-console.log(files.length, files);
+	console.log(dir);
 
-files.map( (f,i) => {
+	let files = glob.sync('**/*.png', {
+		cwd: dir
+	})
 
-	const id  = f.split(' ')[0]
-	const ext = f.split('.').pop()
-	const name = `${id}.${ext}`
+	console.log(files.length, dir);
+
+	files.map( (f,i) => {
+
+		const id  = f.split(' ')[0]
+		const ext = f.split('.').pop()
+		const name = `${id}.${ext}`
 
 
-	const s = join(SOURCE, f);
-	const d = join(SOURCE, name)
+		const s = join(dir, f);
+		const d = join(dir, name)
 
-	console.log(i, id, ext, s, d);
+		// console.log(i, id, ext, s, d);
 
-	renameSync(s, d);
+		renameSync(s, d);
 
-})
+	})
+
+}
+
+SOURCES.map( proc )

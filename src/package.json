@@ -1,14 +1,15 @@
 {
   "name": "AAA-21",
-  "version": "0.0.10",
+  "version": "1.1.0",
   "description": "Offical website for the 2021-winter graduation from Aarhus School of Architecture",
   "scripts": {
     
     "watch": "watchexec --exts js,css,html -i /*.bundle.js/ npm run _dev-all",    
     "_dev-all": "npm run _dev-main && npm run _dev-mobile && npm run _dev-banner",
-    "_dev-main": "esbuild index.main.js --bundle --outfile=../dist/bundle.js",
-    "_dev-mobile": "esbuild index.mobile.js --bundle --outfile=../dist/bundle.mobile.js",
-    "_dev-banner": "esbuild index.banner.js --bundle --outfile=../dist/bundle.banner.js",
+    
+    "_dev-main": "esbuild index.main.js --target=es2016 --bundle --outfile=../dist/bundle.js",
+    "_dev-mobile": "esbuild index.mobile.js --target=es2016 --bundle --outfile=../dist/bundle.mobile.js",
+    "_dev-banner": "esbuild index.banner.js --target=es2016 --bundle --outfile=../dist/bundle.banner.js",
     
     "release": "npm run _dev-all && npm run _release-all",
     "_release-all": "npm run _release-main && npm run _release-mobile && npm run _release-banner",

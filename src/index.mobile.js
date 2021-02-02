@@ -8,12 +8,16 @@ import './styles.mobile.css'
 const init = () => {
 	
 	document.title = settings.document_title
-	document.querySelector('#logo').innerHTML = settings.title //.replace(' ', '<br />')
+	document.querySelector('#logo').innerHTML = settings.title
 
 	let html = ''
 
 	DATA.DATA_STUDENTS.forEach( s => {
-		html += `<a class="student pill" href="https://afgang.aarch.dk/2021/student/${s.stub}">${s.name}</a>`
+
+		// hide excluded students
+		if( ! DATA.DATA_EXCLUDE_PROJECTLINK.includes( s.id ) ){
+			html += `<a class="student pill" href="https://afgang.aarch.dk/2021/student/${s.stub}">${s.name}</a>`
+		}
 	})
 
 	document.querySelector('#list').innerHTML = html

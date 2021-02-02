@@ -13,10 +13,31 @@ div.studentinfo {
     height: calc(100% - 50px);
 }
 
-div.studentinfo .div1 { grid-area: 1 / 1 / 2 / 2; padding-right: 20px; } /* topleft */
-div.studentinfo .div2 { grid-area: 2 / 1 / 3 / 2; } /* btmleft */
-div.studentinfo .div3 { grid-area: 1 / 2 / 2 / 3; } /* topright */
-div.studentinfo .div4 { grid-area: 2 / 2 / 3 / 3; } /* btmright */
+/* topleft (meta) */
+div.studentinfo .div1 {
+	padding-right: 20px;
+	position: relative;
+	width: 250px;
+} 
+
+
+/* btmleft (project-link btn) */
+div.studentinfo .div2 {
+	position: absolute;
+	width: 250px;
+	bottom: 10px;
+} 
+
+/* topright (image) */
+div.studentinfo .div3 { 
+	position: absolute;
+    left: 310px;
+    width: calc(100% - 320px);
+    height: calc(100% - 10px);
+    top: 0;
+    background-repeat: no-repeat;
+    background-size: contain;
+} 
 
 div.studentinfo .name {
 	font-size: 28px;
@@ -29,7 +50,8 @@ div.studentinfo a.projectlink {
     border-radius: 50px;
     text-decoration: none;
     padding: 7px 15px 1px 15px;
-    width: 310px;
+    width: 100%;
+    background-color: #fff;
     display: inline-block;
 }
 div.studentinfo a.projectlink:hover {
@@ -37,14 +59,7 @@ div.studentinfo a.projectlink:hover {
 	background-color: #000;
 }
 
-div.studentinfo .projectimage {
-	/*border: 1px solid #F00;*/
-}
 
-div.studentinfo .projectimage > img {
-	width: 100%;
-	display: block;
-}
 
 #overlay .copytext {
 	max-width: 800px;

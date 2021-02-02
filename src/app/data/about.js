@@ -55,7 +55,7 @@ Graphics: Casper Riis / <a href="https://www.walk.agency/">Walk Agency</a>
 Graphics Programming: Jørgen Skogmo / <a href="https://dearstudio.dk/">dearstudio</a>
 
 <br /><br />
-Lars Steen Møller / <a href="https://www.apparat.dk/">Apparat</a>
+Webmaster: Lars Steen Møller / <a href="https://www.apparat.dk/">Apparat</a>
 
 <br /><br />
 Technical Support: Anne Kamp Jensen / <a href="mailto:anne@kampjensen.dk">anne@kampjensen.dk</a>
