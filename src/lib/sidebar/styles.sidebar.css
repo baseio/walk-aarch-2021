@@ -59,11 +59,11 @@
   text-transform: uppercase;
 }
 
-@media only screen and (max-height: 800px) {
+@media only screen and (max-height: 890px) {
 
-  /*#sidebar {
-    background-color: #f00 !important;
-  }*/
+  #sidebar {
+    /*background-color: #0f0 !important;*/
+  }
 
   #showhide {
     height: 25px;
@@ -122,3 +122,23 @@
   }
 
 }
+
+
+@media only screen and (max-height: 800px) {
+
+  #sidebar {
+    /*background-color: #f00 !important;*/
+
+    /*top: -2px;
+    right: -2px;
+    bottom: -2px;
+    border-radius: 0;*/
+  }
+  #sidebar div.toggle .label {
+    font-size: 12px;
+    white-space: nowrap;
+  }
+
+}
+
+

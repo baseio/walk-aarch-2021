@@ -374,7 +374,9 @@ div.studentinfo a.projectlink:hover {
   font-weight: 700;
   text-transform: uppercase;
 }
-@media only screen and (max-height: 800px) {
+@media only screen and (max-height: 890px) {
+  #sidebar {
+  }
   #showhide {
     height: 25px;
   }
@@ -417,5 +419,13 @@ div.studentinfo a.projectlink:hover {
   body.small #feats-menu {
     grid-row-gap: 15px;
     grid-row-gap: 1vh;
+  }
+}
+@media only screen and (max-height: 800px) {
+  #sidebar {
+  }
+  #sidebar div.toggle .label {
+    font-size: 12px;
+    white-space: nowrap;
   }
 }
