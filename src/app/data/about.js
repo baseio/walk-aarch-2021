@@ -32,12 +32,67 @@ Welcome to the Online Exhibition Site<br />
 Karen Kjaergaard, Curator<br />
 January 2021 
 
+
+
 <br /><br /><br /><br />
 
-SUPPORTED by <a href="https://augustinusfonden.dk">AUGUSTINUS FONDEN</a>
+SPONSORS
+
+<br /><br />
+Supported by <a href="https://augustinusfonden.dk">Augustinus Fonden</a>
 
 <br /><br />
 <img src="/Augustinus_Fonden_logo_RGB_white.png" width="41%" />
+
+
+<br /><br /><br /><br />
+
+PRIZES
+
+<br /><br />
+<strong>VOLA PRIZE</strong>
+
+<br /><br />
+Alexander Hejgaard Fagerholt
+<br />
+"In Between Typologies – The Future Challenges of Refshaleøen"  
+
+<br /><br />
+The project structurally and strategically explores gentrification in multiple scales while offering an alternative to how we might view urban development and influence the current trajectory to be more inventive, playful and site-specific. It is interested in the inherent qualities of place. 
+
+<br /><br />
+The research that supports the ideation process successfully pendulums between two scales as it positions the project’s intentions. At once exploring around the subject matter – placing the present conundrum in a global history of city developments – and researching into the subject matter – the specificity of Copenhagen, Refshaleøen, the particular site. 
+
+<br /><br />
+The resulting project is at once rigorous and playful in its expression. A piece of infrastructure as well as a social and cultural destination, the building will transform itself with the seasons, with the changing currents of the water, or society. It manages to be simultaneously permanent and temporary, thereby posing important questions into the qualities of temporal and how much – or little – building one can get away with to make a measurable impact in an urban environment. Deeply contextual, one can imagine that if it were to be built, it would be hard to question whether it had not been there from the start.  
+
+<br /><br />
+“Do we design governed by certain market forces or to facilitate urban life, or can we build somewhere at the critical intersection?”, the project asks. While taking a stand, it is also a clearly sober proposal as to how architects might use their training and intellect to create exciting opportunities precisely in the tension zone of a seemingly polarized arena. And that’s precisely where the greatest strength of the project lies, in its daring optimism for a future that is surprisingly achievable. 
+
+
+<!-- -->
+<br /><br />
+
+
+<br /><br />
+<strong>VOLA PRIZE</strong>
+
+<br /><br />
+Simon Kobberub Smedsmo
+<br />
+"Holstebro Søpark"
+
+<br /><br />
+With the project, ‘Holstebro Søpark’, Simon Kobberub Smedsmo
+combines sports facilities and nature experiences at a lake near Holstebro. He demonstrates and documents a convincing understanding of working in a complex contextual setting in the transition between city and nature. 
+
+<br />
+The project establishes a center for rowing, a sea-bath, and a sequence of recreative facilities. Together, it creates a significant unity that shields off towards traffic and opens itself towards the lake's quietness and visual beauty. 
+
+<br /><br />
+The project radiates an architectural stringency, it is sustainable, and it operates smoothly in all scales it addresses. Simon manages to communicate his ideas, his concepts, and his design in a clear and easily understandable way. It illustrates a high level of craftsmanship and professionalism, which are the primary reasons, he is awarded the VOLA scholarship. 
+
+
 
 
 
