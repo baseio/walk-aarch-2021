@@ -5,7 +5,13 @@ let firstLoad = true
 export const handleHash = (rawHash) => {
 
 	let hash = rawHash.replace('#', '')
-	// console.log('handleHash:', 'rawHash:', rawHash, 'hash:', hash)
+	console.log('handleHash:', 'rawHash:', rawHash, 'hash:', hash)
+
+	if( hash.indexOf('@') === 0 ){
+		console.log('handleHash: LOCAL');
+		return true
+	}
+
 
 	window.app.userDrawPlaying = false
 
