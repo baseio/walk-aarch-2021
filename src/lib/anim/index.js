@@ -646,7 +646,12 @@ const onDocumentMouseDown = () => {
 		}else{
 			// focus
 			console.log('@anim onDocumentMouseDown focus', DATA.DATA_STUDENTS[previousSelectedObjectId].name );
-			window.location.hash = '#'+ DATA.DATA_STUDENTS[previousSelectedObjectId].stub
+			//window.location.hash = '#'+ DATA.DATA_STUDENTS[previousSelectedObjectId].stub
+
+			// rev3:
+			const stub = DATA.DATA_STUDENTS[previousSelectedObjectId].stub
+			const PROJECT_LINK = `https://afgang.aarch.dk/2021/student/${stub}`
+			window.open(PROJECT_LINK)
 		}
 
 	}else{
