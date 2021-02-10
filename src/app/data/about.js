@@ -1,6 +1,25 @@
 export const DATA_ABOUT = `
 
-RECTOR'S SPEECH
+
+ABOUT
+<br /><br />
+
+
+<a href="#@rector">Rector's speech</a><br />
+<a href="#@curator">Curator's voice</a><br />
+<a href="#@sponsors">Sponsors</a><br />
+<a href="#@prizes">Prizes</a><br />
+<a href="#@credits">Credits</a><br />
+<a href="#@contact">Contact</a><br />
+
+
+<br /><br /><br /><br />
+
+<hr style="border: 0; border-bottom: 1px solid #fff;" />
+
+<br /><br /><br /><br />
+
+<div id="@rector">RECTOR'S SPEECH</div>
 <br /><br />
 
 <div style="position:relative; overflow:hidden; padding-top:56.25%;">
@@ -10,7 +29,7 @@ RECTOR'S SPEECH
 <a href="https://vimeo.com/505177896/6e7317c083">Torben Nielsen - Afgangstale 2021</a>
 
 <br /><br /><br /><br />
-CURATOR’S VOICE
+<div id="@curator">CURATOR’S VOICE</div>
 
 <br /><br />
 Processing Architecture 
@@ -36,7 +55,7 @@ January 2021 
 
 <br /><br /><br /><br />
 
-SPONSORS
+<div id="@sponsors">SPONSORS</div>
 
 <br /><br />
 Supported by <a href="https://augustinusfonden.dk">Augustinus Fonden</a>
@@ -45,16 +64,20 @@ Supported by <a href="https://augustinusfonden.dk">Augustinus Fonden</a>
 <img src="/Augustinus_Fonden_logo_RGB_white.png" width="41%" />
 
 
+
+
 <br /><br /><br /><br />
 
-PRIZES
+<div id="@prizes">PRIZES</div>
+
+
 
 <br /><br />
 <strong>VOLA PRIZE</strong>
 
 <br /><br />
-Alexander Hejgaard Fagerholt
-<br />
+<a href="#alexander-fagerholt">Alexander Hejgaard Fagerholt</a>
+<br /><br />
 "In Between Typologies – The Future Challenges of Refshaleøen"  
 
 <br /><br />
@@ -78,8 +101,8 @@ The resulting project is at once rigorous and playful in its expression. A piece
 <strong>VOLA PRIZE</strong>
 
 <br /><br />
-Simon Kobberub Smedsmo
-<br />
+<a href="/#simon-smedsmo">Simon Kobberub Smedsmo</a>
+<br /><br />
 "Holstebro Søpark"
 
 <br /><br />
@@ -98,7 +121,7 @@ The project radiates an architectural stringency, it is sustainable, and it oper
 
 <br /><br /><br /><br />
 
-CREDITS
+<div id="@credits">CREDITS</div>
 
 <br /><br />
 Curatorial Concept: Karen Kjaergaard, curator & Head of Exhibitions, <a href="https://aarch.dk">AARCH</a>
@@ -118,7 +141,7 @@ Technical Support: Anne Kamp Jensen / <a href="mailto:anne@kampjensen.dk">anne@k
  
 <br /><br /><br /><br />
 
-CONTACT
+<div id="@contact">CONTACT</div>
 
 <br /><br />
 Communication: Niels Rysz Olsen / <a href="mailto:nro@aarch.dk">nro@aarch.dk</a>

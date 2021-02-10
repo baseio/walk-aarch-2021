@@ -600,7 +600,8 @@ const onDocumentMouseDown = () => {
 	// if its a theme   -> go to selectedNode (sat by mouseMove)
 
 	console.log('onDocumentMouseDown', MODE, previousSelectedObjectId);
-	if( previousSelectedObjectId ){
+	// if( previousSelectedObjectId ){
+	if( previousSelectedObjectId != null ){
 
 		if( MODE === 'node' ){
 			// collapse
