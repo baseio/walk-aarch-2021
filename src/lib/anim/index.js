@@ -321,7 +321,10 @@ const hideTooltip = () => {
 	}
 }
 
-const showTooltip = ( pos, label='' ) => {
+
+
+
+export const showTooltip = ( pos, label='' ) => {
 
 	const el = document.querySelector('#tooltip')
 	if( !el ) return
@@ -505,6 +508,9 @@ let focusedNode = null
 
 // brings one node to front
 window.toNode = (id) => {
+	
+	/*
+
 	// console.log('toNode: focusedNode:', focusedNode.?i, id);
 	if( MODE === 'node'){
 		if( focusedNode != null ){
@@ -516,12 +522,12 @@ window.toNode = (id) => {
 	}
 	MODE = 'node'
 	focusedNode = balls[id]
-
 	console.log('toNode', id, focusedNode);
+
+	/// --- rev 3 DEL
 
 	balls.forEach( ball => {
 		if( ball.i != focusedNode.i ){
-			// ball.r = ball.disabledSize
 			ball.hide()
 		}
 	})
@@ -536,6 +542,27 @@ window.toNode = (id) => {
 		window.app.pauseRendering = true
 	}, 1000 )
 
+	*/
+
+	/// --- rev 3 ADD
+	/*
+	// MODE = 'node'
+
+	focusedNode = balls[id]
+
+	// Check if we should hide the project link from this student
+	const stub = focusedNode.el.userData.data.stub
+	const sid  = focusedNode.el.userData.data.id
+	// console.log('## LINK for:', id, sid, stub)
+	if( DATA.DATA_EXCLUDE_PROJECTLINK.includes( sid ) ){
+		console.log('## DONT OPEN PROJECT LINK for:', sid, stub)
+	}else{
+		const PROJECT_LINK = `https://afgang.aarch.dk/2021/student/${stub}`
+		console.log('## OPEN PROJECT LINK:', PROJECT_LINK)
+	}
+
+	/// --- end rev3
+	*/
 	return true
 }
 
@@ -600,7 +627,7 @@ const onDocumentMouseDown = () => {
 	// if its a theme   -> go to selectedNode (sat by mouseMove)
 
 	console.log('onDocumentMouseDown', MODE, previousSelectedObjectId);
-	if( previousSelectedObjectId ){
+	if( previousSelectedObjectId != null ){
 
 		if( MODE === 'node' ){
 			// collapse
@@ -619,7 +646,12 @@ const onDocumentMouseDown = () => {
 		}else{
 			// focus
 			console.log('@anim onDocumentMouseDown focus', DATA.DATA_STUDENTS[previousSelectedObjectId].name );
-			window.location.hash = '#'+ DATA.DATA_STUDENTS[previousSelectedObjectId].stub
+			//window.location.hash = '#'+ DATA.DATA_STUDENTS[previousSelectedObjectId].stub
+
+			// rev3:
+			const stub = DATA.DATA_STUDENTS[previousSelectedObjectId].stub
+			const PROJECT_LINK = `https://afgang.aarch.dk/2021/student/${stub}`
+			window.open(PROJECT_LINK)
 		}
 
 	}else{
@@ -658,6 +690,8 @@ function onDocumentMouseMove( event ) {
 
 	if( intersects.length > 0 ){
 		const res = intersects.filter(res => res && res.object)[0];
+
+
 		if( res && res.object ){
 			selectedObject = res.object;
 			const data = selectedObject.userData
@@ -672,6 +706,7 @@ function onDocumentMouseMove( event ) {
 				previousSelectedObjectId = data.i
 				selectedBall = ball
 				ball.hover()
+
 				//
 				showTooltip( ball.el.position, data.data.name )
 			}
