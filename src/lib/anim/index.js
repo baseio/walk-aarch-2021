@@ -628,6 +628,7 @@ const onDocumentMouseDown = () => {
 	}
 }
 
+
 function onDocumentMouseMove( event ) {
 
 	// console.log('@@', MODE, renderer.domElement.id);

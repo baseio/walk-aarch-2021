@@ -11,6 +11,7 @@ export const handleHash = (rawHash) => {
 		console.log('handleHash: LOCAL');
 		return true
 	}
+	
 
 	window.app.userDrawPlaying = false
 
