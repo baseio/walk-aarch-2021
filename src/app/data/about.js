@@ -76,8 +76,8 @@ Supported by <a href="https://augustinusfonden.dk">Augustinus Fonden</a>
 <strong>VOLA PRIZE</strong>
 
 <br /><br />
-Alexander Hejgaard Fagerholt
-<br />
+<a href="#alexander-fagerholt">Alexander Hejgaard Fagerholt</a>
+<br /><br />
 "In Between Typologies – The Future Challenges of Refshaleøen"  
 
 <br /><br />
@@ -101,8 +101,8 @@ The resulting project is at once rigorous and playful in its expression. A piece
 <strong>VOLA PRIZE</strong>
 
 <br /><br />
-Simon Kobberub Smedsmo
-<br />
+<a href="/#simon-smedsmo">Simon Kobberub Smedsmo</a>
+<br /><br />
 "Holstebro Søpark"
 
 <br /><br />
