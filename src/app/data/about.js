@@ -116,7 +116,100 @@ The project establishes a center for rowing, a sea-bath, and a sequence of recre
 The project radiates an architectural stringency, it is sustainable, and it operates smoothly in all scales it addresses. Simon manages to communicate his ideas, his concepts, and his design in a clear and easily understandable way. It illustrates a high level of craftsmanship and professionalism, which are the primary reasons, he is awarded the VOLA scholarship. 
 
 
+<!-- -->
+<br /><br />
 
+<br /><br />
+<strong>3XN TRAVEL GRANT</strong>: Architecture Shapes Behaviour
+
+<br /><br />
+<a href="#alexander-fagerholt">Alexander Hejgaard Fagerholt</a>
+<br /><br />
+"In between typologies - The future challenges at Refshaleøen"
+
+<br /><br />
+The winning project investigates today's redevelopment of
+our cities’ central industrial areas. On the broader scale, it is
+an experiment of private ownership and public urban life. It
+challenges development controlled by market forces and
+suggests a new type of development inspired by urban life.
+The project cleverly analyses the way the area has
+developed over time and gives the potential for building on
+top of this unique and strong industrial character. The area
+challenges traditional building typologies by giving the old
+industrial buildings a new use.
+
+<br /><br />
+The 3XN Travel Grant is awarded to a student who focuses
+on the constant changes in the use of our cities, while
+illustrating how architects play a vital role in integrating
+elements from the local history in the new development. By
+suggesting a set of solutions that incorporate existing
+conditions, innovation, and knowledge sharing, the project
+underlines how architects can design new typologies that
+can help support existing urban life.
+
+<br /><br />
+This year’s 3XN Travel
+The winning project investigates today's redevelopment of
+our cities’ central industrial areas. On the broader scale, it is
+an experiment of private ownership and public urban life. It
+challenges development controlled by market forces and
+suggests a new type of development inspired by urban life.
+The project cleverly analyses the way the area has
+developed over time and gives the potential for building on
+top of this unique and strong industrial character. The area
+challenges traditional building typologies by giving the old
+industrial buildings a new use.
+
+<br /><br />
+The 3XN Travel Grant is awarded to a student who focuses
+on the constant changes in the use of our cities, while
+illustrating how architects play a vital role in integrating
+elements from the local history in the new development. By
+suggesting a set of solutions that incorporate existing
+conditions, innovation, and knowledge sharing, the project
+underlines how architects can design new typologies that
+can help support existing urban life.
+
+<br /><br />
+3XN/GXN have established the ”Architecture Shapes
+Behaviour” prize in association with AARCH. The prize will be
+awarded to a graduate student of AARCH. By introducing this
+prize we wish to draw attention to/focus on how human behaviour
+is influenced by the architectural surroundings, independent
+of scale. The winner will receive a travel grant of 10.000 DKK.
+
+<!-- -->
+<br /><br />
+
+<br /><br />
+<strong>CEBRA</strong>–prisen
+
+<br /><br />
+<a href="#malene-jors-nielsen">Malene Jørs Nielsen</a>
+<br /><br />
+"Night Tide – Encountering natural phenomena on Mandø"
+
+<br /><br />
+CEBRA-prisen tildeles Malene Jørs Nielsen for det eftertænksomme afgangsprojekt Night Tide – Encountering natural phenomena on Mandø. 
+
+<br /><br />
+Projektets fremhæves for en præcis og smuk læsning af Mandø, der oversættes til et følsomt og minimalistisk arkitektonisk udtryk forankret i tidevandsøen Mandøs helt særlige natur. Inspireret af tidevandet, diger, høfder og den allestedsnærværende horisont og himmel, fremstår det som en ’målepind’ for tidevandets rytme over dagen, året og ved stormflod. 
+
+<br /><br />
+Projektet tilbyder et næsten poetisk møde mellem iagttageren og naturens fænomener, og de smukke illustrationer, der konsekvent benyttes, skaber velvalgte mindelser om de danske Skagensmalere og den amerikanske kunstner James Turells værker. 
+
+<br /><br />
+Et stilfærdigt rumligt forløb iscenesætter bevægelsen og opholdet i det langstrakte rumlige objekt, der bedst kan beskrives som en ’arkitektonisk stjernekikkert’, hvor oplevelsen af nattehimlens uendelighed og tidevandets rytmiske ændring af stedet er i smuk fokus uden andre virkemidler end de menneskelige sanser. 
+
+<br /><br />
+Med CEBRA-prisen følger Le Corbusiers samlede værker samt CEBRA_files_01+02+03, og det er vores håb, at Malene Jørs Nielsen med denne opmuntring vil fortsætte sin undersøgende tilgang til mødet mellem naturen, mennesket og det menneskeskabte. 
+
+
+
+
+<!-- -->
 
 
 <br /><br /><br /><br />
