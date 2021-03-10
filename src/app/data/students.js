@@ -451,5 +451,15 @@ export const DATA_STUDENTS = [
     "email": "vibekevildbrad@hotmail.com",
     "mobile": "+4522818216",
     "stub": "vibeke-vildbrad-kristiansen"
+  },
+  {
+    "id": "16806",
+    "studio": "2A",
+    "name": "Julie Ærthøj Velling",
+    "theme": "5",
+    "title": "A Matter of Proportions - A Textile Factory in Aarhus",
+    "email": "julievelling@hotmail.com",
+    "mobile": "+4521727463",
+    "stub": "julie-aerthoj-velling"
   }
 ]

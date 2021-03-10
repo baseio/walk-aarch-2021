@@ -114,3 +114,39 @@ Also fixed a bug where search did not work when a student was already selected.
 - [x] iPad (Casper gets a black screen)
 - [x] Improve scrollbar css 
 - [x] Improve layout on wide+low screens
+
+--
+
+AARCH 
+
+
+
+
+## Revision 1
+
+- Opdatering af student-data
+- Udvikling af ny funktionalitet der lader os skjule linket til afgang.aarch.dk/{id} fra de studerendes 'visitkort' side - pr. studerende, ved at have en 'exclude-liste'.
+
+Ferdigstillet d. 3 Feb, 2021 - godkendt af Casper
+Antal timer: 6
+
+
+
+## Revison 2
+
+- Opdatering af 'about' siden (inkluder VOLA Prize)
+- Fjern 'visitkort' siden og implementer 'click på student-cirkel for at åbne afgang.aarch.dk/{id}' i et nyt vindue/tab funktionalitet.
+- Rollback, da åbning af vindue/tab efter click's på cirkel-grafikken viste sig at blive fanget af (nogle) browsere's 'pop-up blocker'.
+- Opdatering af student-data (6 studerende tilføjet 'exclude-listen')
+
+Ferdigstillet d. 10 Feb, 2021 - godkendt af Casper og Karen
+Antal timer: 6
+
+
+
+## Revision 3
+
+- 2 ekstra legater
+
+Ferdigstillet d. 16 Feb, 2021 - godkendt af Casper og Karen
+Antal timer: 1
