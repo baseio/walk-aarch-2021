@@ -461,5 +461,15 @@ export const DATA_STUDENTS = [
     "email": "julievelling@hotmail.com",
     "mobile": "+4521727463",
     "stub": "julie-aerthoj-velling"
+  },
+  {
+    "id": "16877",
+    "studio": "1B",
+    "name": "Kristina Elisabeth Dyreby",
+    "theme": "6",
+    "title": "Træskole - i det kulturhistoriske Hvidkilde savværk",
+    "email": "kristina_dyreby@hotmail.com",
+    "mobile": "+4526110870",
+    "stub": "kristina-elisabeth-dyreby"
   }
 ]
